@@ -1,0 +1,129 @@
+import stylistic from '@stylistic/eslint-plugin'
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import prettier from 'eslint-config-prettier/flat'
+import importPlugin from 'eslint-plugin-import'
+import vue from 'eslint-plugin-vue'
+
+const controlStatements = [
+  'if',
+  'return',
+  'for',
+  'while',
+  'do',
+  'switch',
+  'try',
+  'throw'
+]
+const paddingAroundControl = [
+  ...controlStatements.flatMap((stmt) => [
+    { blankLine: 'always', prev: '*', next: stmt },
+    { blankLine: 'always', prev: stmt, next: '*' }
+  ])
+]
+
+export default defineConfigWithVueTs(
+  prettier,
+  vue.configs['flat/essential'],
+  vueTsConfigs.recommended,
+  {
+    plugins: {
+      import: importPlugin
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.json'
+        },
+        node: true
+      }
+    },
+    rules: {
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true,
+          allowTernary: true
+        }
+      ],
+      'vue/multi-word-component-names': 'off',
+      '@typescript-eslint/comma-dangle': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'comma-dangle': ['error', 'never'],
+      'object-curly-spacing': ['error', 'always'],
+      'quotes': ['error', 'single'],
+      'keyword-spacing': ['error'],
+      'space-before-function-paren': ['error', 'never'],
+      'space-before-blocks': ['error', 'always'],
+      'no-multiple-empty-lines': ['error', {
+        'max': 1
+      }],
+      'no-trailing-spaces': ['error'],
+      'padding-line-between-statements': [
+        'error',
+        { 'blankLine': 'always', 'prev': '*', 'next': 'return' }
+      ],
+      'semi': ['error', 'never'],
+      'key-spacing': 'error',
+      'indent': ['error', 2],
+      'vue/require-explicit-emits': ['off'],
+      'no-useless-catch': ['off'],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          prefer: 'type-imports',
+          fixStyle: 'separate-type-imports'
+        }
+      ],
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true
+          }
+        }
+      ],
+      'import/consistent-type-specifier-style': [
+        'error',
+        'prefer-top-level'
+      ]
+    }
+  },
+  {
+    plugins: {
+      '@stylistic': stylistic
+    },
+    rules: {
+      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
+      '@stylistic/padding-line-between-statements': [
+        'error',
+        ...paddingAroundControl
+      ]
+    }
+  },
+  {
+    ignores: [
+      'vendor',
+      'node_modules',
+      'public',
+      'bootstrap/ssr',
+      'tailwind.config.js',
+      'vite.config.ts',
+      'resources/js/actions/**',
+      'resources/js/components/ui/*',
+      'resources/js/routes/**',
+      'resources/js/wayfinder/**'
+    ]
+  },
+  {
+    plugins: {
+      '@stylistic': stylistic
+    },
+    rules: {
+      curly: ['error', 'all'],
+      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }]
+    }
+  }
+)
