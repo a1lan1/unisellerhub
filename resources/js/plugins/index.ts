@@ -1,4 +1,5 @@
 import type { App } from 'vue'
+import apexcharts from './apexcharts'
 import axios from './axios'
 import './echo'
 import pinia from './pinia'
@@ -11,4 +12,5 @@ export function registerPlugins(app: App) {
     .use(pinia)
     .use(vuetify)
     .use(snackbar)
+    .use(apexcharts)
 }

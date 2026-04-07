@@ -1025,6 +1025,11 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
+apexcharts@^5.10.5:
+  version "5.10.5"
+  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-5.10.5.tgz#85382ebdceaa1688d4c12ee55d6b261865531b55"
+  integrity sha512-RirosfLQLqYpWBdn4Pdv9B1M0M2FepzVxPRpcuXQPTilvuZvKt02vgVlEexhCVu2p4fApDIV/3yC9voAIK+qjw==
+
 argparse@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
@@ -3369,6 +3374,11 @@ vue-tsc@^2.2.4:
     "@volar/typescript" "2.4.15"
     "@vue/language-core" "2.2.12"
 
+vue3-apexcharts@^1.11.1:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/vue3-apexcharts/-/vue3-apexcharts-1.11.1.tgz#5a9f8a319ae196e0490bc5413ab68bb400685c55"
+  integrity sha512-MbN3vg8bMG19wc0Lm1HkeQvODgLm56DgpIxtNUO0xpf/JCzYWVGE4jzXp2JISzy2s3Kul1yOxNQUYsLvKQ5L9g==
+
 vue@^3.5.13:
   version "3.5.31"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.5.31.tgz#ff20b2ca7893b4f9ae576a2064dbd3e2f5850118"
@@ -3491,3 +3501,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod@^4.3.6:
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-4.3.6.tgz#89c56e0aa7d2b05107d894412227087885ab112a"
+  integrity sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==
