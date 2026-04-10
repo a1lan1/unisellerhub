@@ -16,6 +16,7 @@
         "laravel/fortify": "^1.34",
         "laravel/framework": "^13.0",
         "laravel/horizon": "^5.45",
+        "laravel/octane": "^2.17",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^11.1",
@@ -28,7 +29,9 @@
         "spatie/laravel-backup": "^10.2",
         "spatie/laravel-data": "^4.20",
         "spatie/laravel-medialibrary": "^11.21",
-        "spatie/laravel-permission": "^7.2"
+        "spatie/laravel-permission": "^7.2",
+        "spiral/roadrunner-cli": "^2.7",
+        "spiral/roadrunner-http": "^4.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
@@ -70,7 +73,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan horizon\" \"meilisearch\" \"php artisan reverb:start --debug --port=8104\" \"php artisan pail --timeout=0\" \"yarn dev\" --names=server,queue,logs,vite --kill-others"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan schedule:work\" \"php artisan horizon\" \"meilisearch\" \"php artisan reverb:start --debug --port=8104\" \"php artisan pail --timeout=0\" \"yarn dev\" --names=server,queue,logs,vite --kill-others"
         ],
         "lint": [
             "pint --parallel"
