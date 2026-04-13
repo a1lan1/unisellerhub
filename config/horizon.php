@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('HORIZON_NAME'),
+    'name' => env('HORIZON_NAME', 'UnisellerHub'),
 
     /*
     |--------------------------------------------------------------------------
@@ -97,7 +97,7 @@ return [
     */
 
     'waits' => [
-        'redis:default' => 60,
+        'rabbitmq:default' => 60,
     ],
 
     /*
@@ -198,7 +198,7 @@ return [
 
     'defaults' => [
         'supervisor-1' => [
-            'connection' => 'redis',
+            'connection' => env('QUEUE_CONNECTION', 'rabbitmq'),
             'queue' => ['default'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',

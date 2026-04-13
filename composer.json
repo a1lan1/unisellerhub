@@ -31,7 +31,8 @@
         "spatie/laravel-permission": "^7.2",
         "spatie/laravel-prometheus": "^1.5",
         "spiral/roadrunner-cli": "^2.7",
-        "spiral/roadrunner-http": "^4.1"
+        "spiral/roadrunner-http": "^4.1",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "dev-master"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
@@ -49,6 +50,12 @@
         "nunomaduro/collision": "^8.9",
         "pestphp/pest": "^4.4",
         "pestphp/pest-plugin-laravel": "^4.1"
+    },
+    "repositories": {
+      "laravel-queue-rabbitmq": {
+        "type": "vcs",
+        "url": "https://github.com/a1lan1/laravel-queue-rabbitmq.git"
+      }
     },
     "autoload": {
         "psr-4": {
@@ -73,7 +80,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan schedule:work\" \"php artisan horizon\" \"meilisearch\" \"php artisan reverb:start --debug --port=8104\" \"php artisan pail --timeout=0\" \"yarn dev\" --names=server,queue,logs,vite --kill-others"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve --port=8585\" \"php artisan schedule:work\" \"php artisan horizon\" \"meilisearch\" \"php artisan reverb:start --debug --port=8104\" \"php artisan pail --timeout=0\" \"yarn dev\" --names=server,queue,logs,vite --kill-others"
         ],
         "lint": [
             "pint --parallel"
