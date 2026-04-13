@@ -50,7 +50,7 @@ class ClearStorage extends Command
             }
 
             foreach ($directories as $subDirectory) {
-                if (basename($subDirectory) !== '.gitignore') {
+                if (basename((string) $subDirectory) !== '.gitignore') {
                     File::deleteDirectory($subDirectory);
                 }
             }
