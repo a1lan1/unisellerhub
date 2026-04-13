@@ -49,10 +49,10 @@ return RectorConfig::configure()
     ->withSetProviders(LaravelSetProvider::class)
 
     // PHP version
-    ->withPhpVersion(PhpVersion::PHP_83)
+    ->withPhpVersion(PhpVersion::PHP_84)
 
     // PHP sets
-    ->withPhpSets(php83: true)
+    ->withPhpSets(php84: true)
 
     // Attributes sets for modern PHP attributes
     ->withAttributesSets(
