@@ -39,7 +39,7 @@ class UsersTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         RoleEnum::ADMIN->value => 'danger',
-                        RoleEnum::USER->value => 'info',
+                        RoleEnum::SELLER->value => 'info',
                         default => 'gray',
                     }),
                 TextColumn::make('created_at')

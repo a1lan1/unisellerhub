@@ -80,7 +80,7 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user): void {
             $user->assignRole([
-                RoleEnum::USER->value,
+                RoleEnum::SELLER->value,
             ]);
         });
     }
