@@ -1,0 +1,241 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      REVERB_APP_ID: ${REVERB_APP_ID}
+      REVERB_APP_KEY: ${REVERB_APP_KEY}
+      REVERB_APP_SECRET: ${REVERB_APP_SECRET}
+      REVERB_HOST: ${REVERB_HOST}
+      REVERB_PORT: ${REVERB_PORT}
+      REVERB_SCHEME: ${REVERB_SCHEME}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-rabbitmq}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE:-default}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-default}
+    image: php:8.4-fpm-alpine
+    ports:
+      - '${APP_PORT:-8585}:8585'
+      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+    container_name: unisellerhub_app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - './docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini'
+    networks:
+      - unisellerhub_app
+    healthcheck:
+      test: [ "CMD", "php", "artisan", "about", "--only=environment" ]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 300s
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  reverb:
+    image: php:8.4-fpm-alpine
+    command: php artisan reverb:start --host=0.0.0.0 --port=${REVERB_SERVER_PORT:-8080}
+    ports:
+      - "${REVERB_SERVER_PORT:-8080}:${REVERB_SERVER_PORT:-8080}"
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+    networks:
+      - unisellerhub_app
+    depends_on:
+      app:
+        condition: service_healthy
+
+  pgsql:
+    image: 'postgres:16-alpine'
+    ports:
+      - '${FORWARD_DB_PORT:-5432}:5432'
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE}'
+      POSTGRES_USER: '${DB_USERNAME}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - 'pgsql-data:/var/lib/postgresql/data'
+      - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+    networks:
+      - unisellerhub_app
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
+      retries: 3
+      timeout: 5s
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
+    restart: unless-stopped
+    volumes:
+      - 'redis-data:/data'
+    networks:
+      - unisellerhub_app
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 3
+      timeout: 5s
+
+  scheduler:
+    profiles:
+      - dev-tools
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: >
+      php artisan schedule:work
+    volumes:
+      - .:/var/www/html
+    networks:
+      - unisellerhub_app
+    depends_on:
+      app:
+        condition: service_healthy
+
+  mailpit:
+    profiles:
+      - dev-tools
+    image: 'axllent/mailpit:latest'
+    ports:
+      - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+      - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+    networks:
+      - unisellerhub_app
+
+  meilisearch:
+    image: 'getmeili/meilisearch:latest'
+    ports:
+      - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
+    restart: unless-stopped
+    volumes:
+      - 'meilisearch-data:/meili_data'
+    networks:
+      - unisellerhub_app
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:7700/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  horizon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      REVERB_APP_ID: ${REVERB_APP_ID}
+      REVERB_APP_KEY: ${REVERB_APP_KEY}
+      REVERB_APP_SECRET: ${REVERB_APP_SECRET}
+      REVERB_HOST: ${REVERB_HOST}
+      REVERB_PORT: ${REVERB_PORT}
+      REVERB_SCHEME: ${REVERB_SCHEME}
+      QUEUE_CONNECTION: rabbitmq
+      RABBITMQ_HOST: rabbitmq
+    command: >
+      php artisan horizon
+    volumes:
+      - .:/var/www/html
+    networks:
+      - unisellerhub_app
+    depends_on:
+      app:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  prometheus:
+    profiles:
+      - monitoring
+    image: prom/prometheus:v2.47.2
+    ports:
+      - '9090:9090'
+    restart: unless-stopped
+    volumes:
+      - './prometheus:/etc/prometheus'
+      - 'prometheus-data:/prometheus'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - unisellerhub_app
+    depends_on:
+      app:
+        condition: service_healthy
+
+  grafana:
+    profiles:
+      - monitoring
+    image: grafana/grafana:10.1.5
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    volumes:
+      - 'grafana-data:/var/lib/grafana'
+      - './grafana/provisioning:/etc/grafana/provisioning'
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD:-password}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - unisellerhub_app
+    depends_on:
+      prometheus:
+        condition: service_started
+
+  rabbitmq:
+    image: 'rabbitmq:3-management-alpine'
+    ports:
+      - '${FORWARD_RABBITMQ_PORT:-5672}:5672'
+      - '${FORWARD_RABBITMQ_DASHBOARD_PORT:-15672}:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: '${RABBITMQ_USER:-guest}'
+      RABBITMQ_DEFAULT_PASS: '${RABBITMQ_PASSWORD:-guest}'
+    volumes:
+      - 'rabbitmq-data:/var/lib/rabbitmq'
+    networks:
+      - unisellerhub_app
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "check_running" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  unisellerhub_app:
+    name: unisellerhub_app
+    driver: bridge
+
+volumes:
+  pgsql-data:
+    driver: local
+  redis-data:
+    driver: local
+  rabbitmq-data:
+    driver: local
+  meilisearch-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
