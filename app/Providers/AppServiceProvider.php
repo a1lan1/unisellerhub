@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Interfaces\NotificationServiceInterface;
-use App\Services\NotificationService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -22,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array<string, string>
      */
     public array $bindings = [
-        NotificationServiceInterface::class => NotificationService::class,
+        //
     ];
 
     /**
@@ -42,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        JsonResource::withoutWrapping();
         $this->configureDefaults();
         $this->configureModels();
     }
