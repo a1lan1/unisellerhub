@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\MockMarketplace\Interfaces\Http\Controllers\AvitoMockController;
 use App\Modules\MockMarketplace\Interfaces\Http\Controllers\OzonMockController;
 use App\Modules\MockMarketplace\Interfaces\Http\Controllers\WbMockController;
 use App\Modules\MockMarketplace\Interfaces\Http\Controllers\YandexMockController;
@@ -43,5 +44,15 @@ Route::prefix('mock')
             Route::post('/businesses/{businessId}/offers/stocks', [YandexMockController::class, 'updateStocks']);
             Route::get('/campaigns/{campaignId}/orders', [YandexMockController::class, 'getOrders']);
             Route::post('/businesses/{businessId}/offer-prices/updates', [YandexMockController::class, 'updatePrices']);
+        });
+
+        // Avito API
+        Route::prefix('avito')->group(function (): void {
+            Route::get('/items/v2/list', [AvitoMockController::class, 'getItems']);
+            Route::get('/items/v2/item/{itemId}', [AvitoMockController::class, 'getItem']);
+            Route::get('/items/v1/stocks', [AvitoMockController::class, 'getStocks']);
+            Route::get('/order/v1/list', [AvitoMockController::class, 'getOrders']);
+            Route::put('/items/v1/item/{itemId}/price', [AvitoMockController::class, 'updatePrice']);
+            Route::get('/core/v1/accounts/self', [AvitoMockController::class, 'getSelf']);
         });
     });
