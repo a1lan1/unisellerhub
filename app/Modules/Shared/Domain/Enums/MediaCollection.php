@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Enums;
+namespace App\Modules\Shared\Domain\Enums;
 
 enum MediaCollection: string
 {

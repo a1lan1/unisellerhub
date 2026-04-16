@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Modules\Shared\Application\Services\TenantManager;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Override;
@@ -41,6 +42,10 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+
+        if ($user && $user->organization_id !== null) {
+            resolve(TenantManager::class)->setOrganizationId((int) $user->organization_id);
+        }
 
         return [
             ...parent::share($request),
