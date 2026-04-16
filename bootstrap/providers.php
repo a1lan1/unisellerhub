@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\MockMarketplace\Infrastructure\Providers\MockMarketplaceServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\FortifyServiceProvider;
@@ -12,4 +13,7 @@ return [
     FortifyServiceProvider::class,
     HorizonServiceProvider::class,
     PrometheusServiceProvider::class,
+
+    // Module Providers
+    MockMarketplaceServiceProvider::class,
 ];
