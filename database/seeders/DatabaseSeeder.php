@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 UserSeeder::class,
                 OrganizationSeeder::class,
+                CategorySeeder::class,
                 MockMarketplaceSeeder::class,
             ]);
         }
