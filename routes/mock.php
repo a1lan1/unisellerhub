@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\MockMarketplace\Interfaces\Http\Controllers\OzonMockController;
 use App\Modules\MockMarketplace\Interfaces\Http\Controllers\WbMockController;
+use App\Modules\MockMarketplace\Interfaces\Http\Controllers\YandexMockController;
 use App\Modules\MockMarketplace\Interfaces\Http\Middleware\IdentifyMockMarketplaceAccount;
 use App\Modules\MockMarketplace\Interfaces\Http\Middleware\MockIdempotencyMiddleware;
 use App\Modules\MockMarketplace\Interfaces\Http\Middleware\MockPerformanceMiddleware;
@@ -33,5 +34,14 @@ Route::prefix('mock')
             Route::post('/product/import/stocks', [OzonMockController::class, 'updateStocks']);
             Route::post('/product/import/prices', [OzonMockController::class, 'updatePrices']);
             Route::post('/posting/fbs/list', [OzonMockController::class, 'getOrders']);
+        });
+
+        // Yandex Market API
+        Route::prefix('yandex/v2')->group(function (): void {
+            Route::get('/campaigns', [YandexMockController::class, 'getCampaigns']);
+            Route::post('/businesses/{businessId}/offer-mappings', [YandexMockController::class, 'getProducts']);
+            Route::post('/businesses/{businessId}/offers/stocks', [YandexMockController::class, 'updateStocks']);
+            Route::get('/campaigns/{campaignId}/orders', [YandexMockController::class, 'getOrders']);
+            Route::post('/businesses/{businessId}/offer-prices/updates', [YandexMockController::class, 'updatePrices']);
         });
     });
