@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Concerns;
 
-use App\Models\User;
+use App\Modules\User\Domain\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 

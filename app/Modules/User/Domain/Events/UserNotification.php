@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Events;
+namespace App\Modules\User\Domain\Events;
 
-use App\Models\User;
+use App\Modules\User\Domain\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;

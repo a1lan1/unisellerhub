@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
+use App\Modules\User\Domain\Models\User;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Override;

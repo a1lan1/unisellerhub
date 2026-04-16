@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Tables;
 
-use App\Enums\MediaCollection;
-use App\Enums\RoleEnum;
-use App\Models\User;
+use App\Modules\Shared\Domain\Enums\MediaCollection;
+use App\Modules\User\Domain\Enums\RoleEnum;
+use App\Modules\User\Domain\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

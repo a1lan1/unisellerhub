@@ -21,3 +21,6 @@ parameters:
 
     bootstrapFiles:
         - %currentWorkingDirectory%/bootstrap/app.php
+
+    universalObjectCratesClasses:
+        - App\Modules\User\Domain\Models\User
