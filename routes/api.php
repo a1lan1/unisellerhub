@@ -9,4 +9,5 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
     Route::get('/user', fn (Request $request) => $request->user());
 });
 
+require __DIR__.'/webhooks.php';
 require __DIR__.'/mock.php';
