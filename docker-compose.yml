@@ -249,6 +249,28 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  sync_consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unisellerhub_sync_consumer
+    restart: unless-stopped
+    command: php artisan app:consume-sync-results
+    volumes:
+      - .:/var/www/html
+    environment:
+      APP_ENV: ${APP_ENV}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+    networks:
+      - unisellerhub_app
+    depends_on:
+      app:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
 networks:
   unisellerhub_app:
     name: unisellerhub_app
