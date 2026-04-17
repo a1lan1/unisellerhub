@@ -1,8 +1,14 @@
 <?php
 
-namespace App\Providers;
+declare(strict_types=1);
 
+namespace App\Modules\Monitoring\Infrastructure\Providers;
+
+use App\Modules\Monitoring\Domain\Collectors\HttpMetricsCollector;
+use App\Modules\Monitoring\Domain\Collectors\MarketplaceMetricsCollector;
+use App\Modules\Monitoring\Domain\Collectors\ModelCountCollector;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Spatie\Prometheus\Collectors\Horizon\CurrentMasterSupervisorCollector;
 use Spatie\Prometheus\Collectors\Horizon\CurrentProcessesPerQueueCollector;
 use Spatie\Prometheus\Collectors\Horizon\CurrentWorkloadCollector;
@@ -19,15 +25,23 @@ use Spatie\Prometheus\Facades\Prometheus;
 
 class PrometheusServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
+        $this->registerAppCollectors();
         $this->registerHorizonCollectors();
-
-        /*
-         * Export queue metrics to Prometheus.
-         * Default connection is used.
-         */
         $this->registerQueueCollectors(['default', 'high', 'low']);
+    }
+
+    public function registerAppCollectors(): self
+    {
+        Prometheus::registerCollectorClasses([
+            ModelCountCollector::class,
+            HttpMetricsCollector::class,
+            MarketplaceMetricsCollector::class,
+        ]);
+
+        return $this;
     }
 
     public function registerHorizonCollectors(): self
@@ -53,7 +67,7 @@ class PrometheusServiceProvider extends ServiceProvider
             QueueDelayedJobsCollector::class,
             QueueReservedJobsCollector::class,
             QueueOldestPendingJobCollector::class,
-        ], compact('connection', 'queues'));
+        ]);
 
         return $this;
     }
