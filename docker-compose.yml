@@ -205,6 +205,15 @@ services:
 
   rabbitmq:
     image: 'rabbitmq:3-management-alpine'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+    restart: unless-stopped
     ports:
       - '${FORWARD_RABBITMQ_PORT:-5672}:5672'
       - '${FORWARD_RABBITMQ_DASHBOARD_PORT:-15672}:15672'
@@ -220,6 +229,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  go_sync_service:
+    build:
+      context: ./services/go_sync_service
+    restart: unless-stopped
+    extra_hosts:
+      - "localhost:host-gateway"
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
+      WB_BASE_URL: ${WB_BASE_URL}
+      OZON_BASE_URL: ${OZON_BASE_URL}
+      YANDEX_BASE_URL: ${YANDEX_BASE_URL}
+      AVITO_BASE_URL: ${AVITO_BASE_URL}
+      MOYSKLAD_BASE_URL: ${MOYSKLAD_BASE_URL}
+    networks:
+      - unisellerhub_app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 networks:
   unisellerhub_app:
