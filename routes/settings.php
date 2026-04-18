@@ -9,6 +9,9 @@ Route::middleware(['auth'])->group(function (): void {
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Marketplace Connections
+    Route::inertia('settings/connections', 'settings/Connections')->name('settings.connections.index');
 });
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
