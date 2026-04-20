@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import NotificationBell from '@/components/NotificationBell.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -26,6 +27,8 @@ const auth = computed(() => page.props.auth)
       <slot />
 
       <div class="ml-auto flex items-center space-x-4">
+        <NotificationBell />
+
         <DropdownMenu>
           <DropdownMenuTrigger :as-child="true">
             <Button
