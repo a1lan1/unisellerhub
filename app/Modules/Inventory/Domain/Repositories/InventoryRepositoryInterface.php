@@ -7,12 +7,9 @@ namespace App\Modules\Inventory\Domain\Repositories;
 use App\Modules\Inventory\Domain\Data\InventoryFilterData;
 use App\Modules\Inventory\Domain\Models\Inventory;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 interface InventoryRepositoryInterface
 {
-    public function getAllInventory(): Collection;
-
     public function getPaginatedInventory(InventoryFilterData $filter): LengthAwarePaginator;
 
     public function findById(int $id): ?Inventory;

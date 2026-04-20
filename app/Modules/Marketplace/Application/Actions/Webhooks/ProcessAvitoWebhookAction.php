@@ -8,6 +8,8 @@ use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
 use App\Modules\Order\Infrastructure\Jobs\SyncOrdersJob;
+use App\Modules\User\Domain\Data\NotificationData;
+use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
 use Illuminate\Support\Facades\Log;
 
@@ -35,14 +37,24 @@ readonly class ProcessAvitoWebhookAction
             if ($eventName === 'message.new' || $eventName === 'chat.new') {
                 $this->notificationService->sendToOrganization(
                     $organization,
-                    sprintf('New customer message on Avito (%s)', $connection->name)
+                    new NotificationData(
+                        title: 'New Message',
+                        message: sprintf('New customer message on Avito (%s)', $connection->name),
+                        type: NotificationTypeEnum::INFO,
+                        icon: 'mdi-chat'
+                    )
                 );
             } elseif ($eventName === 'order.new') {
                 dispatch(new SyncOrdersJob($connection->organization_id, MarketplaceEnum::AVITO));
 
                 $this->notificationService->sendToOrganization(
                     $organization,
-                    sprintf('New order received from Avito (%s). Syncing...', $connection->name)
+                    new NotificationData(
+                        title: 'New Order',
+                        message: sprintf('New order received from Avito (%s). Syncing...', $connection->name),
+                        type: NotificationTypeEnum::SUCCESS,
+                        icon: 'mdi-cart'
+                    )
                 );
             }
         }

@@ -27,7 +27,5 @@ interface OrderRepositoryInterface
 
     public function update(Order $order, array $data): Order;
 
-    public function getAllOrders(): Collection;
-
     public function getPaginatedOrders(OrderFilterData $filter): LengthAwarePaginator;
 }

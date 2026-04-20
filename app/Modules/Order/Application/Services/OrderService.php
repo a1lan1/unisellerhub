@@ -13,7 +13,6 @@ use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
 use App\Modules\Order\Infrastructure\Jobs\SyncOrdersJob;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 readonly class OrderService
 {
@@ -36,15 +35,6 @@ readonly class OrderService
             'trend' => $this->orderRepository->getSalesTrend(now()->subDays(30), now()),
             'distribution' => $this->orderRepository->getMarketplaceDistribution(),
         ];
-    }
-
-    public function getAllOrders(User $user): Collection
-    {
-        if (! $user->has_organization) {
-            return collect();
-        }
-
-        return $this->orderRepository->getAllOrders();
     }
 
     public function getPaginatedOrders(User $user, OrderFilterData $filter): LengthAwarePaginator

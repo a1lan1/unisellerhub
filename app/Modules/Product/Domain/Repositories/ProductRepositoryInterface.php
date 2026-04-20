@@ -10,12 +10,9 @@ use App\Modules\Product\Domain\Models\Product;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Cknow\Money\Money;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 interface ProductRepositoryInterface
 {
-    public function getAllListings(): Collection;
-
     public function getPaginatedListings(ProductListingsFilterData $filter): LengthAwarePaginator;
 
     public function findBySku(string $sku): ?Product;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import AddConnectionModal from '@/components/AddConnectionModal.vue'
+import AddConnectionModal from '@/components/connections/AddConnectionModal.vue'
 import Heading from '@/components/Heading.vue'
 import { useConnections } from '@/composables/useConnections'
 import { snackbar } from '@/plugins/snackbar'

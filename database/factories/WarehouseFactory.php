@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Modules\Inventory\Domain\Models\Warehouse;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\User\Domain\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class WarehouseFactory extends Factory
     public function definition(): array
     {
         return [
+            'organization_id' => Organization::factory(),
             'name' => fake()->city().' Warehouse',
             'marketplace' => fake()->randomElement(MarketplaceEnum::cases()),
             'external_id' => fake()->uuid(),

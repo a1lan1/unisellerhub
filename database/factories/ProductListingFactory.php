@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Product\Domain\Models\Product;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,6 +20,7 @@ class ProductListingFactory extends Factory
     public function definition(): array
     {
         return [
+            'product_id' => Product::factory(),
             'marketplace' => fake()->randomElement(MarketplaceEnum::cases()),
             'external_id' => fake()->uuid(),
             'vendor_code' => fake()->bothify('???-###'),

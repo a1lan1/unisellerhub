@@ -12,17 +12,9 @@ use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
 use Cknow\Money\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class EloquentProductRepository implements ProductRepositoryInterface
 {
-    public function getAllListings(): Collection
-    {
-        return ProductListing::query()
-            ->with('product')
-            ->get();
-    }
-
     public function getPaginatedListings(ProductListingsFilterData $filter): LengthAwarePaginator
     {
         return ProductListing::query()

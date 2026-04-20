@@ -6,6 +6,7 @@ namespace App\Modules\Order\Domain\Enums;
 
 enum OrderStatusEnum: string
 {
+    case NEW = 'new';
     case PENDING = 'pending';
     case PAID = 'paid';
     case PROCESSING = 'processing';

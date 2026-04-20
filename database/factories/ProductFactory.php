@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Modules\Product\Domain\Models\Product;
+use App\Modules\User\Domain\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
+            'organization_id' => Organization::factory(),
             'sku' => fake()->unique()->bothify('PROD-###-???'),
             'name' => fake()->words(3, true),
             'description' => fake()->paragraph(),

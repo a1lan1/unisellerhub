@@ -8,6 +8,8 @@ use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
 use App\Modules\Order\Infrastructure\Jobs\SyncOrdersJob;
+use App\Modules\User\Domain\Data\NotificationData;
+use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
 use Illuminate\Support\Facades\Log;
 
@@ -34,7 +36,12 @@ readonly class ProcessWildberriesWebhookAction
 
             $this->notificationService->sendToOrganization(
                 $organization,
-                sprintf('New order received from Wildberries (%s)', $connection->name)
+                new NotificationData(
+                    title: 'New Order',
+                    message: sprintf('New order received from Wildberries (%s)', $connection->name),
+                    type: NotificationTypeEnum::SUCCESS,
+                    icon: 'mdi-cart'
+                )
             );
         }
     }

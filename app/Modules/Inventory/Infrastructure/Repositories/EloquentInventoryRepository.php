@@ -9,18 +9,9 @@ use App\Modules\Inventory\Domain\Models\Inventory;
 use App\Modules\Inventory\Domain\Repositories\InventoryRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class EloquentInventoryRepository implements InventoryRepositoryInterface
 {
-    public function getAllInventory(): Collection
-    {
-        return Inventory::query()
-            ->whereHas('warehouse')
-            ->with(['listing.product', 'warehouse'])
-            ->get();
-    }
-
     public function getPaginatedInventory(InventoryFilterData $filter): LengthAwarePaginator
     {
         return Inventory::query()

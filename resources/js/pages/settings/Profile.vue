@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form, Head, Link, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { Form, Head, Link } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia'
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController'
 import DeleteUser from '@/components/DeleteUser.vue'
 import Heading from '@/components/Heading.vue'
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { edit } from '@/routes/profile'
 import { send } from '@/routes/verification'
+import { useAuthStore } from '@/stores/auth'
 
 type Props = {
     mustVerifyEmail: boolean;
@@ -29,8 +30,8 @@ defineOptions({
   }
 })
 
-const page = usePage()
-const user = computed(() => page.props.auth.user)
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
 </script>
 
 <template>

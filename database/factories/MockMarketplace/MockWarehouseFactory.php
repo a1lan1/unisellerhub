@@ -18,8 +18,9 @@ class MockWarehouseFactory extends Factory
     public function definition(): array
     {
         return [
+            'mock_marketplace_account_id' => MockMarketplaceAccountFactory::new(),
             'marketplace' => fake()->randomElement(MarketplaceEnum::cases()),
-            'external_id' => fake()->uuid(),
+            'external_id' => (string) fake()->numberBetween(1000, 999999),
             'name' => fake()->city().' Warehouse',
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),

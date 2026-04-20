@@ -18,6 +18,7 @@ class MockStockFactory extends Factory
     public function definition(): array
     {
         return [
+            'mock_marketplace_account_id' => MockMarketplaceAccountFactory::new(),
             'marketplace' => fake()->randomElement(MarketplaceEnum::cases()),
             'external_product_id' => fake()->uuid(),
             'sku' => fake()->bothify('SKU-###-???'),

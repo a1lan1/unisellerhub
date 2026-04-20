@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Domain\Models;
 
+use App\Modules\Inventory\Domain\Models\Warehouse;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Order\Domain\Models\Order;
 use App\Modules\Product\Domain\Models\Product;
-use App\Modules\Product\Domain\Models\Warehouse;
 use Carbon\CarbonImmutable;
 use Database\Factories\OrganizationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Collection<int, Warehouse> $warehouses
  * @property-read int|null $warehouses_count
  *
- * @method static OrganizationFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\OrganizationFactory factory($count = null, $state = [])
  * @method static Builder<static>|Organization newModelQuery()
  * @method static Builder<static>|Organization newQuery()
  * @method static Builder<static>|Organization query()

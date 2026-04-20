@@ -22,6 +22,7 @@ class MockProductFactory extends Factory
         $oldPrice = $price * fake()->randomFloat(2, 1.05, 1.5);
 
         return [
+            'mock_marketplace_account_id' => MockMarketplaceAccountFactory::new(),
             'marketplace' => MarketplaceEnum::WB, // Default, will be overridden
             'external_id' => (string) fake()->numberBetween(1000000, 999999999),
             'vendor_code' => fake()->unique()->bothify('???-###'),

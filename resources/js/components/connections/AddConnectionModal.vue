@@ -5,11 +5,11 @@ import { useZodValidation } from '@/composables/useZodValidation'
 import { MarketplaceEnum, marketplaceConnectionSchema  } from '@/types'
 import type { MarketplaceConnectionForm } from '@/types'
 import { marketplaceOptions } from '@/utils/marketplace'
-import AvitoFields from './connections/fields/AvitoFields.vue'
-import MsFields from './connections/fields/MsFields.vue'
-import OzonFields from './connections/fields/OzonFields.vue'
-import WbFields from './connections/fields/WbFields.vue'
-import YandexFields from './connections/fields/YandexFields.vue'
+import AvitoFields from './fields/AvitoFields.vue'
+import MsFields from './fields/MsFields.vue'
+import OzonFields from './fields/OzonFields.vue'
+import WbFields from './fields/WbFields.vue'
+import YandexFields from './fields/YandexFields.vue'
 
 const props = defineProps<{
   isSaving: boolean;

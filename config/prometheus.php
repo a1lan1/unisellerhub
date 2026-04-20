@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Spatie\Prometheus\Actions\RenderCollectorsAction;
 use Spatie\Prometheus\Http\Middleware\AllowIps;
 
@@ -19,14 +21,13 @@ return [
      */
     'allowed_ips' => [
         // '127.0.0.1',
-        // '172.16.0.0/12', // Allow Docker internal network range
     ],
 
     /*
      * This is the default namespace that will be
      * used by all metrics
      */
-    'default_namespace' => 'unisellerhub',
+    'default_namespace' => 'app',
 
     /*
      * The middleware that will be applied to the urls above

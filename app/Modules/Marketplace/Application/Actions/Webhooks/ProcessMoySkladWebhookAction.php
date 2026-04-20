@@ -8,6 +8,8 @@ use App\Modules\Inventory\Infrastructure\Jobs\SyncMoySkladStockJob;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
+use App\Modules\User\Domain\Data\NotificationData;
+use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
 use Illuminate\Support\Facades\Log;
 
@@ -43,7 +45,12 @@ readonly class ProcessMoySkladWebhookAction
             if ($triggered) {
                 $this->notificationService->sendToOrganization(
                     $organization,
-                    'Stock updated in MoySklad. Syncing to marketplaces...'
+                    new NotificationData(
+                        title: 'Stock Update',
+                        message: 'Stock updated in MoySklad. Syncing to marketplaces...',
+                        type: NotificationTypeEnum::INFO,
+                        icon: 'mdi-refresh'
+                    )
                 );
             }
         }

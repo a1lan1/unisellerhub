@@ -69,14 +69,6 @@ class EloquentOrderRepository implements OrderRepositoryInterface
         return $order;
     }
 
-    public function getAllOrders(): Collection
-    {
-        return Order::query()
-            ->with('items.listing.product')
-            ->latest('order_date')
-            ->get();
-    }
-
     public function getPaginatedOrders(OrderFilterData $filter): LengthAwarePaginator
     {
         return Order::query()
