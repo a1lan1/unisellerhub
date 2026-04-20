@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\User\Infrastructure\Providers;
 
 use App\Modules\User\Application\Services\NotificationService;
+use App\Modules\User\Domain\Interfaces\NotificationRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
 use App\Modules\User\Domain\Policies\OrganizationPolicy;
+use App\Modules\User\Infrastructure\Repositories\EloquentNotificationRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -18,6 +20,7 @@ class UserServiceProvider extends ServiceProvider
      */
     public array $bindings = [
         NotificationServiceInterface::class => NotificationService::class,
+        NotificationRepositoryInterface::class => EloquentNotificationRepository::class,
     ];
 
     #[Override]
