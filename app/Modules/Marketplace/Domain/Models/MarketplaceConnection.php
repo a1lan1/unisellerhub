@@ -7,8 +7,11 @@ namespace App\Modules\Marketplace\Domain\Models;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\User\Domain\Models\Organization;
 use Carbon\CarbonImmutable;
+use Database\Factories\MarketplaceConnectionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Override;
@@ -24,6 +27,7 @@ use Override;
  * @property CarbonImmutable|null $updated_at
  * @property-read Organization $organization
  *
+ * @method static MarketplaceConnectionFactory factory($count = null, $state = [])
  * @method static Builder<static>|MarketplaceConnection newModelQuery()
  * @method static Builder<static>|MarketplaceConnection newQuery()
  * @method static Builder<static>|MarketplaceConnection query()
@@ -39,8 +43,11 @@ use Override;
  * @mixin \Eloquent
  */
 #[Fillable(['organization_id', 'marketplace', 'name', 'credentials', 'is_active'])]
+#[UseFactory(MarketplaceConnectionFactory::class)]
 class MarketplaceConnection extends Model
 {
+    use HasFactory;
+
     /**
      * @return array<string, string>
      */

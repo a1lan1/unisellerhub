@@ -6,7 +6,9 @@ namespace App\Modules\MockMarketplace\Domain\Models;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use Carbon\CarbonImmutable;
+use Database\Factories\MockMarketplace\MockMarketplaceAccountFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +33,7 @@ use Override;
  * @property-read Collection<int, MockWarehouse> $warehouses
  * @property-read int|null $warehouses_count
  *
+ * @method static MockMarketplaceAccountFactory factory($count = null, $state = [])
  * @method static Builder<static>|MockMarketplaceAccount newModelQuery()
  * @method static Builder<static>|MockMarketplaceAccount newQuery()
  * @method static Builder<static>|MockMarketplaceAccount query()
@@ -43,6 +46,7 @@ use Override;
  * @mixin \Eloquent
  */
 #[Fillable(['marketplace', 'name'])]
+#[UseFactory(MockMarketplaceAccountFactory::class)]
 class MockMarketplaceAccount extends Model
 {
     use HasFactory;

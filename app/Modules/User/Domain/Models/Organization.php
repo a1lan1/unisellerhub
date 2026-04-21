@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Collection<int, Warehouse> $warehouses
  * @property-read int|null $warehouses_count
  *
- * @method static \Database\Factories\OrganizationFactory factory($count = null, $state = [])
+ * @method static OrganizationFactory factory($count = null, $state = [])
  * @method static Builder<static>|Organization newModelQuery()
  * @method static Builder<static>|Organization newQuery()
  * @method static Builder<static>|Organization query()

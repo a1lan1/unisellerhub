@@ -23,7 +23,7 @@ class MockProductFactory extends Factory
 
         return [
             'mock_marketplace_account_id' => MockMarketplaceAccountFactory::new(),
-            'marketplace' => MarketplaceEnum::WB, // Default, will be overridden
+            'marketplace' => MarketplaceEnum::WB,
             'external_id' => (string) fake()->numberBetween(1000000, 999999999),
             'vendor_code' => fake()->unique()->bothify('???-###'),
             'barcode' => fake()->ean13(),
