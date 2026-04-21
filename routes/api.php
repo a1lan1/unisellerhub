@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectionController;
+use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\NotificationController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\OrganizationController;
 use Illuminate\Http\Request;
@@ -23,6 +24,12 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
 
     Route::middleware(['has_org'])->group(function (): void {
         Route::apiResource('marketplace-connections', MarketplaceConnectionController::class)->names('api.marketplace-connections');
+
+        // Products
+        Route::prefix('products')->name('api.products.')->group(function (): void {
+            Route::post('sync', [ProductSyncController::class, 'sync'])->name('sync');
+            Route::post('sync-bulk', [ProductSyncController::class, 'syncBulk'])->name('sync_bulk');
+        });
     });
 });
 
