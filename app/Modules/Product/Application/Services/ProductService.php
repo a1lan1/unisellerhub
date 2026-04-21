@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\Product\Application\Services;
+
+use App\Modules\Product\Domain\Data\ProductListingsFilterData;
+use App\Modules\Product\Domain\Data\SyncBulkProductData;
+use App\Modules\Product\Domain\Data\SyncProductsData;
+use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
+use App\Modules\Product\Infrastructure\Jobs\SyncBulkProductsJob;
+use App\Modules\Product\Infrastructure\Jobs\SyncProductsJob;
+use App\Modules\User\Domain\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+readonly class ProductService
+{
+    public function __construct(private ProductRepositoryInterface $repository) {}
+
+    public function getPaginatedListings(User $user, ProductListingsFilterData $filter): LengthAwarePaginator
+    {
+        if (! $user->has_organization) {
+            return new LengthAwarePaginator([], 0, $filter->per_page);
+        }
+
+        return $this->repository->getPaginatedListings($filter);
+    }
+
+    public function syncProducts(SyncProductsData $dto): void
+    {
+        dispatch(new SyncProductsJob($dto->organizationId, $dto->marketplace));
+    }
+
+    public function syncBulkProducts(SyncBulkProductData $dto): void
+    {
+        SyncBulkProductsJob::dispatchIf(
+            $dto->ids !== [],
+            $dto->organizationId, $dto->ids
+        );
+    }
+}
