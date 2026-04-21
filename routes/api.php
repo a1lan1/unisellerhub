@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectionController;
+use App\Modules\Order\Interfaces\Http\Controllers\Api\OrderSyncController;
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\NotificationController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\OrganizationController;
@@ -30,6 +31,9 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
             Route::post('sync', [ProductSyncController::class, 'sync'])->name('sync');
             Route::post('sync-bulk', [ProductSyncController::class, 'syncBulk'])->name('sync_bulk');
         });
+
+        // Orders
+        Route::post('orders/sync', [OrderSyncController::class, 'sync'])->name('api.orders.sync');
     });
 });
 
