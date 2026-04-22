@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Inventory\Interfaces\Http\Controllers\Api\InventorySyncController;
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectionController;
 use App\Modules\Order\Interfaces\Http\Controllers\Api\OrderSyncController;
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
@@ -34,6 +35,14 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
 
         // Orders
         Route::post('orders/sync', [OrderSyncController::class, 'sync'])->name('api.orders.sync');
+
+        // Inventory
+        Route::prefix('inventory')->name('api.inventory.')->group(function (): void {
+            Route::post('pull', [InventorySyncController::class, 'pull'])->name('pull');
+            Route::post('pull-bulk', [InventorySyncController::class, 'pullBulk'])->name('pull_bulk');
+            Route::patch('update', [InventorySyncController::class, 'update'])->name('update');
+            Route::post('sync-ms', [InventorySyncController::class, 'syncMoySkladStock'])->name('sync_ms');
+        });
     });
 });
 
