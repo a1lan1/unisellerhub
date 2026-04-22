@@ -11,11 +11,14 @@ use App\Observers\OrganizationIdObserver;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,6 +41,7 @@ use Override;
  * @property-read int|null $items_count
  * @property-read Organization|null $organization
  *
+ * @method static OrderFactory factory($count = null, $state = [])
  * @method static Builder<static>|Order newModelQuery()
  * @method static Builder<static>|Order newQuery()
  * @method static Builder<static>|Order query()
@@ -58,8 +62,10 @@ use Override;
 #[Fillable(['marketplace', 'external_id', 'status', 'total_price', 'order_date', 'delivery_info', 'last_synced_at', 'organization_id'])]
 #[ScopedBy([UserOrganizationScope::class])]
 #[ObservedBy([OrganizationIdObserver::class])]
+#[UseFactory(OrderFactory::class)]
 class Order extends Model
 {
+    use HasFactory;
     use Searchable;
 
     /**
