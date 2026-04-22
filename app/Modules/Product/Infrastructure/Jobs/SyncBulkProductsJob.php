@@ -6,7 +6,7 @@ namespace App\Modules\Product\Infrastructure\Jobs;
 
 use App\Modules\Activity\Domain\Interfaces\ActivityLoggerInterface;
 use App\Modules\Product\Domain\Events\ProductsSynced;
-use App\Modules\Product\Domain\Models\ProductListing;
+use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use App\Modules\Shared\Application\Services\TenantManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,13 +27,14 @@ class SyncBulkProductsJob implements ShouldQueue
         public array $listingIds
     ) {}
 
-    public function handle(TenantManager $tenantManager, ActivityLoggerInterface $logger): void
-    {
+    public function handle(
+        TenantManager $tenantManager,
+        ActivityLoggerInterface $logger,
+        ProductListingRepositoryInterface $repository
+    ): void {
         $tenantManager->setOrganizationId($this->organizationId);
 
-        $listings = ProductListing::whereIn('id', $this->listingIds)
-            ->whereHas('product', fn ($q) => $q->where('organization_id', $this->organizationId))
-            ->get();
+        $listings = $repository->getByIdsAndOrganization($this->listingIds, $this->organizationId);
 
         if ($listings->isEmpty()) {
             return;

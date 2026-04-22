@@ -9,7 +9,7 @@ use App\Modules\Order\Application\Services\OrderService;
 use App\Modules\Order\Domain\Data\OrderData;
 use App\Modules\Order\Domain\Events\OrdersSynced;
 use App\Modules\Order\Domain\Models\OrderItem;
-use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
+use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -18,7 +18,7 @@ final readonly class SaveMarketplaceOrdersAction
 {
     public function __construct(
         private OrderService $orderService,
-        private ProductRepositoryInterface $productRepository
+        private ProductListingRepositoryInterface $productListingRepository
     ) {}
 
     /**
@@ -55,10 +55,10 @@ final readonly class SaveMarketplaceOrdersAction
 
         foreach ($orderData->items as $itemData) {
             // Try to find listing by external_id first, then by vendor_code
-            $listing = $this->productRepository->findListingByExternalId($connection->marketplace, $itemData->product_id);
+            $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $itemData->product_id);
 
             if (! $listing && ! empty($itemData->sku)) {
-                $listing = $this->productRepository->findListingByVendorCode($connection->marketplace, $itemData->sku);
+                $listing = $this->productListingRepository->findListingByVendorCode($connection->marketplace, $itemData->sku);
             }
 
             OrderItem::create([

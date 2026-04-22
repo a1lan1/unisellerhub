@@ -10,7 +10,7 @@ use App\Modules\Inventory\Domain\Repositories\InventoryRepositoryInterface;
 use App\Modules\Inventory\Domain\Repositories\WarehouseRepositoryInterface;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Product\Domain\Models\ProductListing;
-use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
+use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -18,7 +18,7 @@ use Throwable;
 final readonly class SaveMarketplaceStockAction
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository,
+        private ProductListingRepositoryInterface $productListingRepository,
         private WarehouseRepositoryInterface $warehouseRepository,
         private InventoryRepositoryInterface $inventoryRepository
     ) {}
@@ -43,11 +43,11 @@ final readonly class SaveMarketplaceStockAction
     {
         // 1. Find product listing within the organization
         // Try by external_id first
-        $listing = $this->productRepository->findListingByExternalId($connection->marketplace, $stockData->external_product_id);
+        $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $stockData->external_product_id);
 
         // Fallback to searching by vendor_code if external_id search fails
         if (! $listing instanceof ProductListing && ! in_array($stockData->sku, [null, '', '0'], true)) {
-            $listing = $this->productRepository->findListingByVendorCode($connection->marketplace, $stockData->sku);
+            $listing = $this->productListingRepository->findListingByVendorCode($connection->marketplace, $stockData->sku);
         }
 
         if (! $listing instanceof ProductListing) {
@@ -80,6 +80,6 @@ final readonly class SaveMarketplaceStockAction
         );
 
         // Update sync timestamp for listing
-        $this->productRepository->updateListing($listing, ['last_synced_at' => now()]);
+        $this->productListingRepository->updateListing($listing, ['last_synced_at' => now()]);
     }
 }

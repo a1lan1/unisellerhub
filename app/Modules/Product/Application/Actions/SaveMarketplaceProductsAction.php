@@ -10,6 +10,7 @@ use App\Modules\Product\Domain\Events\ProductsSynced;
 use App\Modules\Product\Domain\Models\Category;
 use App\Modules\Product\Domain\Models\Product;
 use App\Modules\Product\Domain\Models\ProductListing;
+use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -17,7 +18,8 @@ use Throwable;
 final readonly class SaveMarketplaceProductsAction
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository
+        private ProductRepositoryInterface $productRepository,
+        private ProductListingRepositoryInterface $productListingRepository
     ) {}
 
     /**
@@ -65,7 +67,7 @@ final readonly class SaveMarketplaceProductsAction
         }
 
         // 3. Поиск или создание листинга (по External ID маркетплейса)
-        $listing = $this->productRepository->findListingByExternalId($connection->marketplace, $productData->external_id);
+        $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $productData->external_id);
 
         $listingData = [
             'product_id' => $product->id,
@@ -76,9 +78,9 @@ final readonly class SaveMarketplaceProductsAction
         ];
 
         if ($listing instanceof ProductListing) {
-            $this->productRepository->updateListing($listing, $listingData);
+            $this->productListingRepository->updateListing($listing, $listingData);
         } else {
-            $this->productRepository->createListing([
+            $this->productListingRepository->createListing([
                 'marketplace' => $connection->marketplace,
                 'external_id' => $productData->external_id,
                 'status' => 'active',

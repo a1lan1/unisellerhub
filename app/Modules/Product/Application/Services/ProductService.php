@@ -7,7 +7,7 @@ namespace App\Modules\Product\Application\Services;
 use App\Modules\Product\Domain\Data\ProductListingsFilterData;
 use App\Modules\Product\Domain\Data\SyncBulkProductData;
 use App\Modules\Product\Domain\Data\SyncProductsData;
-use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
+use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use App\Modules\Product\Infrastructure\Jobs\SyncBulkProductsJob;
 use App\Modules\Product\Infrastructure\Jobs\SyncProductsJob;
 use App\Modules\User\Domain\Models\User;
@@ -15,7 +15,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 readonly class ProductService
 {
-    public function __construct(private ProductRepositoryInterface $repository) {}
+    public function __construct(
+        private ProductListingRepositoryInterface $productListingRepository
+    ) {}
 
     public function getPaginatedListings(User $user, ProductListingsFilterData $filter): LengthAwarePaginator
     {
@@ -23,7 +25,7 @@ readonly class ProductService
             return new LengthAwarePaginator([], 0, $filter->per_page);
         }
 
-        return $this->repository->getPaginatedListings($filter);
+        return $this->productListingRepository->getPaginatedListings($filter);
     }
 
     public function syncProducts(SyncProductsData $dto): void
