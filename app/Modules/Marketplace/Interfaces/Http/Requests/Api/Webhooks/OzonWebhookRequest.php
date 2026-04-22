@@ -17,7 +17,7 @@ class OzonWebhookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Client-Id' => ['required', 'string'],
+            'client_id' => ['required', 'string'],
             'message_type' => ['nullable', 'string'],
         ];
     }
@@ -27,7 +27,7 @@ class OzonWebhookRequest extends FormRequest
     {
         return array_merge(
             $this->all(),
-            ['Client-Id' => $this->header('Client-Id')]
+            ['client_id' => $this->header('Client-Id')]
         );
     }
 }

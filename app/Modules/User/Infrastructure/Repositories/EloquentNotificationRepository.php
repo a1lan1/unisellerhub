@@ -30,7 +30,7 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
     {
         $notification = $this->findByIdForUser($user, $id);
 
-        if ($notification) {
+        if ($notification instanceof DatabaseNotification) {
             $notification->markAsRead();
 
             return true;
@@ -48,7 +48,7 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
     {
         $notification = $this->findByIdForUser($user, $id);
 
-        if ($notification) {
+        if ($notification instanceof DatabaseNotification) {
             $notification->delete();
 
             return true;

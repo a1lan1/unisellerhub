@@ -26,7 +26,7 @@ class WebhookController extends Controller
         WildberriesWebhookRequest $request,
         ProcessWildberriesWebhookAction $action
     ): JsonResponse {
-        $action->execute($request->header('Authorization', ''));
+        $action->execute((string) $request->input('Authorization', ''));
 
         return response()->json(['status' => 'ok']);
     }
@@ -39,7 +39,7 @@ class WebhookController extends Controller
         ProcessOzonWebhookAction $action
     ): JsonResponse {
         $action->execute(
-            $request->header('Client-Id', ''),
+            (string) $request->input('client_id', ''),
             $request->input('message_type')
         );
 
@@ -54,7 +54,7 @@ class WebhookController extends Controller
         ProcessMoySkladWebhookAction $action
     ): JsonResponse {
         $action->execute(
-            $request->header('Authorization', ''),
+            (string) $request->header('Authorization', ''),
             $request->input('events', [])
         );
 
@@ -69,8 +69,8 @@ class WebhookController extends Controller
         ProcessAvitoWebhookAction $action
     ): JsonResponse {
         $action->execute(
-            $request->header('Authorization', ''),
-            $request->input('event_name', '')
+            (string) $request->header('Authorization', ''),
+            (string) $request->input('event_name', '')
         );
 
         return response()->json(['status' => 'ok']);
@@ -84,7 +84,7 @@ class WebhookController extends Controller
         ProcessYandexWebhookAction $action
     ): JsonResponse {
         $action->execute(
-            $request->header('Api-Key', ''),
+            (string) $request->header('Api-Key', ''),
             (string) $request->input('order_id', '')
         );
 

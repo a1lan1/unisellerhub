@@ -7,9 +7,11 @@ namespace App\Modules\Marketplace\Interfaces\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Modules\Marketplace\Application\Services\MarketplaceConnectionService;
 use App\Modules\Marketplace\Domain\Data\StoreMarketplaceConnectionData;
+use App\Modules\Marketplace\Domain\Data\UpdateMarketplaceConnectionData;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Interfaces\Http\Requests\Api\DestroyMarketplaceConnectionRequest;
 use App\Modules\Marketplace\Interfaces\Http\Requests\Api\StoreMarketplaceConnectionRequest;
+use App\Modules\Marketplace\Interfaces\Http\Requests\Api\UpdateMarketplaceConnectionRequest;
 use App\Modules\Marketplace\Interfaces\Http\Resources\MarketplaceConnectionResource;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -50,12 +52,28 @@ class MarketplaceConnectionController extends Controller
     }
 
     /**
+     * Update the specified marketplace connection.
+     */
+    public function update(UpdateMarketplaceConnectionRequest $request, MarketplaceConnection $marketplaceConnection): JsonResponse
+    {
+        $connection = $this->service->updateConnection(
+            $marketplaceConnection,
+            UpdateMarketplaceConnectionData::fromRequest($request->validated())
+        );
+
+        return response()->json([
+            'message' => 'Connection updated successfully!',
+            'data' => new MarketplaceConnectionResource($connection),
+        ]);
+    }
+
+    /**
      * Remove the specified marketplace connection.
      */
     public function destroy(DestroyMarketplaceConnectionRequest $request, MarketplaceConnection $marketplaceConnection): JsonResponse
     {
         $this->service->deleteConnection($marketplaceConnection);
 
-        return response()->json(['message' => 'Connection deleted successfully!']);
+        return response()->json(null, 204);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Modules\Marketplace\Interfaces\Http\Requests\Api\Webhooks;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class WildberriesWebhookRequest extends FormRequest
 {
@@ -22,5 +23,14 @@ class WildberriesWebhookRequest extends FormRequest
         return [
             'Authorization' => ['required', 'string'],
         ];
+    }
+
+    #[Override]
+    public function validationData(): array
+    {
+        return array_merge(
+            $this->all(),
+            ['Authorization' => $this->header('Authorization')]
+        );
     }
 }

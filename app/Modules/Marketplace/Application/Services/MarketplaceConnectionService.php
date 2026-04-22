@@ -8,6 +8,7 @@ use App\Modules\Activity\Domain\Repositories\ActivityRepositoryInterface;
 use App\Modules\Activity\Interfaces\Http\Resources\ActivityResource;
 use App\Modules\Marketplace\Domain\Data\MarketplaceConnectionStatsData;
 use App\Modules\Marketplace\Domain\Data\StoreMarketplaceConnectionData;
+use App\Modules\Marketplace\Domain\Data\UpdateMarketplaceConnectionData;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
 use App\Modules\User\Domain\Models\User;
@@ -39,6 +40,14 @@ readonly class MarketplaceConnectionService
     public function createConnection(StoreMarketplaceConnectionData $dto): MarketplaceConnection
     {
         return $this->repository->create($dto);
+    }
+
+    /**
+     * Update a marketplace connection.
+     */
+    public function updateConnection(MarketplaceConnection $connection, UpdateMarketplaceConnectionData $dto): MarketplaceConnection
+    {
+        return $this->repository->update($connection, $dto);
     }
 
     /**

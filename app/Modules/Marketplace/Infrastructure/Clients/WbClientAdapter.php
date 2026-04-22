@@ -94,7 +94,7 @@ class WbClientAdapter implements MarketplaceClientInterface
             external_id: (string) $card['nmId'],
             vendor_code: $card['vendorCode'],
             name: $card['title'] ?? 'No name',
-            price: MoneyHelper::fromMarketplace(0, MarketplaceEnum::WB),
+            price: MoneyHelper::fromMarketplace($card['price'] ?? 0, MarketplaceEnum::WB),
             images: array_map(fn (array $img): string => $img['big'], $card['photos'] ?? []),
             attributes: $card['characteristics'] ?? [],
             brand: $card['brand'] ?? null,

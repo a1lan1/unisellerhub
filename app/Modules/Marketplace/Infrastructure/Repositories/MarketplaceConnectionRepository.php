@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Infrastructure\Repositories;
 
 use App\Modules\Marketplace\Domain\Data\StoreMarketplaceConnectionData;
+use App\Modules\Marketplace\Domain\Data\UpdateMarketplaceConnectionData;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class MarketplaceConnectionRepository implements MarketplaceConnectionRepositoryInterface
@@ -35,10 +37,12 @@ class MarketplaceConnectionRepository implements MarketplaceConnectionRepository
             ->get();
     }
 
-    public function findByOrganizationAndMarketplace(int $organizationId, MarketplaceEnum $marketplace): ?MarketplaceConnection
+    public function findByOrganizationAndMarketplace(int $organizationId, MarketplaceEnum $marketplace, bool $activeOnly = false): ?MarketplaceConnection
     {
-        return MarketplaceConnection::where('organization_id', $organizationId)
+        return MarketplaceConnection::query()
+            ->where('organization_id', $organizationId)
             ->where('marketplace', $marketplace)
+            ->when($activeOnly, fn (Builder $query) => $query->where('is_active', true))
             ->first();
     }
 
@@ -51,6 +55,13 @@ class MarketplaceConnectionRepository implements MarketplaceConnectionRepository
             'credentials' => $dto->credentials,
             'is_active' => true,
         ]);
+    }
+
+    public function update(MarketplaceConnection $connection, UpdateMarketplaceConnectionData $dto): MarketplaceConnection
+    {
+        $connection->update($dto->toArray());
+
+        return $connection;
     }
 
     public function delete(MarketplaceConnection $connection): void
