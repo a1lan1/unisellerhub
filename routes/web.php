@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\DashboardController;
 use App\Modules\Inventory\Interfaces\Http\Controllers\InventoryController;
 use App\Modules\Order\Interfaces\Http\Controllers\OrderController;
 use App\Modules\Product\Interfaces\Http\Controllers\ProductController;
@@ -13,6 +14,9 @@ Route::inertia('/', 'Welcome', [
 ])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     // Products
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
 
