@@ -7,6 +7,7 @@ use App\Modules\MockMarketplace\Infrastructure\Providers\MockMarketplaceServiceP
 use App\Modules\Monitoring\Infrastructure\Providers\PrometheusServiceProvider;
 use App\Modules\Order\Infrastructure\Providers\OrderServiceProvider;
 use App\Modules\Product\Infrastructure\Providers\ProductServiceProvider;
+use App\Modules\Report\Infrastructure\Providers\ReportServiceProvider;
 use App\Modules\Shared\Infrastructure\Providers\SharedServiceProvider;
 use App\Modules\User\Infrastructure\Providers\FortifyServiceProvider;
 use App\Modules\User\Infrastructure\Providers\UserServiceProvider;
@@ -30,4 +31,5 @@ return [
     InventoryServiceProvider::class,
     MarketplaceServiceProvider::class,
     MockMarketplaceServiceProvider::class,
+    ReportServiceProvider::class,
 ];
