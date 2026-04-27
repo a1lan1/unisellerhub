@@ -36,7 +36,8 @@ export default defineConfigWithVueTs(
           project: './tsconfig.json'
         },
         node: true
-      }
+      },
+      'import/internal-regex': '^@/'
     },
     rules: {
       '@typescript-eslint/no-unused-expressions': [

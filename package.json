@@ -9,7 +9,7 @@
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint resources/js --fix",
-        "lint:check": "eslint .",
+        "lint:check": "eslint resources/js",
         "types:check": "vue-tsc --noEmit"
     },
     "devDependencies": {
