@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     // Analytics
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
         Route::get('/abc', [AnalyticsController::class, 'abc'])->name('abc');
+        Route::get('/profitability', [AnalyticsController::class, 'profitability'])->name('profitability');
     });
 });
 
