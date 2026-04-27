@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Modules\Inventory\Interfaces\Http\Controllers\InventoryController;
 use App\Modules\Order\Interfaces\Http\Controllers\OrderController;
 use App\Modules\Product\Interfaces\Http\Controllers\ProductController;
+use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -25,6 +26,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     // Inventory
     Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+
+    // Analytics
+    Route::prefix('analytics')->name('analytics.')->group(function (): void {
+        Route::get('/abc', [AnalyticsController::class, 'abc'])->name('abc');
+    });
 });
 
 require __DIR__.'/settings.php';
