@@ -93,6 +93,7 @@ class Order extends Model
         return [
             'id' => (int) $this->id,
             'external_id' => (string) $this->external_id,
+            'total_price' => $this->total_price->getAmount(),
             'organization_id' => (int) $this->organization_id,
         ];
     }

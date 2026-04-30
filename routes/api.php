@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Inventory\Interfaces\Http\Controllers\Api\InventorySyncController;
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectionController;
+use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\SearchController;
 use App\Modules\Order\Interfaces\Http\Controllers\Api\OrderSyncController;
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\NotificationController;
@@ -25,6 +26,8 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
     });
 
     Route::middleware(['has_org'])->group(function (): void {
+        Route::get('search', SearchController::class)->name('api.search');
+
         Route::apiResource('marketplace-connections', MarketplaceConnectionController::class)->names('api.marketplace-connections');
 
         // Products

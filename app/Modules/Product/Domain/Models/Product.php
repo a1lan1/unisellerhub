@@ -91,6 +91,7 @@ class Product extends Model
             'id' => $this->id,
             'sku' => $this->sku,
             'name' => $this->name,
+            'cost_price' => $this->cost_price->getAmount(),
             'organization_id' => $this->organization_id,
         ];
     }

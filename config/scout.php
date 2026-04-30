@@ -145,6 +145,54 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
+            'products' => [
+                'searchableAttributes' => [
+                    'sku',
+                    'name',
+                    'organization_id',
+                ],
+                'filterableAttributes' => [
+                    'organization_id',
+                ],
+                'sortableAttributes' => [
+                    'sku',
+                    'name',
+                    'cost_price',
+                    'created_at',
+                    'updated_at',
+                ],
+                'rankingRules' => [
+                    'words',
+                    'typo',
+                    'proximity',
+                    'attribute',
+                    'sort',
+                    'exactness',
+                ],
+            ],
+            'orders' => [
+                'searchableAttributes' => [
+                    'external_id',
+                    'total_price',
+                    'organization_id',
+                ],
+                'filterableAttributes' => [
+                    'organization_id',
+                ],
+                'sortableAttributes' => [
+                    'total_price',
+                    'created_at',
+                    'updated_at',
+                ],
+                'rankingRules' => [
+                    'words',
+                    'typo',
+                    'proximity',
+                    'attribute',
+                    'sort',
+                    'exactness',
+                ],
+            ],
         ],
     ],
 
