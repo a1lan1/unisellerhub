@@ -55,6 +55,16 @@ class RecordHttpRequestMetrics
     {
         $routeName = $request->route()?->getName() ?? '';
 
+        // Ignore log viewer routes entirely
+        if (str_starts_with($routeName, 'log-viewer')) {
+            return true;
+        }
+
+        // Also ignore by path just in case route name is missing
+        if ($request->is('log-viewer*')) {
+            return true;
+        }
+
         // Ignore Prometheus scrape endpoint (not part of app traffic)
         if ($routeName === 'prometheus.default') {
             return true;
