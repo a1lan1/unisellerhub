@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Listeners\RecordHttpRequestMetrics;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestHandled;
 use Laravel\Octane\Events\RequestReceived;
@@ -79,6 +82,7 @@ return [
 
         RequestTerminated::class => [
             // FlushUploadedFiles::class,
+            RecordHttpRequestMetrics::class,
         ],
 
         TaskReceived::class => [
