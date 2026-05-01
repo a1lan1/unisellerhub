@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f25c468519b00309d22d7bc02ad6c69f",
+    "content-hash": "ebadccdcf5765b2519f821b074927b4a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -6930,16 +6930,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.51",
+            "version": "3.0.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748"
+                "reference": "2adaefc83df2ec548558307690f376dd7d4f4fce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d59c94077f9c9915abb51ddb52ce85188ece1748",
-                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/2adaefc83df2ec548558307690f376dd7d4f4fce",
+                "reference": "2adaefc83df2ec548558307690f376dd7d4f4fce",
                 "shasum": ""
             },
             "require": {
@@ -7020,7 +7020,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.51"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.52"
             },
             "funding": [
                 {
@@ -7036,7 +7036,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-10T01:33:53+00:00"
+            "time": "2026-04-27T07:02:15+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -13946,16 +13946,16 @@
         },
         {
             "name": "vladimir-yuldashev/laravel-queue-rabbitmq",
-            "version": "dev-master",
+            "version": "v14.5.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/a1lan1/laravel-queue-rabbitmq.git",
-                "reference": "b34bbe02f8ca7ce3b2093e7e110489684336ef45"
+                "url": "https://github.com/vyuldashev/laravel-queue-rabbitmq.git",
+                "reference": "10ac02c16ec3f30b39b4b34bc45b80ae5429f6b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/a1lan1/laravel-queue-rabbitmq/zipball/b34bbe02f8ca7ce3b2093e7e110489684336ef45",
-                "reference": "b34bbe02f8ca7ce3b2093e7e110489684336ef45",
+                "url": "https://api.github.com/repos/vyuldashev/laravel-queue-rabbitmq/zipball/10ac02c16ec3f30b39b4b34bc45b80ae5429f6b6",
+                "reference": "10ac02c16ec3f30b39b4b34bc45b80ae5429f6b6",
                 "shasum": ""
             },
             "require": {
@@ -13975,16 +13975,15 @@
             "suggest": {
                 "ext-pcntl": "Required to use all features of the queue consumer."
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "13.0-dev"
-                },
                 "laravel": {
                     "providers": [
                         "VladimirYuldashev\\LaravelQueueRabbitMQ\\LaravelQueueRabbitMQServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-master": "13.0-dev"
                 }
             },
             "autoload": {
@@ -13992,26 +13991,7 @@
                     "VladimirYuldashev\\LaravelQueueRabbitMQ\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "VladimirYuldashev\\LaravelQueueRabbitMQ\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "@test:style",
-                    "@test:unit"
-                ],
-                "test:style": [
-                    "@php vendor/bin/pint --test -v"
-                ],
-                "test:unit": [
-                    "@php vendor/bin/phpunit"
-                ],
-                "fix:style": [
-                    "@php vendor/bin/pint -v"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -14023,9 +14003,10 @@
             ],
             "description": "RabbitMQ driver for Laravel Queue. Supports Laravel Horizon.",
             "support": {
-                "source": "https://github.com/a1lan1/laravel-queue-rabbitmq/tree/master"
+                "issues": "https://github.com/vyuldashev/laravel-queue-rabbitmq/issues",
+                "source": "https://github.com/vyuldashev/laravel-queue-rabbitmq/tree/v14.5.2"
             },
-            "time": "2026-04-11T07:56:58+00:00"
+            "time": "2026-04-30T13:27:27+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -18206,9 +18187,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "vladimir-yuldashev/laravel-queue-rabbitmq": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
