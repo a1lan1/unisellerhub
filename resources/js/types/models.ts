@@ -1,5 +1,11 @@
 import type { MarketplaceEnum, OrderStatusEnum } from '@/types/enums'
 
+export type Organization = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 export type MarketplaceConnection = {
   id: number;
   marketplace: MarketplaceEnum;
@@ -21,6 +27,32 @@ export type Product = {
   last_synced_at?: string;
 };
 
+export type ProductListing = {
+  id: number;
+  marketplace: MarketplaceEnum;
+  product_id: number;
+  product: Product;
+  external_id: string;
+  vendor_code: string;
+  price: number;
+  old_price: number;
+  discount: number;
+  commission_percent: string;
+  logistic_cost: number;
+  status: string;
+  last_synced_at: string;
+};
+
+export type Warehouse = {
+  id: number;
+  name: string;
+  marketplace: MarketplaceEnum;
+  external_id: string;
+  address: string;
+  organization_id: number;
+  organization: Organization;
+};
+
 export type InventoryItem = {
   id: number;
   product_name: string;
@@ -30,6 +62,8 @@ export type InventoryItem = {
   quantity: number;
   reserved: number;
   listing_id: number;
+  listing: ProductListing;
+  warehouse: Warehouse
 };
 
 export type OrderItem = {
