@@ -1,19 +1,7 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-export interface Notification {
-  id: string
-  data: {
-    title: string
-    message: string
-    type: 'info' | 'success' | 'warning' | 'error'
-    action_url?: string
-    icon?: string
-  }
-  read_at: string | null
-  created_at: string
-}
+import type { Notification } from '@/types'
 
 export const useNotificationStore = defineStore('notification', () => {
   const notifications = ref<Notification[]>([])
