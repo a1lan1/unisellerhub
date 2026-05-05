@@ -6,13 +6,15 @@ namespace App\Modules\Product\Domain\Models;
 
 use App\Modules\Inventory\Domain\Models\Inventory;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Product\Domain\Data\ProductListingsFilterData;
+use App\Modules\Product\Domain\Models\Builders\ProductListingBuilder;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Database\Factories\ProductListingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,28 +42,32 @@ use Override;
  * @property-read Product $product
  *
  * @method static ProductListingFactory factory($count = null, $state = [])
- * @method static Builder<static>|ProductListing newModelQuery()
- * @method static Builder<static>|ProductListing newQuery()
- * @method static Builder<static>|ProductListing query()
- * @method static Builder<static>|ProductListing whereCommissionPercent($value)
- * @method static Builder<static>|ProductListing whereCreatedAt($value)
- * @method static Builder<static>|ProductListing whereDiscount($value)
- * @method static Builder<static>|ProductListing whereExternalId($value)
- * @method static Builder<static>|ProductListing whereId($value)
- * @method static Builder<static>|ProductListing whereLastSyncedAt($value)
- * @method static Builder<static>|ProductListing whereLogisticCost($value)
- * @method static Builder<static>|ProductListing whereMarketplace($value)
- * @method static Builder<static>|ProductListing whereOldPrice($value)
- * @method static Builder<static>|ProductListing wherePrice($value)
- * @method static Builder<static>|ProductListing whereProductId($value)
- * @method static Builder<static>|ProductListing whereStatus($value)
- * @method static Builder<static>|ProductListing whereUpdatedAt($value)
- * @method static Builder<static>|ProductListing whereVendorCode($value)
+ * @method static ProductListingBuilder<static>|ProductListing filter(ProductListingsFilterData $filter)
+ * @method static ProductListingBuilder<static>|ProductListing forMarketplace(MarketplaceEnum $marketplace)
+ * @method static ProductListingBuilder<static>|ProductListing forOrganization(int $organizationId)
+ * @method static ProductListingBuilder<static>|ProductListing newModelQuery()
+ * @method static ProductListingBuilder<static>|ProductListing newQuery()
+ * @method static ProductListingBuilder<static>|ProductListing query()
+ * @method static ProductListingBuilder<static>|ProductListing whereCommissionPercent($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereCreatedAt($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereDiscount($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereExternalId($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereId($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereLastSyncedAt($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereLogisticCost($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereMarketplace($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereOldPrice($value)
+ * @method static ProductListingBuilder<static>|ProductListing wherePrice($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereProductId($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereStatus($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereUpdatedAt($value)
+ * @method static ProductListingBuilder<static>|ProductListing whereVendorCode($value)
  *
  * @mixin \Eloquent
  */
 #[Fillable(['product_id', 'marketplace', 'external_id', 'vendor_code', 'price', 'old_price', 'discount', 'commission_percent', 'logistic_cost', 'status', 'last_synced_at'])]
 #[UseFactory(ProductListingFactory::class)]
+#[UseEloquentBuilder(ProductListingBuilder::class)]
 class ProductListing extends Model
 {
     use HasFactory;
