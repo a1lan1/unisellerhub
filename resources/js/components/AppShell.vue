@@ -6,13 +6,14 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { snackbar } from '@/plugins/snackbar'
 import { useAuthStore } from '@/stores/auth'
+import { useMarketplaceStore } from '@/stores/marketplace'
 import { useNotificationStore } from '@/stores/notification'
 import type { AppVariant, FlashMessage } from '@/types'
-import type { UserNotificationEvent } from '@/types'
+import type { UserNotificationEvent, Notification } from '@/types'
 
 type Props = {
   variant?: AppVariant;
-};
+}
 
 withDefaults(defineProps<Props>(), {
   variant: 'sidebar'
@@ -47,6 +48,9 @@ const handleFlashMessages = (flash: FlashMessage) => {
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
 
+const marketplaceStore = useMarketplaceStore()
+const { fetchConnections } = marketplaceStore
+
 const notificationStore = useNotificationStore()
 const { addNotification } = notificationStore
 
@@ -57,27 +61,21 @@ watch(() => page.props.flash, handleFlashMessages, {
 
 onMounted(() => {
   if (user.value) {
+    // Load marketplace connections for sidebar
+    fetchConnections()
+
     const userChannel = echo().private(`App.Models.User.${user.value.id}`)
 
-    userChannel.notification((notification: any) => {
-      addNotification({
-        id: notification.id,
-        data: notification,
-        read_at: null,
-        created_at: new Date().toISOString()
-      })
+    userChannel.notification((notification: Notification) => {
+      addNotification(notification)
 
-      if (snackbar) {
-        snackbar.info({
-          text: `${notification.title}: ${notification.message}`
-        })
-      }
+      snackbar.info({
+        text: `${notification.title}: ${notification.message}`
+      })
     })
 
     userChannel.listen('.user.notification', (e: UserNotificationEvent) => {
-      if (snackbar) {
-        snackbar.info({ text: e.message })
-      }
+      snackbar.info({ text: e.message })
     })
   }
 })
@@ -90,10 +88,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="variant === 'header'" class="flex min-h-screen w-full flex-col">
+  <div
+    v-if="variant === 'header'"
+    class="flex min-h-screen w-full flex-col"
+  >
     <slot />
   </div>
-  <SidebarProvider v-else :default-open="page.props.sidebarOpen">
+  <SidebarProvider
+    v-else
+    :default-open="page.props.sidebarOpen"
+  >
     <slot />
   </SidebarProvider>
 </template>

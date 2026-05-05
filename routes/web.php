@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DashboardController;
 use App\Modules\Inventory\Interfaces\Http\Controllers\InventoryController;
+use App\Modules\Marketplace\Interfaces\Http\Controllers\MarketplaceController;
 use App\Modules\Order\Interfaces\Http\Controllers\OrderController;
 use App\Modules\Product\Interfaces\Http\Controllers\ProductController;
 use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
@@ -27,6 +28,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     // Inventory
     Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+
+    // Marketplaces
+    Route::prefix('marketplaces/{marketplaceConnection}')->name('marketplaces.')->group(function (): void {
+        Route::get('/', [MarketplaceController::class, 'show'])->name('show');
+        Route::get('/logs', [MarketplaceController::class, 'logs'])->name('logs');
+        Route::get('/messenger', [MarketplaceController::class, 'messenger'])->name('messenger');
+    });
 
     // Analytics
     Route::prefix('analytics')->name('analytics.')->group(function (): void {
