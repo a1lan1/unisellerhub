@@ -40,34 +40,4 @@ final class RabbitMQConnectionService implements RabbitMQConnectionInterface
 
         return null;
     }
-
-    public function declareQueues(array $queueNames): void
-    {
-        $connection = $this->connect();
-
-        if (! $connection instanceof AMQPStreamConnection) {
-            Log::error('Failed to declare RabbitMQ queues: Could not establish connection.');
-
-            return;
-        }
-
-        try {
-            $channel = $connection->channel();
-            foreach ($queueNames as $queueName) {
-                $channel->queue_declare(
-                    queue: $queueName,
-                    passive: false,
-                    durable: true,
-                    exclusive: false,
-                    auto_delete: false
-                );
-            }
-
-            $channel->close();
-        } catch (Exception $exception) {
-            Log::error('Error declaring RabbitMQ queues: '.$exception->getMessage(), ['exception' => $exception]);
-        } finally {
-            $connection->close();
-        }
-    }
 }

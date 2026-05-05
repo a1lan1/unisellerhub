@@ -9,6 +9,4 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 interface RabbitMQConnectionInterface
 {
     public function connect(): ?AMQPStreamConnection;
-
-    public function declareQueues(array $queueNames): void;
 }
