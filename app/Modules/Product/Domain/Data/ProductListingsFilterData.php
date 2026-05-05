@@ -11,6 +11,7 @@ class ProductListingsFilterData extends Data
 {
     public function __construct(
         public ?string $search = null,
+        public ?string $semanticSearch = null,
         public ?MarketplaceEnum $marketplace = null,
         public ?string $sort = null,
         public ?string $direction = null,

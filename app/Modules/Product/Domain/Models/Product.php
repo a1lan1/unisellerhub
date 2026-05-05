@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Product\Domain\Models;
 
+use App\Modules\Product\Domain\Observers\ProductObserver;
+use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Scopes\UserOrganizationScope;
 use App\Observers\OrganizationIdObserver;
@@ -36,6 +38,7 @@ use Override;
  * @property Money $cost_price
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
+ * @property-read Category|null $category
  * @property-read Collection<int, ProductListing> $listings
  * @property-read int|null $listings_count
  * @property-read Organization $organization
@@ -58,10 +61,10 @@ use Override;
  *
  * @mixin \Eloquent
  */
-#[Fillable(['sku', 'name', 'description', 'category_id', 'images', 'attributes', 'cost_price', 'organization_id'])]
+#[Fillable(['sku', 'name', 'description', 'category_id', 'images', 'attributes', 'cost_price', 'organization_id', 'embedding'])]
 #[UseFactory(ProductFactory::class)]
 #[ScopedBy([UserOrganizationScope::class])]
-#[ObservedBy([OrganizationIdObserver::class])]
+#[ObservedBy([OrganizationIdObserver::class, ProductObserver::class])]
 class Product extends Model
 {
     use HasFactory;
@@ -77,6 +80,7 @@ class Product extends Model
             'images' => 'array',
             'attributes' => 'array',
             'cost_price' => MoneyIntegerCast::class,
+            'embedding' => 'array',
         ];
     }
 
@@ -104,6 +108,14 @@ class Product extends Model
         return $query->withoutGlobalScopes();
     }
 
+    /**
+     * Get the queue that should be used for the searchable sync.
+     */
+    public function queueForSearchableSync(): string
+    {
+        return QueueNameEnum::MeilisearchTasks->value;
+    }
+
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
@@ -112,5 +124,10 @@ class Product extends Model
     public function listings(): HasMany
     {
         return $this->hasMany(ProductListing::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

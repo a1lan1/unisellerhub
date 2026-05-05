@@ -42,6 +42,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Vector Search
+    |--------------------------------------------------------------------------
+    |
+    | This option determines if the vector search feature is enabled.
+    | When enabled, the application will utilize AI embeddings for semantic search.
+    |
+    */
+
+    'vector_search' => [
+        'enabled' => env('VECTOR_SEARCH_ENABLED', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | AI Providers
     |--------------------------------------------------------------------------
     |

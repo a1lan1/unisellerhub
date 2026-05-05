@@ -33,6 +33,13 @@ class ProductListingBuilder extends Builder
                 $query->where(fn (Builder $sq) => $sq->where('vendor_code', 'like', sprintf('%%%s%%', $s))
                     ->orWhereHas('product', fn (Builder $pq) => $pq->where('name', 'like', sprintf('%%%s%%', $s))));
             })
+            ->when($filter->semanticSearch, function (Builder $query, $semanticQuery): void {
+                if (config('ai.vector_search.enabled')) {
+                    $query->whereHas('product', function (Builder $pq) use ($semanticQuery): void {
+                        $pq->whereVectorSimilarTo('embedding', $semanticQuery);
+                    });
+                }
+            })
             ->when($filter->sort, function (Builder $q, $s) use ($filter): void {
                 $direction = $filter->direction ?? 'asc';
                 if ($s === 'product_name') {

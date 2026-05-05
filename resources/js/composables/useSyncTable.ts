@@ -34,6 +34,7 @@ export function useSyncTable<T extends BaseFilter>(
   })
 
   const search = ref(initialFilters.search || '')
+  const semanticSearch = ref(initialFilters.semanticSearch || '')
   const marketplaceFilter = ref(initialFilters.marketplace || null)
   const statusFilter = ref((initialFilters as any).status || null)
   const statusesFilter = ref<string[]>((initialFilters as any).statuses || [])
@@ -47,12 +48,23 @@ export function useSyncTable<T extends BaseFilter>(
     const params: any = {
       page: currentPage,
       per_page: currentItemsPerPage,
-      search: search.value || undefined,
       marketplace: marketplaceFilter.value || undefined,
       status: statusFilter.value || undefined,
       statuses: statusesFilter.value.length ? statusesFilter.value : undefined,
       date_from: dateFromFilter.value || undefined,
       date_to: dateToFilter.value || undefined
+    }
+
+    // Logic for mutually exclusive search fields
+    if (semanticSearch.value) {
+      params.semantic_query = semanticSearch.value
+      params.search = undefined
+    } else if (search.value) {
+      params.search = search.value
+      params.semantic_query = undefined
+    } else {
+      params.search = undefined
+      params.semantic_query = undefined
     }
 
     if (sortBy.length) {
@@ -68,7 +80,7 @@ export function useSyncTable<T extends BaseFilter>(
   }
 
   let timeout: any = null
-  watch([search, marketplaceFilter, statusFilter, statusesFilter, dateFromFilter, dateToFilter], () => {
+  watch([search, semanticSearch, marketplaceFilter, statusFilter, statusesFilter, dateFromFilter, dateToFilter], () => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
       updateOptions({
@@ -78,6 +90,19 @@ export function useSyncTable<T extends BaseFilter>(
       })
     }, 500)
   }, { deep: true })
+
+  // Watchers for mutual exclusion between search and semanticSearch
+  watch(search, (newVal, oldVal) => {
+    if (newVal && newVal !== oldVal && semanticSearch.value) {
+      semanticSearch.value = '' // Clear semantic search if traditional search is used
+    }
+  })
+
+  watch(semanticSearch, (newVal, oldVal) => {
+    if (newVal && newVal !== oldVal && search.value) {
+      search.value = '' // Clear search if semantic search is used
+    }
+  })
 
   onMounted(() => {
     if (organizationId.value) {
@@ -111,6 +136,7 @@ export function useSyncTable<T extends BaseFilter>(
   return {
     isSyncing: computed(() => store.value.isSyncing),
     search,
+    semanticSearch,
     marketplaceFilter,
     statusFilter,
     statusesFilter,

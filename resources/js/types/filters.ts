@@ -2,6 +2,7 @@ import type { MarketplaceEnum, OrderStatusEnum } from './enums'
 
 export interface BaseFilter {
   search?: string | null;
+  semanticSearch?: string | null;
   marketplace?: MarketplaceEnum | null;
   sort?: string | null;
   direction?: 'asc' | 'desc' | null;
