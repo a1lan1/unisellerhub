@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Domain\Models;
 
+use App\Modules\Inventory\Domain\Data\InventoryFilterData;
+use App\Modules\Inventory\Domain\Models\Builders\InventoryBuilder;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Carbon\CarbonImmutable;
 use Database\Factories\InventoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,22 +29,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Warehouse $warehouse
  *
  * @method static InventoryFactory factory($count = null, $state = [])
- * @method static Builder<static>|Inventory newModelQuery()
- * @method static Builder<static>|Inventory newQuery()
- * @method static Builder<static>|Inventory query()
- * @method static Builder<static>|Inventory whereCreatedAt($value)
- * @method static Builder<static>|Inventory whereId($value)
- * @method static Builder<static>|Inventory whereProductListingId($value)
- * @method static Builder<static>|Inventory whereQuantity($value)
- * @method static Builder<static>|Inventory whereReserved($value)
- * @method static Builder<static>|Inventory whereUpdatedAt($value)
- * @method static Builder<static>|Inventory whereWarehouseId($value)
+ * @method static InventoryBuilder<static>|Inventory filter(InventoryFilterData $filter)
+ * @method static InventoryBuilder<static>|Inventory forDate(string $date)
+ * @method static InventoryBuilder<static>|Inventory lowStock()
+ * @method static InventoryBuilder<static>|Inventory newModelQuery()
+ * @method static InventoryBuilder<static>|Inventory newQuery()
+ * @method static InventoryBuilder<static>|Inventory outOfStock()
+ * @method static InventoryBuilder<static>|Inventory query()
+ * @method static InventoryBuilder<static>|Inventory whereCreatedAt($value)
+ * @method static InventoryBuilder<static>|Inventory whereId($value)
+ * @method static InventoryBuilder<static>|Inventory whereProductListingId($value)
+ * @method static InventoryBuilder<static>|Inventory whereQuantity($value)
+ * @method static InventoryBuilder<static>|Inventory whereReserved($value)
+ * @method static InventoryBuilder<static>|Inventory whereUpdatedAt($value)
+ * @method static InventoryBuilder<static>|Inventory whereWarehouseId($value)
  *
  * @mixin \Eloquent
  */
 #[Fillable(['product_listing_id', 'warehouse_id', 'quantity', 'reserved'])]
 #[Table(name: 'inventory')]
 #[UseFactory(InventoryFactory::class)]
+#[UseEloquentBuilder(InventoryBuilder::class)]
 class Inventory extends Model
 {
     use HasFactory;
