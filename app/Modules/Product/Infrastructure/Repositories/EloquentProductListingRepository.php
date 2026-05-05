@@ -6,10 +6,10 @@ namespace App\Modules\Product\Infrastructure\Repositories;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Product\Domain\Data\ProductListingsFilterData;
+use App\Modules\Product\Domain\Data\ProductListingStoreData;
 use App\Modules\Product\Domain\Models\ProductListing;
 use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use Cknow\Money\Money;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -21,7 +21,8 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
      */
     public function getByOrganizationAndMarketplaces(int $organizationId, array $marketplaces, string $vendorCode): Collection
     {
-        return ProductListing::whereHas('product', fn ($q) => $q->where('organization_id', $organizationId))
+        return ProductListing::query()
+            ->forOrganization($organizationId)
             ->whereIn('marketplace', $marketplaces)
             ->where('vendor_code', $vendorCode)
             ->get();
@@ -34,7 +35,8 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
      */
     public function getByOrganizationMarketplacesAndSkus(int $organizationId, array $marketplaces, array $skus): Collection
     {
-        return ProductListing::whereHas('product', fn ($q) => $q->where('organization_id', $organizationId))
+        return ProductListing::query()
+            ->forOrganization($organizationId)
             ->whereIn('marketplace', $marketplaces)
             ->whereIn('vendor_code', $skus)
             ->get();
@@ -46,8 +48,9 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
      */
     public function getByIdsAndOrganization(array $ids, int $organizationId): Collection
     {
-        return ProductListing::whereIn('id', $ids)
-            ->whereHas('product', fn ($q) => $q->where('organization_id', $organizationId))
+        return ProductListing::query()
+            ->forOrganization($organizationId)
+            ->whereIn('id', $ids)
             ->get();
     }
 
@@ -56,7 +59,8 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
      */
     public function getForInventoryExport(int $organizationId): Collection
     {
-        return ProductListing::whereHas('product', fn ($q) => $q->where('organization_id', $organizationId))
+        return ProductListing::query()
+            ->forOrganization($organizationId)
             ->with(['product', 'inventory.warehouse'])
             ->get();
     }
@@ -66,28 +70,14 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
         return ProductListing::query()
             ->whereHas('product')
             ->with('product')
-            ->when($filter->marketplace, fn (Builder $q, $m) => $q->where('marketplace', $m))
-            ->when($filter->search, function (Builder $q, $s): void {
-                $q->where(fn (Builder $sq) => $sq->where('vendor_code', 'like', sprintf('%%%s%%', $s))
-                    ->orWhereHas('product', fn (Builder $pq) => $pq->where('name', 'like', sprintf('%%%s%%', $s))));
-            })
-            ->when($filter->sort, function (Builder $q, $s) use ($filter): void {
-                $direction = $filter->direction ?? 'asc';
-                if ($s === 'product_name') {
-                    $q->join('products', 'product_listings.product_id', '=', 'products.id')
-                        ->select('product_listings.*')
-                        ->orderBy('products.name', $direction);
-                } else {
-                    $q->orderBy($s, $direction);
-                }
-            }, fn (Builder $q) => $q->orderBy('id', 'desc'))
+            ->filter($filter)
             ->paginate($filter->per_page, ['*'], 'page', $filter->page);
     }
 
     public function findListingByExternalId(MarketplaceEnum $marketplace, string $externalId): ?ProductListing
     {
         return ProductListing::query()
-            ->where('marketplace', $marketplace)
+            ->forMarketplace($marketplace)
             ->where('external_id', $externalId)
             ->first();
     }
@@ -95,14 +85,20 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
     public function findListingByVendorCode(MarketplaceEnum $marketplace, string $vendorCode): ?ProductListing
     {
         return ProductListing::query()
-            ->where('marketplace', $marketplace)
+            ->forMarketplace($marketplace)
             ->where('vendor_code', $vendorCode)
             ->first();
     }
 
-    public function createListing(array $data): ProductListing
+    public function updateOrCreate(ProductListingStoreData $productListingData): ProductListing
     {
-        return ProductListing::create($data);
+        return ProductListing::updateOrCreate(
+            [
+                'external_id' => $productListingData->external_id,
+                'marketplace' => $productListingData->marketplace,
+            ],
+            $productListingData->toArray()
+        );
     }
 
     public function updateListing(ProductListing $listing, array $data): ProductListing

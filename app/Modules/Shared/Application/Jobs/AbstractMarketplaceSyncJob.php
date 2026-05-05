@@ -12,6 +12,7 @@ use App\Modules\Marketplace\Domain\Enums\SyncOperationTypeEnum;
 use App\Modules\Marketplace\Domain\Events\SyncFailed;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Shared\Application\Services\TenantManager;
+use App\Modules\Shared\Domain\Data\SyncMarketplaceTaskData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -67,13 +68,15 @@ abstract class AbstractMarketplaceSyncJob implements ShouldQueue
             try {
                 // Dispatch to Go Sync Service via RabbitMQ with credentials
                 $dispatchAction->execute(
-                    $this->organizationId,
-                    $connection->marketplace,
-                    $operationType->value,
-                    [
-                        'connection_id' => $connection->id,
-                        ...$connection->credentials,
-                    ]
+                    new SyncMarketplaceTaskData(
+                        organizationId: $this->organizationId,
+                        marketplace: $connection->marketplace,
+                        operation: $operationType,
+                        payload: [
+                            'connection_id' => $connection->id,
+                            ...$connection->credentials,
+                        ]
+                    )
                 );
 
                 $duration = microtime(true) - $startTime;
@@ -85,18 +88,11 @@ abstract class AbstractMarketplaceSyncJob implements ShouldQueue
                     ['marketplace' => $marketplaceValue]
                 );
 
-                Prometheus::addCounter('sync_duration_seconds_sum')
-                    ->inc($duration, [$marketplaceValue, 'dispatch_'.$operationType->value]);
-
-                Prometheus::addCounter('sync_duration_seconds_count')
-                    ->inc(1, [$marketplaceValue, 'dispatch_'.$operationType->value]);
-
-                Prometheus::addCounter('sync_dispatched_total')
-                    ->inc(1, [$marketplaceValue, $operationType->value]);
-
+                Prometheus::addCounter('sync_duration_seconds_sum')->inc($duration, [$marketplaceValue, 'dispatch_'.$operationType->value]);
+                Prometheus::addCounter('sync_duration_seconds_count')->inc(1, [$marketplaceValue, 'dispatch_'.$operationType->value]);
+                Prometheus::addCounter('sync_dispatched_total')->inc(1, [$marketplaceValue, $operationType->value]);
             } catch (Throwable $e) {
-                Prometheus::addCounter('sync_errors_total')
-                    ->inc(1, [$marketplaceValue, 'dispatch_error']);
+                Prometheus::addCounter('sync_errors_total')->inc(1, [$marketplaceValue, 'dispatch_error']);
 
                 $logger->log(
                     $this->organizationId,

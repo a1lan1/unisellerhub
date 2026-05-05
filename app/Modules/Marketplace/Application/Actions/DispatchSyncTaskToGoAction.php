@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Application\Actions;
 
-use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Shared\Domain\Data\SyncMarketplaceTaskData;
+use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use Illuminate\Support\Facades\Queue;
 
 final class DispatchSyncTaskToGoAction
@@ -12,16 +13,12 @@ final class DispatchSyncTaskToGoAction
     /**
      * Dispatch a marketplace sync task to the Go microservice via RabbitMQ.
      */
-    public function execute(int $organizationId, MarketplaceEnum $marketplace, string $operation, array $payload = []): void
+    public function execute(SyncMarketplaceTaskData $taskData): void
     {
-        $task = [
-            'organization_id' => $organizationId,
-            'marketplace' => $marketplace->value,
-            'operation' => $operation,
-            'payload' => $payload,
-        ];
-
         // Send raw JSON to the 'sync.tasks' queue used by the Go service
-        Queue::connection('rabbitmq')->pushRaw(json_encode($task), 'sync.tasks');
+        Queue::connection('rabbitmq')->pushRaw(
+            $taskData->toJsonEncode(),
+            QueueNameEnum::SyncTasks->value
+        );
     }
 }

@@ -6,6 +6,7 @@ namespace App\Modules\Product\Domain\Repositories;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Product\Domain\Data\ProductListingsFilterData;
+use App\Modules\Product\Domain\Data\ProductListingStoreData;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Cknow\Money\Money;
 use Illuminate\Database\Eloquent\Collection;
@@ -43,7 +44,7 @@ interface ProductListingRepositoryInterface
 
     public function findListingByVendorCode(MarketplaceEnum $marketplace, string $vendorCode): ?ProductListing;
 
-    public function createListing(array $data): ProductListing;
+    public function updateOrCreate(ProductListingStoreData $productListingData): ProductListing;
 
     public function updateListing(ProductListing $listing, array $data): ProductListing;
 
