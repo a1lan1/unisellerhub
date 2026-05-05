@@ -83,18 +83,16 @@ onMounted(fetchNotifications)
       </template>
 
       <v-toolbar
-        color="primary"
         density="compact"
         flat
       >
-        <v-toolbar-title class="text-subtitle-1 font-weight-bold">
-          Notifications
-        </v-toolbar-title>
+        <v-toolbar-title>Notifications</v-toolbar-title>
         <v-spacer />
         <v-btn
           v-if="unreadCount > 0"
-          variant="text"
-          size="small"
+          variant="elevated"
+          color="success"
+          size="x-small"
           @click="markAllAsRead"
         >
           Mark all read
@@ -102,9 +100,12 @@ onMounted(fetchNotifications)
       </v-toolbar>
 
       <v-list
-        lines="three"
+        lines="two"
+        density="compact"
+        variant="plain"
+        color="success"
         max-height="450"
-        class="pa-0 overflow-y-auto"
+        class="p-0 overflow-y-auto"
       >
         <v-list-item
           v-if="notifications.length === 0 && !loading"
@@ -121,7 +122,7 @@ onMounted(fetchNotifications)
         >
           <v-list-item
             :class="{ 'unread-item': !notification.read_at }"
-            class="notification-item py-3"
+            class="notification-item"
             @click="handleNotificationClick(notification)"
           >
             <template #prepend>
@@ -148,8 +149,8 @@ onMounted(fetchNotifications)
             </v-list-item-subtitle>
 
             <template #append>
-              <div class="d-flex flex-column align-end">
-                <div class="text-grey-darken-1 text-xxs mb-2">
+              <div class="align-center text-right">
+                <div class="text-xxs">
                   {{
                     formatDistanceToNow(new Date(notification.created_at), {
                       addSuffix: true,
@@ -158,9 +159,9 @@ onMounted(fetchNotifications)
                 </div>
                 <v-btn
                   icon="mdi-close"
-                  variant="text"
+                  variant="plain"
                   size="x-small"
-                  color="grey-lighten-1"
+                  color="warning"
                   class="delete-btn"
                   @click.stop="removeNotification(notification.id)"
                 />

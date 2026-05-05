@@ -22,7 +22,9 @@ withDefaults(defineProps<Props>(), {
         <AppSidebarHeader :breadcrumbs="breadcrumbs" />
       </AppHeader>
 
-      <slot />
+      <div class="p-2 space-y-4">
+        <slot />
+      </div>
 
       <AppSidebar />
     </AppContent>

@@ -23,8 +23,8 @@ const auth = computed(() => page.props.auth)
 </script>
 
 <template>
-  <div class="border-b border-sidebar-border/80">
-    <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
+  <div class="header-sticky border-sidebar-border/80">
+    <div class="flex flex-row w-full glass glass-border glass-shadow rounded-lg text-white h-14 justify-between items-center px-4">
       <slot />
 
       <div class="ml-auto flex items-center space-x-4">
