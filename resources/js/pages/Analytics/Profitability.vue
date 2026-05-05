@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import { api } from '@/plugins/axios'
 import { snackbar } from '@/plugins/snackbar'
 import { dashboard } from '@/routes'
+import { formatCurrency } from '@/utils/formatters'
 import { getMarketplaceColor } from '@/utils/marketplace'
 
 interface ProfitabilityItem {
@@ -97,97 +98,112 @@ const getMarginColor = (margin: number) => {
 <template>
   <Head title="Profitability" />
 
-  <div class="p-6 space-y-6">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold flex items-center gap-2">
-        <Calculator class="text-primary" />
-        Profitability Calculator
-      </h1>
-    </div>
-
-    <v-card border flat>
-      <v-card-text class="pa-0">
-        <v-data-table
-          :headers="headers"
-          :items="localItems"
-          hover
-          density="comfortable"
-        >
-          <template v-slot:[`item.name`]="{ item }">
-            <div class="py-2">
-              <div class="font-weight-bold text-caption">{{ item.sku }}</div>
-              <div class="text-truncate" style="max-width: 300px">{{ item.name }}</div>
-            </div>
-          </template>
-
-          <template v-slot:[`item.marketplace`]="{ item }">
-            <v-chip :color="getMarketplaceColor(item.marketplace)" size="x-small" label>
-              {{ item.marketplace.toUpperCase() }}
-            </v-chip>
-          </template>
-
-          <template v-slot:[`item.price`]="{ item }">
-            {{ item.price.toLocaleString() }} ₽
-          </template>
-
-          <template v-slot:[`item.cost_price`]="{ item }">
-            <v-text-field
-              v-model.number="item.cost_price"
-              type="number"
-              density="compact"
-              hide-details
-              variant="underlined"
-              @update:model-value="calculateRow(item)"
-            />
-          </template>
-
-          <template v-slot:[`item.commission_percent`]="{ item }">
-            <v-text-field
-              v-model.number="item.commission_percent"
-              type="number"
-              density="compact"
-              hide-details
-              variant="underlined"
-              suffix="%"
-              @update:model-value="calculateRow(item)"
-            />
-          </template>
-
-          <template v-slot:[`item.logistic_cost`]="{ item }">
-            <v-text-field
-              v-model.number="item.logistic_cost"
-              type="number"
-              density="compact"
-              hide-details
-              variant="underlined"
-              @update:model-value="calculateRow(item)"
-            />
-          </template>
-
-          <template v-slot:[`item.profit`]="{ item }">
-            <span :class="item.profit < 0 ? 'text-red-600' : 'text-green-600'">
-              {{ item.profit.toLocaleString() }} ₽
-            </span>
-          </template>
-
-          <template v-slot:[`item.margin`]="{ item }">
-            <span :class="getMarginColor(item.margin)">
-              {{ item.margin.toFixed(1) }}%
-            </span>
-          </template>
-
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-btn
-              icon="mdi-content-save"
-              variant="text"
-              size="small"
-              color="primary"
-              :loading="isUpdating === item.id"
-              @click="saveFinance(item)"
-            ></v-btn>
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold flex items-center gap-2">
+      <Calculator class="text-primary" />
+      Profitability Calculator
+    </h1>
   </div>
+
+  <v-card
+    border
+    flat
+  >
+    <v-card-text class="pa-0">
+      <v-data-table
+        :headers="headers"
+        :items="localItems"
+        hover
+        density="comfortable"
+        fixed-header
+        fixed-footer
+        class="table-height"
+      >
+        <template #[`item.name`]="{ item }">
+          <div class="py-2">
+            <div class="font-weight-bold text-caption">
+              {{ item.sku }}
+            </div>
+            <div
+              class="text-truncate"
+              style="max-width: 300px"
+            >
+              {{ item.name }}
+            </div>
+          </div>
+        </template>
+
+        <template #[`item.marketplace`]="{ item }">
+          <v-chip
+            :color="getMarketplaceColor(item.marketplace)"
+            size="x-small"
+            label
+          >
+            {{ item.marketplace.toUpperCase() }}
+          </v-chip>
+        </template>
+
+        <template #[`item.price`]="{ item }">
+          {{ formatCurrency(item.price) }}
+        </template>
+
+        <template #[`item.cost_price`]="{ item }">
+          <v-text-field
+            v-model.number="item.cost_price"
+            type="number"
+            density="compact"
+            hide-details
+            variant="underlined"
+            @update:model-value="calculateRow(item)"
+          />
+        </template>
+
+        <template #[`item.commission_percent`]="{ item }">
+          <v-text-field
+            v-model.number="item.commission_percent"
+            type="number"
+            density="compact"
+            hide-details
+            variant="underlined"
+            suffix="%"
+            @update:model-value="calculateRow(item)"
+          />
+        </template>
+
+        <template #[`item.logistic_cost`]="{ item }">
+          <v-text-field
+            v-model.number="item.logistic_cost"
+            type="number"
+            density="compact"
+            hide-details
+            variant="underlined"
+            @update:model-value="calculateRow(item)"
+          />
+        </template>
+
+        <template #[`item.profit`]="{ item }">
+          <span :class="item.profit < 0 ? 'text-red-600' : 'text-green-600'">
+            {{ formatCurrency(item.profit) }}
+          </span>
+        </template>
+
+        <template #[`item.margin`]="{ item }">
+          <span :class="getMarginColor(item.margin)">
+            {{ item.margin.toFixed(1) }}%
+          </span>
+        </template>
+
+        <template #[`item.actions`]="{ item }">
+          <v-btn
+            icon="mdi-content-save"
+            variant="text"
+            size="small"
+            color="primary"
+            :loading="isUpdating === item.id"
+            @click="saveFinance(item)"
+          />
+        </template>
+      </v-data-table>
+    </v-card-text>
+  </v-card>
 </template>

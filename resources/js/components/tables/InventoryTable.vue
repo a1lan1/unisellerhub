@@ -44,9 +44,17 @@ const bulkPull = async() => {
   <div class="space-y-4">
     <!-- Selection Action Bar -->
     <v-expand-transition>
-      <div v-if="hasSelection" class="bg-primary-50 border border-primary-200 rounded-lg p-3 flex items-center justify-between shadow-sm">
+      <div
+        v-if="hasSelection"
+        class="bg-primary-50 border border-primary-200 rounded-lg p-3 flex items-center justify-between shadow-sm"
+      >
         <div class="flex items-center gap-3">
-          <v-chip color="primary" size="small">{{ selected.length }} items selected</v-chip>
+          <v-chip
+            color="primary"
+            size="small"
+          >
+            {{ selected.length }} items selected
+          </v-chip>
           <span class="text-sm font-medium text-primary-900">Bulk Actions:</span>
         </div>
         <div class="flex gap-2">
@@ -72,7 +80,10 @@ const bulkPull = async() => {
       </div>
     </v-expand-transition>
 
-    <v-card border flat>
+    <v-card
+      border
+      flat
+    >
       <div class="p-4 flex gap-4 flex-wrap">
         <v-text-field
           v-model="search"
@@ -104,9 +115,12 @@ const bulkPull = async() => {
         :loading="isSyncing"
         show-select
         hover
+        fixed-header
+        fixed-footer
+        class="table-height"
         @update:options="updateOptions"
       >
-        <template v-slot:[`item.marketplace`]="{ item }">
+        <template #[`item.marketplace`]="{ item }">
           <v-chip
             :color="getMarketplaceColor(item.marketplace)"
             size="small"
@@ -117,15 +131,17 @@ const bulkPull = async() => {
           </v-chip>
         </template>
 
-        <template v-slot:[`item.product_name`]="{ item }">
-          <div class="font-weight-medium">{{ item.product_name }}</div>
+        <template #[`item.product_name`]="{ item }">
+          <div class="font-weight-medium">
+            {{ item.product_name }}
+          </div>
         </template>
 
-        <template v-slot:[`item.warehouse_name`]="{ item }">
+        <template #[`item.warehouse_name`]="{ item }">
           <span class="text-caption text-medium-emphasis">{{ item.warehouse_name }}</span>
         </template>
 
-        <template v-slot:[`item.quantity`]="{ item }">
+        <template #[`item.quantity`]="{ item }">
           <v-text-field
             v-model.number="item.quantity"
             type="number"
@@ -137,7 +153,7 @@ const bulkPull = async() => {
           />
         </template>
 
-        <template v-slot:[`item.actions`]="{ item }">
+        <template #[`item.actions`]="{ item }">
           <v-btn
             size="small"
             variant="tonal"

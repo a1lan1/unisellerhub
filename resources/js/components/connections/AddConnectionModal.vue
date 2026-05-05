@@ -109,12 +109,16 @@ const close = () => {
             v-model="form.credentials"
             :errors="clientErrors"
           />
-
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn variant="text" @click="close">Cancel</v-btn>
+        <v-spacer />
+        <v-btn
+          variant="text"
+          @click="close"
+        >
+          Cancel
+        </v-btn>
         <v-btn
           color="primary"
           variant="elevated"

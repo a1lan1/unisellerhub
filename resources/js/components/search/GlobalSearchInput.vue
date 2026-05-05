@@ -31,12 +31,15 @@ const updateSearch = (event: Event) => {
     <input
       ref="searchInput"
       :value="modelValue"
-      @input="updateSearch"
       type="text"
       placeholder="Search SKU, products or orders..."
       class="grow border-none bg-transparent text-lg outline-none"
+      @input="updateSearch"
+    >
+    <Loader2
+      v-if="isLoading"
+      class="size-5 animate-spin text-primary"
     />
-    <Loader2 v-if="isLoading" class="size-5 animate-spin text-primary" />
     <v-btn
       icon="mdi-close"
       variant="text"

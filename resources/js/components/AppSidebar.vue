@@ -143,7 +143,10 @@ const footerNavItems: NavItem[] = [
     <SidebarContent>
       <NavMain :items="mainNavItems" />
       <NavMarketplaces />
-      <NavMain title="Dev" :items="devNavItems" />
+      <NavMain
+        title="Dev"
+        :items="devNavItems"
+      />
     </SidebarContent>
 
     <SidebarFooter>

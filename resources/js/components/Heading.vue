@@ -6,7 +6,8 @@ type Props = {
 };
 
 withDefaults(defineProps<Props>(), {
-  variant: 'default'
+  variant: 'default',
+  description: undefined
 })
 </script>
 

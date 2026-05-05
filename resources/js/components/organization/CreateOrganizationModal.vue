@@ -56,10 +56,10 @@ const createOrganization = async() => {
           variant="outlined"
           :error-messages="errors.name"
           required
-        ></v-text-field>
+        />
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="primary"
           variant="elevated"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSyncTable } from '@/composables/useSyncTable'
 import type { Order, Pagination, OrderFilter } from '@/types'
+import { formatCurrency } from '@/utils/formatters'
 import { getMarketplaceColor, marketplaceOptions } from '@/utils/marketplace'
 import { getStatusColor, statusOptions } from '@/utils/order'
 
@@ -31,7 +32,10 @@ const headers = [
 </script>
 
 <template>
-  <v-card border flat>
+  <v-card
+    border
+    flat
+  >
     <div class="p-4 flex flex-col gap-2">
       <!-- First Row of Filters -->
       <div class="flex gap-4 flex-wrap items-center">
@@ -102,9 +106,12 @@ const headers = [
       :items-length="orders.meta.total"
       :loading="isSyncing"
       hover
+      fixed-header
+      fixed-footer
+      class="table-height"
       @update:options="updateOptions"
     >
-      <template v-slot:[`item.marketplace`]="{ item }">
+      <template #[`item.marketplace`]="{ item }">
         <v-chip
           :color="getMarketplaceColor(item.marketplace)"
           size="small"
@@ -115,15 +122,15 @@ const headers = [
         </v-chip>
       </template>
 
-      <template v-slot:[`item.external_id`]="{ item }">
+      <template #[`item.external_id`]="{ item }">
         <code class="text-caption">{{ item.external_id }}</code>
       </template>
 
-      <template v-slot:[`item.order_date`]="{ item }">
+      <template #[`item.order_date`]="{ item }">
         <span class="text-sm">{{ item.order_date }}</span>
       </template>
 
-      <template v-slot:[`item.status`]="{ item }">
+      <template #[`item.status`]="{ item }">
         <v-chip
           :color="getStatusColor(item.status)"
           size="x-small"
@@ -133,11 +140,11 @@ const headers = [
         </v-chip>
       </template>
 
-      <template v-slot:[`item.total_price`]="{ item }">
-        <span class="font-weight-bold">{{ item.formatted_total_price }}</span>
+      <template #[`item.total_price`]="{ item }">
+        <span class="font-weight-bold">{{ formatCurrency(item.total_price) }}</span>
       </template>
 
-      <template v-slot:[`item.items_count`]="{ item }">
+      <template #[`item.items_count`]="{ item }">
         {{ item.items?.length || 0 }}
       </template>
     </v-data-table-server>

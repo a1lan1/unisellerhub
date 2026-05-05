@@ -69,16 +69,30 @@ const handleSave = async(form: MarketplaceConnectionForm) => {
       v-if="isLoading"
       class="flex justify-center p-10"
     >
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        color="primary"
+      />
     </div>
     <div
       v-else-if="connections.length === 0"
       class="text-center p-10 bg-neutral-50 rounded-lg border border-dashed"
     >
-      <p class="text-neutral-500 mb-4">No active connections found.</p>
-      <v-btn variant="outlined" color="primary" @click="showAddModal = true">Set up your first connection</v-btn>
+      <p class="text-neutral-500 mb-4">
+        No active connections found.
+      </p>
+      <v-btn
+        variant="outlined"
+        color="primary"
+        @click="showAddModal = true"
+      >
+        Set up your first connection
+      </v-btn>
     </div>
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div
+      v-else
+      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+    >
       <v-card
         v-for="conn in connections"
         :key="conn.id"
@@ -86,8 +100,12 @@ const handleSave = async(form: MarketplaceConnectionForm) => {
         class="relative overflow-visible!"
       >
         <v-card-item>
-          <template v-slot:prepend>
-            <v-avatar :color="getMarketplaceColor(conn.marketplace)" size="40" class="text-white font-weight-bold">
+          <template #prepend>
+            <v-avatar
+              :color="getMarketplaceColor(conn.marketplace)"
+              size="40"
+              class="text-white font-weight-bold"
+            >
               {{ conn.marketplace.toUpperCase() }}
             </v-avatar>
           </template>
@@ -96,7 +114,11 @@ const handleSave = async(form: MarketplaceConnectionForm) => {
         </v-card-item>
 
         <v-card-text>
-          <div v-for="(val, key) in conn.credentials" :key="key" class="text-caption mb-1">
+          <div
+            v-for="(val, key) in conn.credentials"
+            :key="key"
+            class="text-caption mb-1"
+          >
             <span class="font-weight-bold text-uppercase">{{ key }}:</span>
             <span class="font-mono ml-2">{{ val }}</span>
           </div>
@@ -111,7 +133,7 @@ const handleSave = async(form: MarketplaceConnectionForm) => {
             icon="mdi-delete"
             :loading="isDeleting"
             @click="deleteConnection(conn.id)"
-          ></v-btn>
+          />
         </v-card-actions>
       </v-card>
     </div>

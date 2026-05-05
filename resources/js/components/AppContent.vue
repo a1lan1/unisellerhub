@@ -9,7 +9,8 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'sidebar'
+  variant: 'sidebar',
+  class: undefined
 })
 const className = computed(() => props.class)
 </script>

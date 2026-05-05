@@ -23,7 +23,7 @@ const paddingAroundControl = [
 
 export default defineConfigWithVueTs(
   prettier,
-  vue.configs['flat/essential'],
+  vue.configs['flat/recommended'],
   vueTsConfigs.recommended,
   {
     plugins: {

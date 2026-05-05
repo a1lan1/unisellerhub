@@ -22,10 +22,8 @@ const orderStore = useOrderStore()
 defineOptions({
   layout: {
     breadcrumbs: [
-      {
-        title: 'Dashboard',
-        href: dashboard()
-      }
+      { title: 'Dashboard', href: dashboard() },
+      { title: 'Orders', href: '#' }
     ]
   }
 })
@@ -38,54 +36,55 @@ const exportOrders = () => {
 </script>
 
 <template>
-    <Head title="Orders" />
+  <Head title="Orders" />
 
-    <div class="space-y-6 p-6">
-        <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold">Orders Management</h1>
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">
+      Orders Management
+    </h1>
 
-            <div class="flex gap-2">
-                <v-btn
-                    v-if="hasOrganization"
-                    color="secondary"
-                    variant="outlined"
-                    density="compact"
-                    prepend-icon="mdi-microsoft-excel"
-                    @click="exportOrders"
-                >
-                    Export Excel
-                </v-btn>
+    <div class="flex gap-2">
+      <v-btn
+        v-if="hasOrganization"
+        color="primary"
+        variant="elevated"
+        density="compact"
+        prepend-icon="mdi-microsoft-excel"
+        @click="exportOrders"
+      >
+        Export Excel
+      </v-btn>
 
-                <v-btn
-                    v-if="hasOrganization"
-                    :loading="orderStore.isSyncing"
-                    color="primary"
-                    variant="elevated"
-                    density="compact"
-                    @click="orderStore.sync"
-                >
-                    Sync Orders from MP
-                </v-btn>
-                <v-btn
-                    v-else
-                    color="warning"
-                    variant="elevated"
-                    density="compact"
-                    @click="showCreateOrgModal = true"
-                >
-                    Create Organization
-                </v-btn>
-            </div>
-        </div>
-
-        <OrdersTable
-          :orders="orders"
-          :filters="filters"
-        />
-
-        <CreateOrganizationModal
-            v-model="showCreateOrgModal"
-            @created="router.reload()"
-        />
+      <v-btn
+        v-if="hasOrganization"
+        :loading="orderStore.isSyncing"
+        color="success"
+        variant="elevated"
+        density="compact"
+        prepend-icon="mdi-sync"
+        @click="orderStore.sync"
+      >
+        Sync Orders from MP
+      </v-btn>
+      <v-btn
+        v-else
+        color="warning"
+        variant="elevated"
+        density="compact"
+        @click="showCreateOrgModal = true"
+      >
+        Create Organization
+      </v-btn>
     </div>
+  </div>
+
+  <OrdersTable
+    :orders="orders"
+    :filters="filters"
+  />
+
+  <CreateOrganizationModal
+    v-model="showCreateOrgModal"
+    @created="router.reload()"
+  />
 </template>

@@ -11,7 +11,8 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   height: 350,
-  colors: () => ['#9333ea', '#2563eb', '#dc2626', '#ca8a04', '#16a34a']
+  colors: () => ['#9333ea', '#2563eb', '#dc2626', '#ca8a04', '#16a34a'],
+  title: undefined
 })
 
 const chartOptions = computed(() => ({
