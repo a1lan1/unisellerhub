@@ -10,7 +10,6 @@ use App\Modules\Order\Domain\Models\Order;
 use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
 use Carbon\CarbonInterface;
 use Flowframe\Trend\Trend;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -18,12 +17,16 @@ class EloquentOrderRepository implements OrderRepositoryInterface
 {
     public function getOrdersCountForDashboard(string $date): int
     {
-        return Order::whereDate('order_date', $date)->count();
+        return Order::query()
+            ->forDate($date)
+            ->count();
     }
 
     public function getSalesAmountForDashboard(string $date): float
     {
-        return (float) Order::whereDate('order_date', $date)->sum('total_price');
+        return (float) Order::query()
+            ->forDate($date)
+            ->sum('total_price');
     }
 
     public function getSalesTrend(CarbonInterface $startDate, CarbonInterface $endDate): Collection
@@ -44,7 +47,8 @@ class EloquentOrderRepository implements OrderRepositoryInterface
 
     public function getMarketplaceDistribution(): Collection
     {
-        return Order::selectRaw('marketplace, count(*) as count')
+        return Order::query()
+            ->selectRaw('marketplace, count(*) as count')
             ->groupBy('marketplace')
             ->get();
     }
@@ -52,7 +56,7 @@ class EloquentOrderRepository implements OrderRepositoryInterface
     public function findByExternalId(MarketplaceEnum $marketplace, string $externalId): ?Order
     {
         return Order::query()
-            ->where('marketplace', $marketplace)
+            ->forMarketplace($marketplace)
             ->where('external_id', $externalId)
             ->first();
     }
@@ -72,17 +76,20 @@ class EloquentOrderRepository implements OrderRepositoryInterface
     public function getPaginatedOrders(OrderFilterData $filter): LengthAwarePaginator
     {
         return Order::query()
+            ->filter($filter)
             ->with('items.listing.product')
-            ->when($filter->marketplace, fn (Builder $q, $m) => $q->where('marketplace', $m))
-            ->when($filter->statuses, fn (Builder $q, array $s) => $q->whereIn('status', $s))
-            ->when($filter->date_from, fn (Builder $q, $d) => $q->whereDate('order_date', '>=', $d))
-            ->when($filter->date_to, fn (Builder $q, $d) => $q->whereDate('order_date', '<=', $d))
-            ->when($filter->search, function (Builder $q, string $s): void {
-                $q->where('external_id', 'like', sprintf('%%%s%%', $s));
-            })
-            ->when($filter->sort, function (Builder $q, $s) use ($filter): void {
-                $q->orderBy($s, $filter->direction ?? 'desc');
-            }, fn (Builder $q) => $q->latest('order_date'))
             ->paginate($filter->per_page, ['*'], 'page', $filter->page);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, Order>
+     */
+    public function getForOrdersExport(int $organizationId): Collection
+    {
+        return Order::query()
+            ->forOrganization($organizationId)
+            ->with('items')
+            ->latest()
+            ->get();
     }
 }

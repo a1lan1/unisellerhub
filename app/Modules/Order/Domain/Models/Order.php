@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Order\Domain\Models;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Order\Domain\Data\OrderFilterData;
+use App\Modules\Order\Domain\Models\Builders\OrderBuilder;
+use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Scopes\UserOrganizationScope;
 use App\Observers\OrganizationIdObserver;
@@ -15,6 +18,7 @@ use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,20 +46,24 @@ use Override;
  * @property-read Organization|null $organization
  *
  * @method static OrderFactory factory($count = null, $state = [])
- * @method static Builder<static>|Order newModelQuery()
- * @method static Builder<static>|Order newQuery()
- * @method static Builder<static>|Order query()
- * @method static Builder<static>|Order whereCreatedAt($value)
- * @method static Builder<static>|Order whereDeliveryInfo($value)
- * @method static Builder<static>|Order whereExternalId($value)
- * @method static Builder<static>|Order whereId($value)
- * @method static Builder<static>|Order whereLastSyncedAt($value)
- * @method static Builder<static>|Order whereMarketplace($value)
- * @method static Builder<static>|Order whereOrderDate($value)
- * @method static Builder<static>|Order whereOrganizationId($value)
- * @method static Builder<static>|Order whereStatus($value)
- * @method static Builder<static>|Order whereTotalPrice($value)
- * @method static Builder<static>|Order whereUpdatedAt($value)
+ * @method static OrderBuilder<static>|Order filter(OrderFilterData $filter)
+ * @method static OrderBuilder<static>|Order forDate(string $date)
+ * @method static OrderBuilder<static>|Order forMarketplace(MarketplaceEnum $marketplace)
+ * @method static OrderBuilder<static>|Order forOrganization(int $organizationId)
+ * @method static OrderBuilder<static>|Order newModelQuery()
+ * @method static OrderBuilder<static>|Order newQuery()
+ * @method static OrderBuilder<static>|Order query()
+ * @method static OrderBuilder<static>|Order whereCreatedAt($value)
+ * @method static OrderBuilder<static>|Order whereDeliveryInfo($value)
+ * @method static OrderBuilder<static>|Order whereExternalId($value)
+ * @method static OrderBuilder<static>|Order whereId($value)
+ * @method static OrderBuilder<static>|Order whereLastSyncedAt($value)
+ * @method static OrderBuilder<static>|Order whereMarketplace($value)
+ * @method static OrderBuilder<static>|Order whereOrderDate($value)
+ * @method static OrderBuilder<static>|Order whereOrganizationId($value)
+ * @method static OrderBuilder<static>|Order whereStatus($value)
+ * @method static OrderBuilder<static>|Order whereTotalPrice($value)
+ * @method static OrderBuilder<static>|Order whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
@@ -63,6 +71,7 @@ use Override;
 #[ScopedBy([UserOrganizationScope::class])]
 #[ObservedBy([OrganizationIdObserver::class])]
 #[UseFactory(OrderFactory::class)]
+#[UseEloquentBuilder(OrderBuilder::class)]
 class Order extends Model
 {
     use HasFactory;
@@ -104,6 +113,14 @@ class Order extends Model
     protected function makeAllSearchableUsing(Builder $query): Builder
     {
         return $query->withoutGlobalScopes();
+    }
+
+    /**
+     * Get the queue that should be used for the searchable sync.
+     */
+    public function queueForSearchableSync(): string
+    {
+        return QueueNameEnum::MeilisearchTasks->value;
     }
 
     public function items(): HasMany
