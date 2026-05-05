@@ -1,0 +1,5 @@
+pandas
+pika
+xlsxwriter
+python-dotenv
+python-json-logger
