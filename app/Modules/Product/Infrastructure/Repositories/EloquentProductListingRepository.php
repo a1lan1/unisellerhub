@@ -117,9 +117,7 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
 
     public function updateFinance(int $listingId, array $listingData, ?Money $costPrice): ProductListing
     {
-        $listing = ProductListing::query()
-            ->with('product')
-            ->findOrFail($listingId);
+        $listing = ProductListing::query()->findOrFail($listingId);
 
         $listing->update($listingData);
 

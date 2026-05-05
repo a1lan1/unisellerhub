@@ -7,6 +7,7 @@ use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectio
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\SearchController;
 use App\Modules\Order\Interfaces\Http\Controllers\Api\OrderSyncController;
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
+use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\NotificationController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\OrganizationController;
 use Illuminate\Http\Request;
@@ -46,6 +47,9 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
             Route::patch('update', [InventorySyncController::class, 'update'])->name('update');
             Route::post('sync-ms', [InventorySyncController::class, 'syncMoySkladStock'])->name('sync_ms');
         });
+
+        // Analytics
+        Route::patch('analytics/update-finance', [AnalyticsController::class, 'updateFinance'])->name('api.analytics.update_finance');
     });
 });
 
