@@ -52,10 +52,22 @@ readonly class InventoryService
                 'out_of_stock' => 0,
                 'low_stock' => 0,
                 'total_items' => 0,
+                'out_of_stock_items' => collect(),
+                'low_stock_items' => collect(),
             ];
         }
 
-        return $this->repository->getHealthStats();
+        $outOfStockItems = $this->repository->getOutOfStockItems();
+        $lowStockItems = $this->repository->getLowStockItems();
+        $healthStats = $this->repository->getHealthStats();
+
+        return [
+            'out_of_stock' => $healthStats['out_of_stock'],
+            'low_stock' => $healthStats['low_stock'],
+            'total_items' => $healthStats['total_items'],
+            'out_of_stock_items' => $outOfStockItems,
+            'low_stock_items' => $lowStockItems,
+        ];
     }
 
     /**

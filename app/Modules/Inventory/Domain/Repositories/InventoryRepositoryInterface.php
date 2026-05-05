@@ -7,6 +7,7 @@ namespace App\Modules\Inventory\Domain\Repositories;
 use App\Modules\Inventory\Domain\Data\InventoryFilterData;
 use App\Modules\Inventory\Domain\Models\Inventory;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface InventoryRepositoryInterface
 {
@@ -22,4 +23,8 @@ interface InventoryRepositoryInterface
      * Get inventory health statistics.
      */
     public function getHealthStats(): array;
+
+    public function getOutOfStockItems(): Collection;
+
+    public function getLowStockItems(): Collection;
 }

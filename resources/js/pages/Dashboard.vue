@@ -10,6 +10,7 @@ import DateSlider from '@/components/DateSlider.vue'
 import InventoryHealth from '@/components/inventory/InventoryHealth.vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { dashboard } from '@/routes'
+import type { InventoryItem } from '@/types'
 import { formatCurrency } from '@/utils/formatters'
 
 interface Activity {
@@ -24,6 +25,8 @@ interface InventoryStats {
   out_of_stock: number;
   low_stock: number;
   total_items: number;
+  out_of_stock_items: InventoryItem[];
+  low_stock_items: InventoryItem[];
 }
 
 const props = defineProps<{
