@@ -21,10 +21,13 @@ class DashboardController extends Controller
 
     public function index(Request $request): Response
     {
+        $selectedDate = $request->input('date', now()->toDateString());
+
         return Inertia::render('Dashboard', [
-            'stats' => $this->orderService->getDashboardStats($request->user()),
+            'stats' => $this->orderService->getDashboardStats($request->user(), $selectedDate),
             'inventory_stats' => $this->inventoryService->getInventoryHealthStats($request->user()),
             'activities' => $this->activityService->getLatestFormattedActivitiesForUser($request->user()),
+            'selectedDate' => $selectedDate,
         ]);
     }
 }

@@ -13,12 +13,13 @@ use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
 use App\Modules\Order\Infrastructure\Jobs\SyncOrdersJob;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Date;
 
 readonly class OrderService
 {
     public function __construct(private OrderRepositoryInterface $orderRepository) {}
 
-    public function getDashboardStats(User $user): array
+    public function getDashboardStats(User $user, ?string $date = null): array
     {
         if (! $user->has_organization) {
             return [
@@ -29,10 +30,12 @@ readonly class OrderService
             ];
         }
 
+        $selectedDate = $date ? Date::parse($date) : now();
+
         return [
-            'today_orders' => $this->orderRepository->getOrdersCountForDashboard(now()->toDateString()),
-            'today_sales' => $this->orderRepository->getSalesAmountForDashboard(now()->toDateString()),
-            'trend' => $this->orderRepository->getSalesTrend(now()->subDays(30), now()),
+            'today_orders' => $this->orderRepository->getOrdersCountForDashboard($selectedDate->toDateString()),
+            'today_sales' => $this->orderRepository->getSalesAmountForDashboard($selectedDate->toDateString()),
+            'trend' => $this->orderRepository->getSalesTrend($selectedDate->copy()->subDays(30), $selectedDate),
             'distribution' => $this->orderRepository->getMarketplaceDistribution(),
         ];
     }
