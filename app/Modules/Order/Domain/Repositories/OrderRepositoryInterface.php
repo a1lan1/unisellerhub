@@ -28,9 +28,4 @@ interface OrderRepositoryInterface
     public function update(Order $order, array $data): Order;
 
     public function getPaginatedOrders(OrderFilterData $filter): LengthAwarePaginator;
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, Order>
-     */
-    public function getForOrdersExport(int $organizationId): Collection;
 }

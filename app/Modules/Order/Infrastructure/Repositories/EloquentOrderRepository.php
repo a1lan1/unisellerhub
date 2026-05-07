@@ -80,16 +80,4 @@ class EloquentOrderRepository implements OrderRepositoryInterface
             ->with('items.listing.product')
             ->paginate($filter->per_page, ['*'], 'page', $filter->page);
     }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, Order>
-     */
-    public function getForOrdersExport(int $organizationId): Collection
-    {
-        return Order::query()
-            ->forOrganization($organizationId)
-            ->with('items')
-            ->latest()
-            ->get();
-    }
 }

@@ -33,11 +33,6 @@ interface ProductListingRepositoryInterface
      */
     public function getByIdsAndOrganization(array $ids, int $organizationId): Collection;
 
-    /**
-     * @return Collection<int, ProductListing>
-     */
-    public function getForInventoryExport(int $organizationId): Collection;
-
     public function getPaginatedListings(ProductListingsFilterData $filter): LengthAwarePaginator;
 
     public function findListingByExternalId(MarketplaceEnum $marketplace, string $externalId): ?ProductListing;

@@ -54,17 +54,6 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
             ->get();
     }
 
-    /**
-     * @return Collection<int, ProductListing>
-     */
-    public function getForInventoryExport(int $organizationId): Collection
-    {
-        return ProductListing::query()
-            ->forOrganization($organizationId)
-            ->with(['product', 'inventory.warehouse'])
-            ->get();
-    }
-
     public function getPaginatedListings(ProductListingsFilterData $filter): LengthAwarePaginator
     {
         return ProductListing::query()

@@ -4,22 +4,34 @@ declare(strict_types=1);
 
 namespace App\Modules\Report\Domain\Exports;
 
+use App\Modules\Order\Domain\Data\OrderFilterData;
 use App\Modules\Order\Domain\Models\Order;
-use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-readonly class OrdersExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
+readonly class OrdersExport implements FromQuery, ShouldAutoSize, WithChunkReading, WithHeadings, WithMapping
 {
-    public function __construct(private int $organizationId) {}
+    public function __construct(
+        private int $organizationId,
+        private ?OrderFilterData $filters = null
+    ) {}
 
-    public function collection(): Collection
+    public function query(): Builder
     {
-        return resolve(OrderRepositoryInterface::class)
-            ->getForOrdersExport($this->organizationId);
+        $query = Order::query()
+            ->forOrganization($this->organizationId)
+            ->with('items')
+            ->latest();
+
+        if ($this->filters instanceof OrderFilterData) {
+            $query->filter($this->filters);
+        }
+
+        return $query;
     }
 
     public function headings(): array
@@ -47,5 +59,10 @@ readonly class OrdersExport implements FromCollection, ShouldAutoSize, WithHeadi
             $order->total_price.' ₽',
             $order->items->count(),
         ];
+    }
+
+    public function chunkSize(): int
+    {
+        return 500;
     }
 }
