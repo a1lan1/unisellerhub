@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Order\Domain\Models;
 
+use App\Modules\Order\Domain\Models\Builders\OrderItemBuilder;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Override;
@@ -27,25 +27,26 @@ use Override;
  * @property-read ProductListing|null $listing
  * @property-read Order $order
  *
- * @method static Builder<static>|OrderItem newModelQuery()
- * @method static Builder<static>|OrderItem newQuery()
- * @method static Builder<static>|OrderItem query()
- * @method static Builder<static>|OrderItem whereCreatedAt($value)
- * @method static Builder<static>|OrderItem whereExternalProductId($value)
- * @method static Builder<static>|OrderItem whereId($value)
- * @method static Builder<static>|OrderItem whereOrderId($value)
- * @method static Builder<static>|OrderItem wherePrice($value)
- * @method static Builder<static>|OrderItem whereProductListingId($value)
- * @method static Builder<static>|OrderItem whereQuantity($value)
- * @method static Builder<static>|OrderItem whereUpdatedAt($value)
+ * @method static OrderItemBuilder<static>|OrderItem forOrganization(int $organizationId)
+ * @method static OrderItemBuilder<static>|OrderItem newModelQuery()
+ * @method static OrderItemBuilder<static>|OrderItem newQuery()
+ * @method static OrderItemBuilder<static>|OrderItem query()
+ * @method static OrderItemBuilder<static>|OrderItem revenue(int $organizationId, ?int $days = 30)
+ * @method static OrderItemBuilder<static>|OrderItem whereCreatedAt($value)
+ * @method static OrderItemBuilder<static>|OrderItem whereExternalProductId($value)
+ * @method static OrderItemBuilder<static>|OrderItem whereId($value)
+ * @method static OrderItemBuilder<static>|OrderItem whereOrderId($value)
+ * @method static OrderItemBuilder<static>|OrderItem wherePrice($value)
+ * @method static OrderItemBuilder<static>|OrderItem whereProductListingId($value)
+ * @method static OrderItemBuilder<static>|OrderItem whereQuantity($value)
+ * @method static OrderItemBuilder<static>|OrderItem whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
 #[Fillable(['order_id', 'product_listing_id', 'external_product_id', 'quantity', 'price'])]
+#[UseEloquentBuilder(OrderItemBuilder::class)]
 class OrderItem extends Model
 {
-    use HasFactory;
-
     /**
      * @return array<string, string>
      */
