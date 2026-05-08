@@ -11,7 +11,6 @@ use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Models\User;
 use App\Modules\User\Domain\Notifications\SystemNotification;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Notification;
 
 readonly class NotificationService implements NotificationServiceInterface
 {
@@ -21,7 +20,7 @@ readonly class NotificationService implements NotificationServiceInterface
 
     public function sendToUser(User $user, NotificationData $data): void
     {
-        $user->notify(new SystemNotification($data));
+        $user->notify(new SystemNotification($user, $data));
     }
 
     public function sendToOrganization(Organization $organization, NotificationData $data): void
@@ -29,7 +28,9 @@ readonly class NotificationService implements NotificationServiceInterface
         $organization->loadMissing('users');
 
         if ($organization->users->isNotEmpty()) {
-            Notification::send($organization->users, new SystemNotification($data));
+            foreach ($organization->users as $user) {
+                $user->notify(new SystemNotification($user, $data));
+            }
         }
     }
 

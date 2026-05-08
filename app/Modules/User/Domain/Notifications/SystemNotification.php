@@ -5,15 +5,24 @@ declare(strict_types=1);
 namespace App\Modules\User\Domain\Notifications;
 
 use App\Modules\User\Domain\Data\NotificationData;
+use App\Modules\User\Domain\Models\User;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
+use Override;
 
-class SystemNotification extends Notification
+class SystemNotification extends Notification implements ShouldBroadcast, ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public NotificationData $data) {}
+    public function __construct(
+        public User $user,
+        public NotificationData $data
+    ) {}
 
     public function via(object $notifiable): array
     {
@@ -28,5 +37,14 @@ class SystemNotification extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->data->toArray());
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    #[Override]
+    public function broadcastOn(): array
+    {
+        return [new PrivateChannel('App.Models.User.'.$this->user->id)];
     }
 }
