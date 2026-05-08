@@ -8,7 +8,7 @@ use App\Modules\Marketplace\Interfaces\Http\Controllers\MarketplaceController;
 use App\Modules\Order\Interfaces\Http\Controllers\OrderController;
 use App\Modules\Product\Interfaces\Http\Controllers\ProductController;
 use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
-use App\Modules\Report\Interfaces\Http\Controllers\ExportController;
+use App\Modules\Report\Interfaces\Http\Controllers\DownloadExportController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -42,11 +42,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/profitability', [AnalyticsController::class, 'profitability'])->name('profitability');
     });
 
-    // Exports
-    Route::prefix('exports')->name('exports.')->group(function (): void {
-        Route::get('/orders', [ExportController::class, 'orders'])->name('orders');
-        Route::get('/inventory', [ExportController::class, 'inventory'])->name('inventory');
-    });
+    // Download Exported File
+    Route::get('/exports/download/{filename}', DownloadExportController::class)
+        ->name('exports.download')
+        ->middleware('signed');
 });
 
 require __DIR__.'/settings.php';
