@@ -15,3 +15,5 @@ Schedule::command('storage:clear')->environments(['local'])->everySixHours();
 
 // Mock Activity Simulation (Webhooks)
 Schedule::command('mock:simulate-activity')->environments(['local'])->everyThirtySeconds();
+
+Schedule::command('app:send-inspiring-notification')->environments(['local'])->everyMinute();
