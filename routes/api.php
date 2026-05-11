@@ -8,6 +8,7 @@ use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\SearchController;
 use App\Modules\Order\Interfaces\Http\Controllers\Api\OrderSyncController;
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
 use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
+use App\Modules\Report\Interfaces\Http\Controllers\Api\ExportController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\NotificationController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\OrganizationController;
 use Illuminate\Http\Request;
@@ -47,6 +48,13 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
             Route::post('pull-bulk', [InventorySyncController::class, 'pullBulk'])->name('pull_bulk');
             Route::patch('update', [InventorySyncController::class, 'update'])->name('update');
             Route::post('sync-ms', [InventorySyncController::class, 'syncMoySkladStock'])->name('sync_ms');
+        });
+
+        // Exports
+        Route::prefix('exports')->name('exports.')->group(function (): void {
+            Route::post('orders', [ExportController::class, 'orders'])->name('orders');
+            Route::post('inventory', [ExportController::class, 'inventory'])->name('inventory');
+            Route::post('analytics', [ExportController::class, 'generateAnalyticsReport'])->name('analytics');
         });
 
         // Analytics

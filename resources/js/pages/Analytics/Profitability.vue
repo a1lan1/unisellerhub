@@ -93,6 +93,24 @@ const getMarginColor = (margin: number) => {
 
   return 'text-green-600 font-bold'
 }
+
+const isGeneratingReport = ref(false)
+
+const generateReport = async() => {
+  isGeneratingReport.value = true
+
+  try {
+    await api.post('/api/exports/analytics', {
+      report_type: 'product_profitability_analysis'
+    })
+    snackbar.success({ text: 'Product Profitability Analysis report generation started. You will be notified when it\'s ready.' })
+  } catch (error) {
+    console.error('Error generating report:', error)
+    snackbar.error({ text: 'Failed to start report generation.' })
+  } finally {
+    isGeneratingReport.value = false
+  }
+}
 </script>
 
 <template>
@@ -103,6 +121,17 @@ const getMarginColor = (margin: number) => {
       <Calculator class="text-primary" />
       Profitability Calculator
     </h1>
+    <v-btn
+      color="primary"
+      variant="tonal"
+      density="compact"
+      prepend-icon="mdi-microsoft-excel"
+      :loading="isGeneratingReport"
+      :disabled="isGeneratingReport"
+      @click="generateReport"
+    >
+      Export Report
+    </v-btn>
   </div>
 
   <v-card

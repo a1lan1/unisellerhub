@@ -4,12 +4,14 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import CreateOrganizationModal from '@/components/organization/CreateOrganizationModal.vue'
 import InventoryTable from '@/components/tables/InventoryTable.vue'
+import { api } from '@/plugins/axios'
+import { snackbar } from '@/plugins/snackbar'
 import { dashboard } from '@/routes'
 import { useAuthStore } from '@/stores/auth'
 import { useInventoryStore } from '@/stores/inventory'
 import type { InventoryItem, Pagination, InventoryFilter } from '@/types'
 
-defineProps<{
+const props = defineProps<{
   inventory: Pagination<InventoryItem>;
   filters: InventoryFilter;
 }>()
@@ -18,6 +20,8 @@ const authStore = useAuthStore()
 const { hasOrganization } = storeToRefs(authStore)
 
 const inventoryStore = useInventoryStore()
+const { isSyncing } = storeToRefs(inventoryStore)
+const { syncMoySklad, pullFromMarketplaces } = inventoryStore
 
 defineOptions({
   layout: {
@@ -29,9 +33,20 @@ defineOptions({
 })
 
 const showCreateOrgModal = ref(false)
+const exportLoading = ref(false)
 
-const exportInventory = () => {
-  window.location.href = '/exports/inventory'
+const exportInventory = async() => {
+  exportLoading.value = true
+
+  try {
+    const { data } = await api.post('/api/exports/inventory', props.filters)
+    snackbar.success({ text: data.message })
+  } catch (error) {
+    console.error('Error exporting inventory:', error)
+    snackbar.error({ text: 'Failed to start inventory export.' })
+  } finally {
+    exportLoading.value = false
+  }
 }
 </script>
 
@@ -47,9 +62,10 @@ const exportInventory = () => {
       <v-btn
         v-if="hasOrganization"
         color="primary"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         prepend-icon="mdi-microsoft-excel"
+        :loading="exportLoading"
         @click="exportInventory"
       >
         Export
@@ -57,31 +73,31 @@ const exportInventory = () => {
 
       <v-btn
         v-if="hasOrganization"
-        :loading="inventoryStore.isSyncing"
+        :loading="isSyncing"
         color="success"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         prepend-icon="mdi-sync"
-        @click="inventoryStore.syncMoySklad"
+        @click="syncMoySklad"
       >
         Sync from MoySklad
       </v-btn>
 
       <v-btn
         v-if="hasOrganization"
-        :loading="inventoryStore.isSyncing"
+        :loading="isSyncing"
         color="success"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         prepend-icon="mdi-sync"
-        @click="inventoryStore.pullFromMarketplaces"
+        @click="pullFromMarketplaces"
       >
         Pull Stocks from MP
       </v-btn>
       <v-btn
         v-else
         color="warning"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         @click="showCreateOrgModal = true"
       >

@@ -4,12 +4,14 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import CreateOrganizationModal from '@/components/organization/CreateOrganizationModal.vue'
 import OrdersTable from '@/components/tables/OrdersTable.vue'
+import { api } from '@/plugins/axios'
+import { snackbar } from '@/plugins/snackbar'
 import { dashboard } from '@/routes'
 import { useAuthStore } from '@/stores/auth'
 import { useOrderStore } from '@/stores/order'
 import type { Order, Pagination, OrderFilter } from '@/types'
 
-defineProps<{
+const props = defineProps<{
   orders: Pagination<Order>;
   filters: OrderFilter;
 }>()
@@ -18,6 +20,8 @@ const authStore = useAuthStore()
 const { hasOrganization } = storeToRefs(authStore)
 
 const orderStore = useOrderStore()
+const { isSyncing } = storeToRefs(orderStore)
+const { sync } = orderStore
 
 defineOptions({
   layout: {
@@ -29,9 +33,20 @@ defineOptions({
 })
 
 const showCreateOrgModal = ref(false)
+const exportLoading = ref(false)
 
-const exportOrders = () => {
-  window.location.href = '/exports/orders'
+const exportOrders = async() => {
+  exportLoading.value = true
+
+  try {
+    const { data } = await api.post('/api/exports/orders', props.filters)
+    snackbar.success({ text: data.message })
+  } catch (error) {
+    console.error('Error exporting orders:', error)
+    snackbar.error({ text: 'Failed to start orders export.' })
+  } finally {
+    exportLoading.value = false
+  }
 }
 </script>
 
@@ -45,11 +60,12 @@ const exportOrders = () => {
 
     <div class="flex gap-2">
       <v-btn
-        v-if="hasOrganization"
+        v-if="hasOrganization && orders.data.length"
         color="primary"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         prepend-icon="mdi-microsoft-excel"
+        :loading="exportLoading"
         @click="exportOrders"
       >
         Export Excel
@@ -57,19 +73,19 @@ const exportOrders = () => {
 
       <v-btn
         v-if="hasOrganization"
-        :loading="orderStore.isSyncing"
+        :loading="isSyncing"
         color="success"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         prepend-icon="mdi-sync"
-        @click="orderStore.sync"
+        @click="sync"
       >
         Sync Orders from MP
       </v-btn>
       <v-btn
         v-else
         color="warning"
-        variant="elevated"
+        variant="tonal"
         density="compact"
         @click="showCreateOrgModal = true"
       >
