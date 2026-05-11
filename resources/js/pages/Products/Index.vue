@@ -20,6 +20,8 @@ const authStore = useAuthStore()
 const { hasOrganization } = storeToRefs(authStore)
 
 const productStore = useProductStore()
+const { isSyncing, isAnalyzingPrices } = storeToRefs(productStore)
+const { sync, analyzePrices } = productStore
 
 defineOptions({
   layout: {
@@ -41,26 +43,40 @@ const showCreateOrgModal = ref(false)
       Product Listings
     </h1>
 
-    <v-btn
-      v-if="hasOrganization"
-      :loading="productStore.isSyncing"
-      color="success"
-      variant="elevated"
-      density="compact"
-      prepend-icon="mdi-sync"
-      @click="productStore.sync"
-    >
-      Sync Products
-    </v-btn>
-    <v-btn
-      v-else
-      color="warning"
-      variant="elevated"
-      density="compact"
-      @click="showCreateOrgModal = true"
-    >
-      Create Organization
-    </v-btn>
+    <div class="flex gap-2">
+      <v-btn
+        v-if="hasOrganization"
+        :loading="isAnalyzingPrices"
+        color="primary"
+        variant="tonal"
+        density="compact"
+        prepend-icon="mdi-chart-line"
+        @click="analyzePrices"
+      >
+        Analyze Prices
+      </v-btn>
+
+      <v-btn
+        v-if="hasOrganization"
+        :loading="isSyncing"
+        color="success"
+        variant="tonal"
+        density="compact"
+        prepend-icon="mdi-sync"
+        @click="sync"
+      >
+        Sync Products
+      </v-btn>
+      <v-btn
+        v-else
+        color="warning"
+        variant="tonal"
+        density="compact"
+        @click="showCreateOrgModal = true"
+      >
+        Create Organization
+      </v-btn>
+    </div>
   </div>
 
   <ProductsTable

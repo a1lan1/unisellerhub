@@ -6,6 +6,7 @@ use App\Modules\Inventory\Interfaces\Http\Controllers\Api\InventorySyncControlle
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectionController;
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\SearchController;
 use App\Modules\Order\Interfaces\Http\Controllers\Api\OrderSyncController;
+use App\Modules\PriceAnalysis\Interfaces\Http\Controllers\Api\PriceAnalysisController;
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
 use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
 use App\Modules\Report\Interfaces\Http\Controllers\Api\ExportController;
@@ -59,6 +60,9 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
 
         // Analytics
         Route::patch('analytics/update-finance', [AnalyticsController::class, 'updateFinance'])->name('api.analytics.update_finance');
+
+        // Price Analysis
+        Route::post('price-analysis/analyze', [PriceAnalysisController::class, 'analyze'])->name('api.price-analysis.analyze');
     });
 });
 
