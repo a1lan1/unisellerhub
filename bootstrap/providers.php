@@ -6,6 +6,7 @@ use App\Modules\Marketplace\Infrastructure\Providers\MarketplaceServiceProvider;
 use App\Modules\MockMarketplace\Infrastructure\Providers\MockMarketplaceServiceProvider;
 use App\Modules\Monitoring\Infrastructure\Providers\PrometheusServiceProvider;
 use App\Modules\Order\Infrastructure\Providers\OrderServiceProvider;
+use App\Modules\PriceAnalysis\Providers\PriceAnalysisServiceProvider;
 use App\Modules\Product\Infrastructure\Providers\ProductServiceProvider;
 use App\Modules\Report\Infrastructure\Providers\ReportServiceProvider;
 use App\Modules\Shared\Infrastructure\Providers\SharedServiceProvider;
@@ -32,4 +33,5 @@ return [
     MarketplaceServiceProvider::class,
     MockMarketplaceServiceProvider::class,
     ReportServiceProvider::class,
+    PriceAnalysisServiceProvider::class,
 ];

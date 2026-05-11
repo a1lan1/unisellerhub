@@ -20,14 +20,16 @@ RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq")
 RABBITMQ_USER = os.getenv("RABBITMQ_USER", "guest")
 RABBITMQ_PASS = os.getenv("RABBITMQ_PASS", "guest")
 TASK_QUEUE = "report.tasks"
-RESULT_QUEUE = "sync.results"
+RESULT_QUEUE = "report.results"
 
 def generate_excel(data, filename):
     """
     Generates an Excel file from a list of dictionaries.
     """
+    # filepath to use the mounted volume
+    filepath = f"/app/reports/{filename}"
+
     df = pd.DataFrame(data)
-    filepath = f"/tmp/{filename}"
 
     # Use XlsxWriter as the engine
     writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
@@ -50,28 +52,28 @@ def process_message(ch, method, properties, body):
         org_id = payload.get("organization_id")
         report_type = payload.get("report_type", "general")
         items = payload.get("data", [])
+        batch_id = payload.get("batch_id")
 
-        logger.info("Generating report", extra={"organization_id": org_id, "type": report_type})
+        logger.info("Generating report", extra={"organization_id": org_id, "type": report_type, "batch_id": batch_id})
 
         start_time = time.time()
         filename = f"report_{org_id}_{int(time.time())}.xlsx"
         filepath = generate_excel(items, filename)
+        logger.info("File generated at", extra={"filepath": filepath})
         duration = time.time() - start_time
 
-        # In a real app, we would upload this to S3 and return the URL
-        # For this prototype, we'll return the filename and simulated URL
         result = {
             "organization_id": org_id,
-            "marketplace": "internal",
             "operation": "report_generation",
             "status": "success",
             "duration": duration,
             "data": {
                 "report_type": report_type,
                 "filename": filename,
-                "download_url": f"/storage/reports/{filename}"
+                "download_url": f"reports/{filename}"
             },
-            "processed_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+            "processed_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+            "batch_id": batch_id,
         }
 
         ch.basic_publish(
@@ -82,7 +84,7 @@ def process_message(ch, method, properties, body):
         )
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        logger.info("Report generated successfully", extra={"duration": duration})
+        logger.info("Report generated successfully", extra={"duration": duration, "batch_id": batch_id})
 
     except Exception as e:
         logger.error("Error generating report", extra={"error": str(e)})
