@@ -24,4 +24,6 @@ interface NotificationRepositoryInterface
     public function markAllAsRead(User $user): void;
 
     public function delete(User $user, string $id): bool;
+
+    public function clearAll(User $user): void;
 }

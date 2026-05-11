@@ -1,7 +1,3 @@
-export interface UserNotificationEvent {
-  message: string;
-}
-
 export interface FlashMessage {
   success?: string;
   error?: string;
@@ -16,5 +12,5 @@ export interface Notification {
   action_url?: string
   icon?: string
   read_at: string | null
-  created_at: string
+  created_at?: string
 }

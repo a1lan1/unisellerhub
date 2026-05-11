@@ -66,4 +66,9 @@ readonly class NotificationService implements NotificationServiceInterface
     {
         return $this->repository->delete($user, $id);
     }
+
+    public function clearAll(User $user): void
+    {
+        $this->repository->clearAll($user);
+    }
 }

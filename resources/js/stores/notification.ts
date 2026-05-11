@@ -1,18 +1,20 @@
-import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { api } from '@/plugins/axios'
 import type { Notification } from '@/types'
 
 export const useNotificationStore = defineStore('notification', () => {
   const notifications = ref<Notification[]>([])
   const unreadCount = ref(0)
   const loading = ref(false)
+  const storing = ref(false)
+  const deleting = ref(false)
 
   const fetchNotifications = async() => {
     loading.value = true
 
     try {
-      const response = await axios.get('/api/notifications')
+      const response = await api.get('/api/notifications')
       notifications.value = response.data.notifications
       unreadCount.value = response.data.unread_count
     } catch (error) {
@@ -23,8 +25,10 @@ export const useNotificationStore = defineStore('notification', () => {
   }
 
   const markAsRead = async(id: string) => {
+    storing.value = true
+
     try {
-      await axios.post(`/api/notifications/${id}/read`)
+      await api.post(`/api/notifications/${id}/read`)
       const notification = notifications.value.find(n => n.id === id)
 
       if (notification && !notification.read_at) {
@@ -33,22 +37,30 @@ export const useNotificationStore = defineStore('notification', () => {
       }
     } catch (error) {
       console.error('Failed to mark notification as read:', error)
+    } finally {
+      storing.value = false
     }
   }
 
   const markAllAsRead = async() => {
+    storing.value = true
+
     try {
-      await axios.post('/api/notifications/read')
+      await api.post('/api/notifications/read')
       notifications.value.forEach(n => n.read_at = new Date().toISOString())
       unreadCount.value = 0
     } catch (error) {
       console.error('Failed to mark all as read:', error)
+    } finally {
+      storing.value = false
     }
   }
 
   const removeNotification = async(id: string) => {
+    deleting.value = true
+
     try {
-      await axios.delete(`/api/notifications/${id}`)
+      await api.delete(`/api/notifications/${id}`)
       const index = notifications.value.findIndex(n => n.id === id)
 
       if (index !== -1) {
@@ -60,6 +72,22 @@ export const useNotificationStore = defineStore('notification', () => {
       }
     } catch (error) {
       console.error('Failed to delete notification:', error)
+    } finally {
+      deleting.value = false
+    }
+  }
+
+  const clearAllNotifications = async() => {
+    deleting.value = true
+
+    try {
+      await api.delete('/api/notifications')
+      notifications.value = []
+      unreadCount.value = 0
+    } catch (error) {
+      console.error('Failed to clear all notifications:', error)
+    } finally {
+      deleting.value = false
     }
   }
 
@@ -77,10 +105,13 @@ export const useNotificationStore = defineStore('notification', () => {
     notifications,
     unreadCount,
     loading,
+    storing,
+    deleting,
     fetchNotifications,
     markAsRead,
     markAllAsRead,
     removeNotification,
+    clearAllNotifications,
     addNotification
   }
 })

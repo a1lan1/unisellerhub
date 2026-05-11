@@ -56,4 +56,9 @@ class EloquentNotificationRepository implements NotificationRepositoryInterface
 
         return false;
     }
+
+    public function clearAll(User $user): void
+    {
+        $user->notifications()->delete();
+    }
 }

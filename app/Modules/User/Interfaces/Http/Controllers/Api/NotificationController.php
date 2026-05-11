@@ -48,4 +48,11 @@ final class NotificationController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
+    public function clearAll(Request $request): JsonResponse
+    {
+        $this->notificationService->clearAll($request->user());
+
+        return response()->json(['status' => 'success']);
+    }
 }

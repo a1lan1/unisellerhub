@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { formatDistanceToNow } from 'date-fns'
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import AllNotificationsModal from '@/components/AllNotificationsModal.vue'
 import { useNotificationStore } from '@/stores/notification'
 import type { Notification } from '@/types'
 
 const store = useNotificationStore()
-const { notifications, unreadCount, loading } = storeToRefs(store)
-const { fetchNotifications, removeNotification, markAsRead, markAllAsRead } = store
+const { notifications, unreadCount, loading, storing, deleting } = storeToRefs(store)
+const { fetchNotifications, removeNotification, markAsRead, markAllAsRead, clearAllNotifications } = store
+
+const showAllNotificationsModal = ref(false)
 
 const handleNotificationClick = async(notification: Notification) => {
   if (!notification.read_at) {
@@ -32,6 +35,12 @@ const getIconColor = (type: string) => {
   }
 }
 
+const displayDate = (date?: string) => {
+  return date
+    ? formatDistanceToNow(new Date(date), { addSuffix: true })
+    : date
+}
+
 onMounted(fetchNotifications)
 </script>
 
@@ -47,6 +56,7 @@ onMounted(fetchNotifications)
         v-bind="props"
         class="mr-2"
         variant="text"
+        :loading="loading || storing || deleting"
       >
         <v-badge
           v-if="unreadCount > 0"
@@ -69,7 +79,7 @@ onMounted(fetchNotifications)
     </template>
 
     <v-card
-      width="380"
+      width="450"
       class="notification-card mx-auto"
       :loading="loading"
     >
@@ -88,15 +98,28 @@ onMounted(fetchNotifications)
       >
         <v-toolbar-title>Notifications</v-toolbar-title>
         <v-spacer />
-        <v-btn
-          v-if="unreadCount > 0"
-          variant="elevated"
-          color="success"
-          size="x-small"
-          @click="markAllAsRead"
-        >
-          Mark all read
-        </v-btn>
+        <div class="flex gap-1">
+          <v-btn
+            v-if="notifications.length > 0"
+            variant="tonal"
+            color="error"
+            size="x-small"
+            :loading="deleting"
+            @click="clearAllNotifications"
+          >
+            Clear All
+          </v-btn>
+          <v-btn
+            v-if="unreadCount > 0"
+            variant="tonal"
+            color="success"
+            size="x-small"
+            :loading="storing"
+            @click="markAllAsRead"
+          >
+            Mark all read
+          </v-btn>
+        </div>
       </v-toolbar>
 
       <v-list
@@ -129,7 +152,6 @@ onMounted(fetchNotifications)
               <v-avatar
                 :color="getIconColor(notification.type)"
                 size="36"
-                class="mr-3"
               >
                 <v-icon
                   color="white"
@@ -151,11 +173,7 @@ onMounted(fetchNotifications)
             <template #append>
               <div class="align-center text-right">
                 <div class="text-xxs">
-                  {{
-                    formatDistanceToNow(new Date(notification.created_at), {
-                      addSuffix: true,
-                    })
-                  }}
+                  {{ displayDate(notification.created_at) }}
                 </div>
                 <v-btn
                   icon="mdi-close"
@@ -163,6 +181,7 @@ onMounted(fetchNotifications)
                   size="x-small"
                   color="warning"
                   class="delete-btn"
+                  :loading="deleting"
                   @click.stop="removeNotification(notification.id)"
                 />
               </div>
@@ -172,19 +191,25 @@ onMounted(fetchNotifications)
         </template>
       </v-list>
 
-      <v-divider />
-      <v-card-actions class="pa-2">
+      <v-card-actions
+        v-if="notifications.length > 0"
+        class="p-0"
+      >
         <v-btn
-          variant="text"
+          variant="tonal"
           size="small"
           block
           color="primary"
+          density="comfortable"
+          @click="showAllNotificationsModal = true"
         >
           View all notifications
         </v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
+
+  <AllNotificationsModal v-model="showAllNotificationsModal" />
 </template>
 
 <style scoped>

@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::post('read', [NotificationController::class, 'markAllAsRead'])->name('read_all');
         Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::delete('{id}', [NotificationController::class, 'destroy'])->name('destroy');
+        Route::delete('', [NotificationController::class, 'clearAll'])->name('clear_all');
     });
 
     Route::middleware(['has_org'])->group(function (): void {
