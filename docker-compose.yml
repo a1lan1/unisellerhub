@@ -288,6 +288,23 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  price_analyzer:
+    build:
+      context: ./services/price_analyzer
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASSWORD:-guest}
+    networks:
+      - unisellerhub_app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
 networks:
   unisellerhub_app:
     name: unisellerhub_app
