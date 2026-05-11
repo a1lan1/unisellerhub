@@ -45,12 +45,16 @@ class ExportOrdersJob implements ShouldQueue
         try {
             $tenantManager->setOrganizationId($this->user->organization_id);
 
-            Excel::store(new OrdersExport($this->user->organization_id, $this->filters), $fileName, 'local');
+            Excel::store(
+                new OrdersExport($this->user->organization_id, $this->filters),
+                $fileName,
+                'reports'
+            );
 
             $fileUrl = URL::temporarySignedRoute(
                 'exports.download',
                 now()->addMinutes(30),
-                ['filename' => $fileName]
+                ['path' => $fileName]
             );
 
             // Dispatch broadcast event for immediate download

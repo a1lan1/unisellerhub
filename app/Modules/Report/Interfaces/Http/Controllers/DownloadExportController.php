@@ -11,23 +11,24 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DownloadExportController extends Controller
 {
-    public function __invoke(Request $request, string $filename): BinaryFileResponse
+    public function __invoke(Request $request, string $path): BinaryFileResponse
     {
-        $request->validate([
-            'expires' => ['required', 'numeric'],
-            'signature' => ['required', 'string'],
-        ]);
-
         if (! $request->hasValidSignature()) {
             abort(401, 'Invalid signature or expired link.');
         }
 
-        if (! Storage::disk('local')->exists($filename)) {
-            abort(404, 'File not found.');
+        if (Storage::disk('reports')->exists($path)) {
+            return response()->download(
+                Storage::disk('reports')->path($path)
+            );
         }
 
-        return response()->download(
-            Storage::disk('local')->path($filename)
-        );
+        if (Storage::disk('public')->exists($path)) {
+            return response()->download(
+                Storage::disk('public')->path($path)
+            );
+        }
+
+        abort(404, 'File not found!!.');
     }
 }
