@@ -11,9 +11,11 @@ Schedule::command('telescope:prune')->everyTwoHours();
 Schedule::command('backup:run')->daily()->at('08:00');
 Schedule::command('backup:clean')->daily()->at('20:00');
 
-Schedule::command('storage:clear')->environments(['local'])->everySixHours();
+Schedule::command('storage:clear')->environments(['local'])->everyTwoHours();
 
 // Mock Activity Simulation (Webhooks)
 Schedule::command('mock:simulate-activity')->environments(['local'])->everyThirtySeconds();
 
 Schedule::command('app:send-inspiring-notification')->environments(['local'])->everyMinute();
+
+Schedule::command('reports:cleanup-old')->dailyAt('12:00');
