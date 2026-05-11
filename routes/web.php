@@ -43,9 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     });
 
     // Download Exported File
-    Route::get('/exports/download/{filename}', DownloadExportController::class)
+    Route::get('/exports/download/{path}', DownloadExportController::class)
         ->name('exports.download')
-        ->middleware('signed');
+        ->middleware('signed')
+        ->where('path', '.*');
 });
 
 require __DIR__.'/settings.php';
