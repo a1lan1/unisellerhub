@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useMarketplaceStore } from '@/stores/marketplace'
 import { useNotificationStore } from '@/stores/notification'
 import type { AppVariant, FlashMessage } from '@/types'
-import type { UserNotificationEvent, Notification } from '@/types'
+import type { Notification } from '@/types'
 
 type Props = {
   variant?: AppVariant;
@@ -68,14 +68,13 @@ onMounted(() => {
 
     userChannel.notification((notification: Notification) => {
       addNotification(notification)
-
-      snackbar.info({
-        text: `${notification.title}: ${notification.message}`
-      })
+      snackbar.info({ text: `${notification.title}: ${notification.message}` })
     })
 
-    userChannel.listen('.user.notification', (e: UserNotificationEvent) => {
-      snackbar.info({ text: e.message })
+    // Listen for export.ready event to automatically download the file
+    userChannel.listen('.export.ready', (e: { fileUrl: string; exportType: string }) => {
+      window.open(e.fileUrl, '_blank')
+      snackbar.success({ text: `${e.exportType} export file is ready and download started.` })
     })
   }
 })
