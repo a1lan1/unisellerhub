@@ -32,9 +32,14 @@ final readonly class SyncResultProcessorService implements SyncResultProcessorIn
      */
     public function processSuccess(array $data): void
     {
+        if (empty($data['marketplace'])) {
+            Log::warning('marketplace empty');
+            return;
+        }
+
         $operation = $data['operation'];
         $organizationId = (int) $data['organization_id'];
-        $marketplace = MarketplaceEnum::from($data['marketplace']);
+        $marketplace = MarketplaceEnum::tryFrom($data['marketplace']);
 
         $this->tenantManager->setOrganizationId($organizationId);
 

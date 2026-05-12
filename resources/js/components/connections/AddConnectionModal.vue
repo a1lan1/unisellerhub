@@ -121,7 +121,7 @@ const close = () => {
         </v-btn>
         <v-btn
           color="primary"
-          variant="elevated"
+          variant="tonal"
           :loading="isSaving"
           @click="submit"
         >

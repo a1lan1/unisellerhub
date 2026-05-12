@@ -62,7 +62,7 @@ const createOrganization = async() => {
         <v-spacer />
         <v-btn
           color="primary"
-          variant="elevated"
+          variant="tonal"
           :loading="isLoading"
           @click="createOrganization"
         >

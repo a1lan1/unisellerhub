@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 import { useSyncTable } from '@/composables/useSyncTable'
 import { useInventoryStore } from '@/stores/inventory'
@@ -12,6 +13,9 @@ const props = defineProps<{
 }>()
 
 const inventoryStore = useInventoryStore()
+const { isBulkUpdating } = storeToRefs(inventoryStore)
+const { pullBulk, updateStock } = inventoryStore
+
 const selected = ref<number[]>([])
 
 const {
@@ -35,7 +39,7 @@ const bulkPull = async() => {
     return
   }
 
-  await inventoryStore.pullBulk(selected.value)
+  await pullBulk(selected.value)
   selected.value = []
 }
 </script>
@@ -62,8 +66,8 @@ const bulkPull = async() => {
             size="small"
             color="primary"
             prepend-icon="mdi-download"
-            variant="elevated"
-            :loading="inventoryStore.isBulkUpdating"
+            variant="tonal"
+            :loading="isBulkUpdating"
             @click="bulkPull"
           >
             Pull Stocks for Selected
@@ -159,7 +163,7 @@ const bulkPull = async() => {
             variant="tonal"
             color="secondary"
             :disabled="!hasOrganization"
-            @click="inventoryStore.updateStock(item)"
+            @click="updateStock(item)"
           >
             Update
           </v-btn>

@@ -55,7 +55,7 @@ const handleSave = async(form: MarketplaceConnectionForm) => {
       />
       <v-btn
         color="primary"
-        variant="elevated"
+        variant="tonal"
         prepend-icon="mdi-plus"
         @click="showAddModal = true"
       >

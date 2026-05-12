@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 import { useSyncTable } from '@/composables/useSyncTable'
 import { useProductStore } from '@/stores/product'
@@ -13,6 +14,9 @@ const props = defineProps<{
 }>()
 
 const productStore = useProductStore()
+const { isBulkUpdating } = storeToRefs(productStore)
+const { syncBulk } = productStore
+
 const selected = ref<number[]>([])
 
 const {
@@ -41,7 +45,7 @@ const bulkSync = async() => {
     return
   }
 
-  await productStore.syncBulk(selected.value)
+  await syncBulk(selected.value)
   selected.value = []
 }
 </script>
@@ -68,8 +72,8 @@ const bulkSync = async() => {
             size="small"
             color="primary"
             prepend-icon="mdi-sync"
-            variant="elevated"
-            :loading="productStore.isBulkUpdating"
+            variant="tonal"
+            :loading="isBulkUpdating"
             @click="bulkSync"
           >
             Sync Selected

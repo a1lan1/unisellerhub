@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Product\Domain\Observers;
 
-use App\Modules\Product\Actions\GenerateProductEmbeddingAction;
+use App\Modules\Product\Application\Actions\GenerateProductEmbeddingAction;
 use App\Modules\Product\Domain\Models\Product;
 use Exception;
 

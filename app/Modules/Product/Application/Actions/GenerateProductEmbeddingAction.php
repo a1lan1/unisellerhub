@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Product\Actions;
+namespace App\Modules\Product\Application\Actions;
 
 use App\Modules\Product\Domain\Models\Product;
 use Illuminate\Support\Str;

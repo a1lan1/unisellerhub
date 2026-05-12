@@ -45,17 +45,21 @@ final class ConsumeSyncResultsCommand extends Command
 
         $callback = function (AMQPMessage $msg) use ($syncResultProcessorService): void {
             $data = json_decode($msg->getBody(), true);
-            $this->info(sprintf('Received result: [%s] for Org: %s from Marketplace: %s', $data['operation'], $data['organization_id'], $data['marketplace']));
-
-            // DEBUG
-            Log::debug('RAW DATA FROM GO:', [
-                'marketplace' => $data['marketplace'],
-                'operation' => $data['operation'],
-                'count' => is_array($data['data']) ? count($data['data']) : 0,
-                'sample' => is_array($data['data']) ? array_slice($data['data'], 0, 1) : $data['data'],
-            ]);
+            $this->info(sprintf(
+                'Received result: [%s] for Org: %s from Marketplace: %s',
+                $data['operation'],
+                $data['organization_id'],
+                $data['marketplace'] ?? null
+            ));
 
             try {
+                if (isset($data['marketplace']) && $data['marketplace'] === 'internal') {
+                    Log::info(sprintf('Skipping internal operation: [%s] for Org: %s', $data['operation'] ?? 'unknown', $data['organization_id'] ?? 'unknown'));
+                    $msg->ack();
+
+                    return;
+                }
+
                 if ($data['status'] === 'success') {
                     $syncResultProcessorService->processSuccess($data);
                 } else {

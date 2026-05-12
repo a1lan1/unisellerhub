@@ -27,7 +27,6 @@ use Override;
  * @property-read ProductListing|null $listing
  * @property-read Order $order
  *
- * @method static OrderItemBuilder<static>|OrderItem forOrganization(int $organizationId)
  * @method static OrderItemBuilder<static>|OrderItem newModelQuery()
  * @method static OrderItemBuilder<static>|OrderItem newQuery()
  * @method static OrderItemBuilder<static>|OrderItem query()
