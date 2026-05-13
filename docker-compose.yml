@@ -330,6 +330,24 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  geo_collector:
+    profiles:
+      - rabbitmq
+    build:
+      context: ./services/geo_collector
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
+      RABBITMQ_QUEUE: geo_reviews
+    networks:
+      - unisellerhub_app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
 networks:
   unisellerhub_app:
     name: unisellerhub_app

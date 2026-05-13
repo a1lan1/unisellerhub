@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+requests
+python-dotenv
+textblob
+pytest
+aio-pika
+python-json-logger
