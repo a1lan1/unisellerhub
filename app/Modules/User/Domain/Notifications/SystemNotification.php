@@ -12,6 +12,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Override;
 
@@ -26,7 +27,7 @@ class SystemNotification extends Notification implements ShouldBroadcast, Should
 
     public function via(object $notifiable): array
     {
-        return ['database', 'broadcast'];
+        return $this->data->channels;
     }
 
     public function toArray(object $notifiable): array
@@ -37,6 +38,22 @@ class SystemNotification extends Notification implements ShouldBroadcast, Should
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->data->toArray());
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        $mailMessage = (new MailMessage)
+            ->subject($this->data->title)
+            ->line($this->data->message);
+
+        if ($this->data->actionUrl) {
+            $mailMessage->action('View Details', $this->data->actionUrl);
+        }
+
+        return $mailMessage;
     }
 
     /**

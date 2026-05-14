@@ -14,6 +14,7 @@ final readonly class NotificationData
         public NotificationTypeEnum $type = NotificationTypeEnum::INFO,
         public ?string $actionUrl = null,
         public ?string $icon = null,
+        public array $channels = ['database', 'broadcast'],
     ) {}
 
     public static function fromArray(array $data): self
@@ -26,6 +27,7 @@ final readonly class NotificationData
                 : NotificationTypeEnum::tryFrom((string) ($data['type'] ?? 'info')) ?? NotificationTypeEnum::INFO,
             actionUrl: $data['action_url'] ?? null,
             icon: $data['icon'] ?? null,
+            channels: $data['channels'] ?? ['database', 'broadcast'],
         );
     }
 
@@ -37,6 +39,7 @@ final readonly class NotificationData
             'type' => $this->type->value,
             'action_url' => $this->actionUrl,
             'icon' => $this->icon,
+            'channels' => $this->channels,
         ];
     }
 }
