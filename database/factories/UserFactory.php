@@ -41,6 +41,7 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
+            'telegram_chat_id' => fake()->optional()->randomNumber(9, true),
         ];
     }
 

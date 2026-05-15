@@ -20,6 +20,7 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'telegram_chat_id' => $this->telegramChatIdRules($userId),
         ];
     }
 
@@ -44,6 +45,24 @@ trait ProfileValidationRules
             'required',
             'string',
             'email',
+            'max:255',
+            $userId === null
+                ? Rule::unique(User::class)
+                : Rule::unique(User::class)->ignore($userId),
+        ];
+    }
+
+    /**
+     * Get the validation rules used to validate user telegram_chat_id.
+     *
+     * @return array<int, Unique|string>
+     */
+    protected function telegramChatIdRules(?int $userId = null): array
+    {
+        return [
+            'nullable',
+            'string',
+            'numeric',
             'max:255',
             $userId === null
                 ? Rule::unique(User::class)

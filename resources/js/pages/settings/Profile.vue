@@ -88,6 +88,24 @@ const { user } = storeToRefs(authStore)
         />
       </div>
 
+      <!-- New Telegram Chat ID field -->
+      <div class="grid gap-2">
+        <Label for="telegram_chat_id">Telegram Chat ID</Label>
+        <Input
+          id="telegram_chat_id"
+          type="text"
+          class="mt-1 block w-full"
+          name="telegram_chat_id"
+          :default-value="user.telegram_chat_id"
+          autocomplete="telegram_chat_id"
+          placeholder="Your Telegram Chat ID"
+        />
+        <InputError
+          class="mt-2"
+          :message="errors.telegram_chat_id"
+        />
+      </div>
+
       <div v-if="mustVerifyEmail && !user.email_verified_at">
         <p class="-mt-4 text-sm text-muted-foreground">
           Your email address is unverified.

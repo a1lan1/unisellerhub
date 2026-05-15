@@ -56,6 +56,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property int|null $organization_id
+ * @property string|null $telegram_chat_id
  * @property-read string $avatar
  * @property-read bool $has_organization
  * @property-read Collection<int, Location> $locations
@@ -93,6 +94,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User whereOrganizationId($value)
  * @method static Builder<static>|User wherePassword($value)
  * @method static Builder<static>|User whereRememberToken($value)
+ * @method static Builder<static>|User whereTelegramChatId($value)
  * @method static Builder<static>|User whereTwoFactorConfirmedAt($value)
  * @method static Builder<static>|User whereTwoFactorRecoveryCodes($value)
  * @method static Builder<static>|User whereTwoFactorSecret($value)
@@ -104,7 +106,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @mixin \Eloquent
  */
 #[Appends(['avatar', 'has_organization'])]
-#[Fillable(['name', 'email', 'password', 'organization_id'])]
+#[Fillable(['name', 'email', 'password', 'organization_id', 'telegram_chat_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements FilamentUser, HasMedia
