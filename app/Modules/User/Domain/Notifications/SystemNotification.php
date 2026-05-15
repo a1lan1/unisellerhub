@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Domain\Notifications;
 
+use App\Modules\User\Application\Notifications\Channels\TelegramChannel;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -25,16 +26,36 @@ class SystemNotification extends Notification implements ShouldBroadcast, Should
         public NotificationData $data
     ) {}
 
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
     public function via(object $notifiable): array
     {
-        return $this->data->channels;
+        $channels = $this->data->channels;
+
+        if (in_array('telegram', $channels, true) && $notifiable->telegram_chat_id) {
+            $channels = array_diff($channels, ['telegram']);
+            $channels[] = TelegramChannel::class;
+        }
+
+        return $channels;
     }
 
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(object $notifiable): array
     {
         return $this->data->toArray();
     }
 
+    /**
+     * Get the broadcastable representation of the notification.
+     */
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->data->toArray());
@@ -57,6 +78,22 @@ class SystemNotification extends Notification implements ShouldBroadcast, Should
     }
 
     /**
+     * Get the Telegram representation of the notification.
+     *
+     * @return array<string, string>
+     */
+    public function toTelegram(User $notifiable): array
+    {
+        return [
+            'text' => "<b>{$this->data->title}</b>\n".$this->data->message.
+                      ($this->data->actionUrl ? "\n\n<a href=\"{$this->data->actionUrl}\">View Details</a>" : ''),
+            'parse_mode' => 'HTML',
+        ];
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
      * @return array<int, Channel>
      */
     #[Override]
