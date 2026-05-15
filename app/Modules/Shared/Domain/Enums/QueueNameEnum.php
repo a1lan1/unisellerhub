@@ -13,6 +13,7 @@ enum QueueNameEnum: string
     case ReportResults = 'report.results';
     case NotificationsTelegram = 'notifications.telegram';
     case PriceTasks = 'price.tasks';
+    case GeoReviews = 'geo_reviews';
     case MeilisearchTasks = 'meilisearch.tasks';
     case HighPriority = 'high_priority';
     case LowPriority = 'low_priority';

@@ -330,6 +330,29 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  geo_reviews_consumer:
+    profiles:
+      - rabbitmq
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: >
+      php artisan rabbitmq:consume-geo-reviews
+    volumes:
+      - .:/var/www/html
+    networks:
+      - unisellerhub_app
+    depends_on:
+      app:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      pgsql:
+        condition: service_healthy
+
   geo_collector:
     profiles:
       - rabbitmq
