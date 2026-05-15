@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\User\Domain\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Modules\Geo\Domain\Models\Location;
+use App\Modules\Geo\Domain\Models\ResponseTemplate;
+use App\Modules\Geo\Domain\Models\Review;
 use App\Modules\Shared\Domain\Enums\MediaCollection;
 use App\Modules\User\Domain\Enums\RoleEnum;
 use Carbon\CarbonImmutable;
@@ -20,6 +23,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\DatabaseNotification;
@@ -53,6 +58,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $organization_id
  * @property-read string $avatar
  * @property-read bool $has_organization
+ * @property-read Collection<int, Location> $locations
+ * @property-read int|null $locations_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
@@ -60,6 +67,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read Organization|null $organization
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
+ * @property-read Collection<int, ResponseTemplate> $responseTemplates
+ * @property-read int|null $response_templates_count
+ * @property-read Collection<int, Review> $reviews
+ * @property-read int|null $reviews_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
  * @property-read Collection<int, Permission> $teams
@@ -144,6 +155,42 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    /**
+     * @return HasMany<ResponseTemplate, $this>
+     */
+    public function responseTemplates(): HasMany
+    {
+        return $this->hasMany(ResponseTemplate::class, 'user_id');
+    }
+
+    /**
+     * @return HasMany<Location, $this>
+     */
+    public function locations(): HasMany
+    {
+        return $this->hasMany(Location::class, 'user_id');
+    }
+
+    /**
+     * Get all of the reviews for the user's locations.
+     *
+     * @return HasManyThrough<Review, Location, $this>
+     */
+    public function reviews(): HasManyThrough
+    {
+        return $this->hasManyThrough(Review::class, Location::class);
+    }
+
+    public function averageRating(): float
+    {
+        return (float) $this->reviews()->avg('rating');
+    }
+
+    public function reviewsCount(): int
+    {
+        return $this->reviews()->count();
     }
 
     protected function hasOrganization(): Attribute
