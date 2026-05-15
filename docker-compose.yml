@@ -371,6 +371,19 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  telegram_bot:
+    build:
+      context: ./services/telegram_bot
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+    networks:
+      - unisellerhub_app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
 networks:
   unisellerhub_app:
     name: unisellerhub_app

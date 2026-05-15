@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     /*
@@ -33,6 +35,15 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
+    ],
+
+    'geo_collector' => [
+        'url' => env('GEO_COLLECTOR_SERVICE_URL', 'http://geo_collector:8003'),
+        'timeout' => env('GEO_COLLECTOR_SERVICE_TIMEOUT', 5),
+    ],
+
+    'telegram' => [
+        'admin_chat_id' => env('TELEGRAM_ADMIN_CHAT_ID'),
     ],
 
 ];
