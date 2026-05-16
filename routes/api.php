@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Modules\Geo\Interfaces\Http\Controllers\Api\LocationController;
+use App\Modules\Geo\Interfaces\Http\Controllers\Api\ResponseTemplateController;
+use App\Modules\Geo\Interfaces\Http\Controllers\Api\ReviewController;
+use App\Modules\Geo\Interfaces\Http\Controllers\Api\SellerController;
 use App\Modules\Inventory\Interfaces\Http\Controllers\Api\InventorySyncController;
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\MarketplaceConnectionController;
 use App\Modules\Marketplace\Interfaces\Http\Controllers\Api\SearchController;
@@ -28,6 +32,8 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::delete('{id}', [NotificationController::class, 'destroy'])->name('destroy');
         Route::delete('', [NotificationController::class, 'clearAll'])->name('clear_all');
     });
+
+    Route::get('sellers', [SellerController::class, 'list'])->name('sellers.list');
 
     Route::middleware(['has_org'])->group(function (): void {
         Route::get('search', SearchController::class)->name('api.search');
@@ -63,6 +69,16 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
 
         // Price Analysis
         Route::post('price-analysis/analyze', [PriceAnalysisController::class, 'analyze'])->name('api.price-analysis.analyze');
+
+        Route::prefix('geo')->name('api.geo.')->group(function (): void {
+            Route::apiResource('locations', LocationController::class);
+            Route::apiResource('response-templates', ResponseTemplateController::class);
+
+            Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
+            Route::post('reviews', [ReviewController::class, 'store'])->middleware('throttle:reviews')->name('reviews.store');
+
+            Route::get('metrics', [ReviewController::class, 'metrics'])->name('metrics');
+        });
     });
 });
 

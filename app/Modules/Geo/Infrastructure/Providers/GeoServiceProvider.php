@@ -21,7 +21,10 @@ use App\Modules\Geo\Domain\Repositories\ReviewRepositoryInterface;
 use App\Modules\Geo\Infrastructure\Repositories\LocationRepository;
 use App\Modules\Geo\Infrastructure\Repositories\ResponseTemplateRepository;
 use App\Modules\Geo\Infrastructure\Repositories\ReviewRepository;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -55,6 +58,6 @@ class GeoServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        RateLimiter::for('reviews', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
     }
 }
