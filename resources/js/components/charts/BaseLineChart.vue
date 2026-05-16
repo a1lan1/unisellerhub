@@ -1,25 +1,43 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+interface Series {
+   name: string;
+   data: number[];
+}
+
 interface Props {
-  series: { name: string; data: number[] }[];
+  series: Series[];
   categories: string[];
   height?: number | string;
   colors?: string[];
   title?: string;
+  zoomEnabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   height: 350,
-  colors: () => ['#9333ea', '#2563eb', '#dc2626', '#ca8a04', '#16a34a'],
-  title: undefined
+  colors: () => [
+    '#42A5F5',
+    '#2563eb',
+    '#42A5F5',
+    '#66BB6A',
+    '#FFA726',
+    '#26C6DA',
+    '#FF7043',
+    '#5C6BC0',
+    '#D4E157',
+    '#8D6E63'
+  ],
+  title: undefined,
+  zoomEnabled: false
 })
 
 const chartOptions = computed(() => ({
   chart: {
     type: 'line',
     toolbar: { show: false },
-    zoom: { enabled: false },
+    zoom: { enabled: props.zoomEnabled },
     fontFamily: 'inherit'
   },
   colors: props.colors,
