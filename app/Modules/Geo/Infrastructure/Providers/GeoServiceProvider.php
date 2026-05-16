@@ -7,10 +7,12 @@ namespace App\Modules\Geo\Infrastructure\Providers;
 use App\Modules\Geo\Application\Services\CachedReviewService;
 use App\Modules\Geo\Application\Services\GeoCollectorService;
 use App\Modules\Geo\Application\Services\LocationService;
+use App\Modules\Geo\Application\Services\ResponseTemplateService;
 use App\Modules\Geo\Application\Services\ReviewService;
 use App\Modules\Geo\Application\Services\SellerService;
 use App\Modules\Geo\Domain\Interfaces\GeoCollectorServiceInterface;
 use App\Modules\Geo\Domain\Interfaces\LocationServiceInterface;
+use App\Modules\Geo\Domain\Interfaces\ResponseTemplateServiceInterface;
 use App\Modules\Geo\Domain\Interfaces\ReviewServiceInterface;
 use App\Modules\Geo\Domain\Interfaces\SellerServiceInterface;
 use App\Modules\Geo\Domain\Repositories\LocationRepositoryInterface;
@@ -31,6 +33,7 @@ class GeoServiceProvider extends ServiceProvider
     public array $bindings = [
         SellerServiceInterface::class => SellerService::class,
         LocationServiceInterface::class => LocationService::class,
+        ResponseTemplateServiceInterface::class => ResponseTemplateService::class,
 
         ReviewRepositoryInterface::class => ReviewRepository::class,
         ResponseTemplateRepositoryInterface::class => ResponseTemplateRepository::class,
