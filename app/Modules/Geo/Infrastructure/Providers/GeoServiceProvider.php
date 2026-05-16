@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Geo\Infrastructure\Providers;
 
+use App\Modules\Geo\Application\Services\GeoCollectorService;
+use App\Modules\Geo\Domain\Interfaces\GeoCollectorServiceInterface;
 use App\Modules\Geo\Domain\Repositories\LocationRepositoryInterface;
 use App\Modules\Geo\Domain\Repositories\ResponseTemplateRepositoryInterface;
 use App\Modules\Geo\Domain\Repositories\ReviewRepositoryInterface;
@@ -27,7 +29,10 @@ class GeoServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
-        //
+        $this->app->singleton(fn (): GeoCollectorServiceInterface => new GeoCollectorService(
+            baseUrl: config('services.geo_collector.url'),
+            timeout: config('services.geo_collector.timeout'),
+        ));
     }
 
     public function boot(): void

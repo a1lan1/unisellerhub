@@ -1,12 +1,13 @@
 <?php
 
 use App\Modules\Activity\Infrastructure\Providers\ActivityServiceProvider;
+use App\Modules\Geo\Infrastructure\Providers\GeoServiceProvider;
 use App\Modules\Inventory\Infrastructure\Providers\InventoryServiceProvider;
 use App\Modules\Marketplace\Infrastructure\Providers\MarketplaceServiceProvider;
 use App\Modules\MockMarketplace\Infrastructure\Providers\MockMarketplaceServiceProvider;
 use App\Modules\Monitoring\Infrastructure\Providers\PrometheusServiceProvider;
 use App\Modules\Order\Infrastructure\Providers\OrderServiceProvider;
-use App\Modules\PriceAnalysis\Providers\PriceAnalysisServiceProvider;
+use App\Modules\PriceAnalysis\Infrastructure\Providers\PriceAnalysisServiceProvider;
 use App\Modules\Product\Infrastructure\Providers\ProductServiceProvider;
 use App\Modules\Report\Infrastructure\Providers\ReportServiceProvider;
 use App\Modules\Shared\Infrastructure\Providers\SharedServiceProvider;
@@ -34,4 +35,5 @@ return [
     MockMarketplaceServiceProvider::class,
     ReportServiceProvider::class,
     PriceAnalysisServiceProvider::class,
+    GeoServiceProvider::class,
 ];
