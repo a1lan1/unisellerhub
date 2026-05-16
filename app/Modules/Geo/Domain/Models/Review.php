@@ -8,11 +8,13 @@ use App\Modules\Geo\Domain\Data\ReviewFilterData;
 use App\Modules\Geo\Domain\Enums\ReviewSourceEnum;
 use App\Modules\Geo\Domain\Enums\SentimentEnum;
 use App\Modules\Geo\Domain\Models\Builders\ReviewBuilder;
+use App\Modules\Geo\Domain\Observers\ReviewObserver;
 use App\Modules\Geo\Domain\Policies\ReviewPolicy;
 use App\Modules\User\Domain\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -56,6 +58,7 @@ use Override;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([ReviewObserver::class])]
 #[UseEloquentBuilder(ReviewBuilder::class)]
 #[Fillable(['location_id', 'source', 'external_id', 'author_name', 'text', 'rating', 'sentiment', 'published_at'])]
 #[UseFactory(ReviewFactory::class)]
