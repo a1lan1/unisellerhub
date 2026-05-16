@@ -1,9 +1,16 @@
+import type { User } from '@/types'
 import type { MarketplaceEnum, OrderStatusEnum } from '@/types/enums'
 
 export type Organization = {
   id: number;
   name: string;
   slug: string;
+};
+
+export interface Seller extends User {
+  average_rating: number;
+  reviews_count: number;
+  products?: Product[];
 };
 
 export type MarketplaceConnection = {
@@ -96,4 +103,3 @@ export type ActivityLog = {
   created_at: string;
   human_time: string;
 };
-
