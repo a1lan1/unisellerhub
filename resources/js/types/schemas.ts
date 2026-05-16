@@ -60,3 +60,23 @@ export const marketplaceConnectionSchema = z.discriminatedUnion('marketplace', [
 ])
 
 export type MarketplaceConnectionForm = z.infer<typeof marketplaceConnectionSchema>;
+
+export const reviewFormSchema = z.object({
+  rating: z.number().min(1, 'Rating is required'),
+  comment: z.string().min(1, 'Comment is required'),
+  selectedLocationId: z.number().min(1, 'Location is required')
+})
+
+export type ReviewForm = z.infer<typeof reviewFormSchema>;
+
+export const reviewPayloadSchema = z.object({
+  location_id: z.number().min(1, 'Location ID is required'),
+  rating: z.number().min(1, 'Rating is required'),
+  text: z.string().min(1, 'Text is required'),
+  source: z.string(),
+  author_name: z.string(),
+  external_id: z.string(),
+  published_at: z.string()
+})
+
+export type ReviewPayload = z.infer<typeof reviewPayloadSchema>;
