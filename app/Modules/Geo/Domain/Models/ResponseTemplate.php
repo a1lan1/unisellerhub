@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Geo\Domain\Models;
 
+use App\Modules\Geo\Domain\Observers\ResponseTemplateObserver;
 use App\Modules\Geo\Domain\Policies\ResponseTemplatePolicy;
 use App\Modules\User\Domain\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Factories\ResponseTemplateFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([ResponseTemplateObserver::class])]
 #[UsePolicy(ResponseTemplatePolicy::class)]
 #[Fillable([
     'user_id',
