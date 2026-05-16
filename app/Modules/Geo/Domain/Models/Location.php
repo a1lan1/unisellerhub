@@ -6,12 +6,14 @@ namespace App\Modules\Geo\Domain\Models;
 
 use App\Modules\Geo\Domain\Casts\AddressCast;
 use App\Modules\Geo\Domain\Enums\LocationTypeEnum;
+use App\Modules\Geo\Domain\Observers\LocationObserver;
 use App\Modules\Geo\Domain\Policies\LocationPolicy;
 use App\Modules\Shared\ValueObjects\Address;
 use App\Modules\User\Domain\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Factories\LocationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,6 +57,7 @@ use Override;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy([LocationObserver::class])]
 #[UsePolicy(LocationPolicy::class)]
 #[Fillable([
     'user_id',
