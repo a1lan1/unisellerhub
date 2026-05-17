@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Modules\User\Domain\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Override;
@@ -44,6 +46,17 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
         $this->configureDefaults();
         $this->configureModels();
+
+        Gate::define('viewApiDocs', function (?User $user) {
+            if (! $this->app->isProduction()) {
+                return true;
+            }
+
+            return $user && in_array($user->email, [
+                'test@example.com',
+            ]);
+        });
+
     }
 
     /**
