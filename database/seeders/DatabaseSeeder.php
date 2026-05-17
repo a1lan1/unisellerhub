@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
                 CategorySeeder::class,
                 MockMarketplaceSeeder::class,
                 // SampleSalesSeeder::class,
+                GeoSeeder::class,
             ]);
         }
     }
