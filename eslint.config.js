@@ -53,6 +53,9 @@ export default defineConfigWithVueTs(
       'comma-dangle': ['error', 'never'],
       'object-curly-spacing': ['error', 'always'],
       'quotes': ['error', 'single'],
+      'vue/component-name-in-template-casing': ['error', 'PascalCase', {
+        registeredComponentsOnly: true
+      }],
       'keyword-spacing': ['error'],
       'space-before-function-paren': ['error', 'never'],
       'space-before-blocks': ['error', 'always'],
