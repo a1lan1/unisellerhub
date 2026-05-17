@@ -1,3 +1,5 @@
+import { formatDistanceToNow } from 'date-fns'
+
 export function formatCurrency(
   value: number | string,
   currency: string = 'RUB'
@@ -28,4 +30,12 @@ export function formatDate(dateString: string): string {
     hour: '2-digit',
     minute: '2-digit'
   }).format(date)
+}
+
+export function formatDateDistance(dateString: string | undefined): string {
+  if (!dateString) {
+    return formatDistanceToNow(new Date(), { addSuffix: true })
+  }
+
+  return formatDistanceToNow(new Date(dateString), { addSuffix: true })
 }

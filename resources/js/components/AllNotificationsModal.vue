@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { formatDistanceToNow } from 'date-fns'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useNotificationStore } from '@/stores/notification'
 import type { Notification } from '@/types'
+import { formatDateDistance } from '@/utils/formatters'
 
 const props = defineProps<{
   modelValue: boolean
@@ -125,11 +125,7 @@ const getIconColor = (type: string) => {
               <template #append>
                 <div class="align-center text-right">
                   <div class="text-xxs">
-                    {{
-                      formatDistanceToNow(new Date(notification.created_at), {
-                        addSuffix: true,
-                      })
-                    }}
+                    {{ formatDateDistance(notification.created_at) }}
                   </div>
 
                   <div class="flex justify-end gap-1">
