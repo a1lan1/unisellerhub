@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Infrastructure\Repositories;
 
-use App\Modules\User\Domain\Interfaces\NotificationRepositoryInterface;
 use App\Modules\User\Domain\Models\User;
+use App\Modules\User\Domain\Repositories\NotificationRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\DatabaseNotification;
 

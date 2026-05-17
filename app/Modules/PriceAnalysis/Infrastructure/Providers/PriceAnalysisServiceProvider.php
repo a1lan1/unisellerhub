@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\PriceAnalysis\Providers;
+namespace App\Modules\PriceAnalysis\Infrastructure\Providers;
 
 use App\Modules\PriceAnalysis\Application\Services\PriceAnalysisSyncResultProcessor;
 use App\Modules\PriceAnalysis\Domain\Repositories\PriceAnalysisRepositoryInterface;

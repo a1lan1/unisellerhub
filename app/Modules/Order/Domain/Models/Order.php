@@ -6,6 +6,7 @@ namespace App\Modules\Order\Domain\Models;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Order\Domain\Data\OrderFilterData;
+use App\Modules\Order\Domain\Enums\OrderStatusEnum;
 use App\Modules\Order\Domain\Models\Builders\OrderBuilder;
 use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use App\Modules\User\Domain\Models\Organization;
@@ -34,7 +35,7 @@ use Override;
  * @property int|null $organization_id
  * @property MarketplaceEnum $marketplace
  * @property string $external_id
- * @property string $status
+ * @property OrderStatusEnum $status
  * @property Money $total_price
  * @property CarbonImmutable $order_date
  * @property array<array-key, mixed>|null $delivery_info
@@ -84,10 +85,11 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'delivery_info' => 'array',
             'order_date' => 'datetime',
             'last_synced_at' => 'datetime',
+            'status' => OrderStatusEnum::class,
             'total_price' => MoneyIntegerCast::class,
-            'delivery_info' => 'array',
             'marketplace' => MarketplaceEnum::class,
         ];
     }

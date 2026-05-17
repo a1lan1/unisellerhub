@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\User\Application\Services;
 
 use App\Modules\User\Domain\Data\NotificationData;
-use App\Modules\User\Domain\Interfaces\NotificationRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
 use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Models\User;
 use App\Modules\User\Domain\Notifications\SystemNotification;
+use App\Modules\User\Domain\Repositories\NotificationRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 readonly class NotificationService implements NotificationServiceInterface

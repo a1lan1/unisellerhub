@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureModels();
 
-        Gate::define('viewApiDocs', function (?User $user) {
+        Gate::define('viewApiDocs', function (?User $user): bool {
             if (! $this->app->isProduction()) {
                 return true;
             }

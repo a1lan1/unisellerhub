@@ -32,13 +32,15 @@ final readonly class SyncResultProcessorService implements SyncResultProcessorIn
      */
     public function processSuccess(array $data): void
     {
+        $operation = $data['operation'] ?? null;
+        $organizationId = (int) ($data['organization_id'] ?? 0);
+
         if (empty($data['marketplace'])) {
             Log::warning('marketplace empty');
+
             return;
         }
 
-        $operation = $data['operation'];
-        $organizationId = (int) $data['organization_id'];
         $marketplace = MarketplaceEnum::tryFrom($data['marketplace']);
 
         $this->tenantManager->setOrganizationId($organizationId);
@@ -77,8 +79,8 @@ final readonly class SyncResultProcessorService implements SyncResultProcessorIn
 
     public function processFailure(array $data): void
     {
+        $operation = $data['operation'] ?? null;
         $marketplace = $data['marketplace'];
-        $operation = $data['operation'];
 
         Log::error(sprintf('Microservice Error for %s [%s]: %s', $marketplace, $operation, $data['error_message']), $data);
 

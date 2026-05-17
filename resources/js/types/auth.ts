@@ -6,6 +6,7 @@ export type User = {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    telegram_chat_id?: string;
     [key: string]: unknown;
 };
 

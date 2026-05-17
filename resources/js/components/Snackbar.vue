@@ -8,7 +8,7 @@ const { messages } = storeToRefs(snackbarStore)
 </script>
 
 <template>
-  <v-snackbar-queue
+  <VSnackbarQueue
     v-model="messages"
     close-on-content-click
     location="top right"

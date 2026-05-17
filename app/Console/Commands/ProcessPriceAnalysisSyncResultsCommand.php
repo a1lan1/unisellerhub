@@ -31,6 +31,8 @@ final class ProcessPriceAnalysisSyncResultsCommand extends Command
 
         $connection = $rabbitMQConnectionService->connect();
         if (! $connection instanceof AMQPStreamConnection) {
+            $this->error('Failed to establish RabbitMQ connection.');
+
             return 1;
         }
 

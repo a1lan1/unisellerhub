@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\User\Domain\Interfaces;
+namespace App\Modules\User\Domain\Repositories;
 
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Database\Eloquent\Collection;
