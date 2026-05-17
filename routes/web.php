@@ -10,6 +10,7 @@ use App\Modules\Product\Interfaces\Http\Controllers\ProductController;
 use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
 use App\Modules\Report\Interfaces\Http\Controllers\DownloadExportController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::inertia('/', 'Welcome', [
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/', [MarketplaceController::class, 'show'])->name('show');
         Route::get('/logs', [MarketplaceController::class, 'logs'])->name('logs');
         Route::get('/messenger', [MarketplaceController::class, 'messenger'])->name('messenger');
+    });
+
+    Route::prefix('geo')->name('geo.')->group(function (): void {
+        Route::get('dashboard', fn () => Inertia::render('geo/Dashboard'))->name('dashboard');
     });
 
     // Analytics
