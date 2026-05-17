@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DashboardController;
 use App\Modules\Geo\Interfaces\Http\Controllers\LocationController;
+use App\Modules\Geo\Interfaces\Http\Controllers\SellerController;
 use App\Modules\Inventory\Interfaces\Http\Controllers\InventoryController;
 use App\Modules\Marketplace\Interfaces\Http\Controllers\MarketplaceController;
 use App\Modules\Order\Interfaces\Http\Controllers\OrderController;
@@ -37,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/logs', [MarketplaceController::class, 'logs'])->name('logs');
         Route::get('/messenger', [MarketplaceController::class, 'messenger'])->name('messenger');
     });
+
+    Route::get('sellers/{seller}', [SellerController::class, 'show'])->name('sellers.show');
 
     Route::prefix('geo')->name('geo.')->group(function (): void {
         Route::get('dashboard', fn () => Inertia::render('geo/Dashboard'))->name('dashboard');
