@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
-import { FolderGit2, LayoutGrid, Package, Warehouse, ShoppingCart, BarChart3, Calculator } from 'lucide-vue-next'
+import { Link, usePage } from '@inertiajs/vue3'
+import { FolderGit2, LayoutGrid, Package, Warehouse, ShoppingCart, BarChart3, Calculator, Map, MapPin, Radar } from 'lucide-vue-next'
+import { computed } from 'vue'
 import AppLogo from '@/components/AppLogo.vue'
 import NavFooter from '@/components/NavFooter.vue'
 import NavMain from '@/components/NavMain.vue'
@@ -17,13 +18,20 @@ import {
 import { dashboard } from '@/routes'
 import { abc as abcAnalytics, profitability as profitabilityAnalytics } from '@/routes/analytics'
 import { dashboard as filament } from '@/routes/filament/admin/pages'
+import { dashboard as geoDashboard } from '@/routes/geo'
+import { index as geoLocations } from '@/routes/geo/locations'
 import { index as horizon } from '@/routes/horizon'
 import { index as inventoryIndex } from '@/routes/inventory'
 import { index as logViewer } from '@/routes/log-viewer'
 import { index as ordersIndex } from '@/routes/orders'
 import { index as productsIndex } from '@/routes/products'
 import { defaultMethod as prometheus } from '@/routes/prometheus'
+import scramble from '@/routes/scramble'
+import { show as seller } from '@/routes/sellers'
 import type { NavItem } from '@/types'
+
+const page = usePage()
+const authUser = computed(() => page.props.auth.user)
 
 const mainNavItems: NavItem[] = [
   {
@@ -55,6 +63,24 @@ const mainNavItems: NavItem[] = [
     title: 'Profitability',
     href: profitabilityAnalytics(),
     icon: Calculator
+  }
+]
+
+const geoNavItems: NavItem[] = [
+  {
+    title: 'Dashboard',
+    href: geoDashboard(),
+    icon: Radar
+  },
+  {
+    title: 'Reviews',
+    href: seller({ id: authUser.value.id }),
+    icon: Map
+  },
+  {
+    title: 'My Locations',
+    href: geoLocations(),
+    icon: MapPin
   }
 ]
 
@@ -108,6 +134,11 @@ const devNavItems: NavItem[] = [
     title: 'Prometheus Metrics',
     href: prometheus(),
     icon: LayoutGrid
+  },
+  {
+    title: 'Scramble Docs',
+    href: scramble.docs.ui(),
+    icon: LayoutGrid
   }
 ]
 
@@ -142,6 +173,10 @@ const footerNavItems: NavItem[] = [
 
     <SidebarContent>
       <NavMain :items="mainNavItems" />
+      <NavMain
+        title="Geo"
+        :items="geoNavItems"
+      />
       <NavMarketplaces />
       <NavMain
         title="Dev"
