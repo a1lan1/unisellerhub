@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import DashboardMetrics from '@/components/geo/DashboardMetrics.vue'
 import ReviewFormDialog from '@/components/review/ReviewFormDialog.vue'
 import ReviewList from '@/components/review/ReviewList.vue'
 import { dashboard } from '@/routes'
+import { useAuthStore } from '@/stores/auth'
 import { useGeoStore } from '@/stores/geo'
 import { useReviewStore } from '@/stores/review'
 
@@ -18,8 +18,8 @@ defineOptions({
   }
 })
 
-const page = usePage()
-const auth = computed(() => page.props.auth)
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
 
 const geoStore = useGeoStore()
 const { locations } = storeToRefs(geoStore)
@@ -80,7 +80,7 @@ onMounted(async() => {
 
       <ReviewFormDialog
         :location-id="selectedLocationId"
-        :author-name="auth.user.name"
+        :author-name="user.name"
       />
     </div>
 

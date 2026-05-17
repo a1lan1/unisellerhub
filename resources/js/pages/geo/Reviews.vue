@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import SellerList from '@/components/geo/SellerList.vue'
 import ReviewForm from '@/components/review/ReviewForm.vue'
 import ReviewList from '@/components/review/ReviewList.vue'
 import { dashboard } from '@/routes'
+import { useAuthStore } from '@/stores/auth'
 import { useReviewStore } from '@/stores/review'
 import type { Seller } from '@/types'
 
@@ -22,12 +22,12 @@ defineOptions({
   }
 })
 
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
+
 const reviewStore = useReviewStore()
 const { reviews, loading } = storeToRefs(reviewStore)
 const { fetchReviews } = reviewStore
-
-const page = usePage()
-const auth = computed(() => page.props.auth)
 
 onMounted(fetchReviews)
 </script>
@@ -92,12 +92,12 @@ onMounted(fetchReviews)
     <VRow>
       <VCol cols="12">
         <ReviewForm
-          v-if="auth.user?.id !== seller.id"
+          v-if="user?.id !== seller.id"
           :location-id="seller.id"
-          :author-name="auth.user.name"
+          :author-name="user.name"
         />
         <v-alert
-          v-else-if="!auth.user"
+          v-else-if="!user"
           type="info"
           variant="tonal"
           class="mb-6"

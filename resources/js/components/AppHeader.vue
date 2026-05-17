@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import NotificationBell from '@/components/NotificationBell.vue'
 import GlobalSearch from '@/components/search/GlobalSearch.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import UserMenuContent from '@/components/UserMenuContent.vue'
 import { getInitials } from '@/composables/useInitials'
+import { useAuthStore } from '@/stores/auth'
 import type { BreadcrumbItem } from '@/types'
 
 type Props = {
@@ -18,8 +18,8 @@ withDefaults(defineProps<Props>(), {
   breadcrumbs: () => []
 })
 
-const page = usePage()
-const auth = computed(() => page.props.auth)
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
 </script>
 
 <template>
@@ -42,14 +42,14 @@ const auth = computed(() => page.props.auth)
             >
               <Avatar class="size-8 overflow-hidden rounded-full">
                 <AvatarImage
-                  v-if="auth.user.avatar"
-                  :src="auth.user.avatar"
-                  :alt="auth.user.name"
+                  v-if="user.avatar"
+                  :src="user.avatar"
+                  :alt="user.name"
                 />
                 <AvatarFallback
                   class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
                 >
-                  {{ getInitials(auth.user?.name) }}
+                  {{ getInitials(user?.name) }}
                 </AvatarFallback>
               </Avatar>
             </Button>
@@ -58,7 +58,7 @@ const auth = computed(() => page.props.auth)
             align="end"
             class="w-56"
           >
-            <UserMenuContent :user="auth.user" />
+            <UserMenuContent :user="user" />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

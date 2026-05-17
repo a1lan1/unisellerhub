@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import { FolderGit2, LayoutGrid, Package, Warehouse, ShoppingCart, BarChart3, Calculator, Map, MapPin, Radar } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import AppLogo from '@/components/AppLogo.vue'
 import NavFooter from '@/components/NavFooter.vue'
 import NavMain from '@/components/NavMain.vue'
@@ -28,10 +28,11 @@ import { index as productsIndex } from '@/routes/products'
 import { defaultMethod as prometheus } from '@/routes/prometheus'
 import scramble from '@/routes/scramble'
 import { show as seller } from '@/routes/sellers'
+import { useAuthStore } from '@/stores/auth'
 import type { NavItem } from '@/types'
 
-const page = usePage()
-const authUser = computed(() => page.props.auth.user)
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
 
 const mainNavItems: NavItem[] = [
   {
@@ -74,7 +75,7 @@ const geoNavItems: NavItem[] = [
   },
   {
     title: 'Reviews',
-    href: seller({ id: authUser.value.id }),
+    href: seller({ id: user.value.id }),
     icon: Map
   },
   {
