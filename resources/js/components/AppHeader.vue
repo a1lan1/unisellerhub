@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import NotificationBell from '@/components/NotificationBell.vue'
 import GlobalSearch from '@/components/search/GlobalSearch.vue'
+import BackgroundToggleButton from '@/components/theme/BackgroundToggleButton.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -32,6 +33,8 @@ const { user } = storeToRefs(authStore)
         <GlobalSearch />
         <!-- Notifications -->
         <NotificationBell />
+        <!-- Background -->
+        <BackgroundToggleButton />
 
         <DropdownMenu>
           <DropdownMenuTrigger :as-child="true">
