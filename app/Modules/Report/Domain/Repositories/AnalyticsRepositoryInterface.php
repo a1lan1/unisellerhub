@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 interface AnalyticsRepositoryInterface
 {
-    public function getProductRevenue(int $organizationId, int $days = 30): Collection;
+    public function getProductRevenue(int $organizationId, string $endDate, int $days = 30): Collection;
 
     public function getProductListingsWithCosts(int $organizationId): Collection;
 }

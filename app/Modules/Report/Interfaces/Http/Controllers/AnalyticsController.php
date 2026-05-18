@@ -21,8 +21,13 @@ class AnalyticsController extends Controller
 
     public function abc(AbcAnalysisRequest $request): Response
     {
+        $endDate = $request->validated('endDate');
+        $days = $request->validated('days');
+
         return Inertia::render('Analytics/Abc', [
-            'abc' => $this->analyticsService->getAbcAnalysis($request->user()),
+            'abc' => $this->analyticsService->getAbcAnalysis($request->user(), $endDate, $days),
+            'selectedEndDate' => $endDate,
+            'days' => $days,
         ]);
     }
 

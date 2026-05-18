@@ -26,7 +26,7 @@ class OrderFactory extends Factory
             'external_id' => (string) fake()->unique()->numberBetween(100000, 999999),
             'status' => 'new',
             'total_price' => fake()->numberBetween(1000, 100000), // In kopeks
-            'order_date' => now(),
+            'order_date' => fake()->dateTimeBetween('-1 year', 'now'),
             'organization_id' => Organization::factory(),
             'delivery_info' => [
                 'customer_name' => fake()->name(),

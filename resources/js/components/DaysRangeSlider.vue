@@ -1,50 +1,32 @@
 <script setup lang="ts">
-import {
-  parseISO,
-  format,
-  subDays,
-  differenceInCalendarDays,
-  isValid
-} from 'date-fns'
 import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{
-  initialDate: string // YYYY-MM-DD
+  initialDays: number
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:date', value: string): void
+  (e: 'update:days', value: number): void
 }>()
 
-const DAYS_RANGE = 30
+const DAYS_OPTIONS = [7, 14, 30, 60, 90, 180, 365]
 
-const today = new Date()
+const initialIndex = DAYS_OPTIONS.indexOf(props.initialDays)
+const value = ref(initialIndex !== -1 ? initialIndex : DAYS_OPTIONS.indexOf(30))
 
-const parsedInitialDate = computed(() => {
-  const date = parseISO(props.initialDate);
-  return isValid(date) ? date : today;
-});
-
-const initialOffset = differenceInCalendarDays(today, parsedInitialDate.value)
-
-const value = ref(DAYS_RANGE - Math.min(Math.max(initialOffset, 0), DAYS_RANGE))
-
-const currentDate = computed(() => {
-  return subDays(today, DAYS_RANGE - value.value)
-})
+const selectedDays = computed(() => DAYS_OPTIONS[value.value])
 
 const marks = computed(() => {
   const result: Record<number, string> = {}
-
-  for (let i = 0; i <= DAYS_RANGE; i += 3) {
-    result[i] = format(subDays(today, DAYS_RANGE - i), 'dd MMM')
-  }
+  DAYS_OPTIONS.forEach((days, index) => {
+    result[index] = `${days}d`
+  })
 
   return result
 })
 
 watch(value, () => {
-  emit('update:date', format(currentDate.value, 'yyyy-MM-dd'))
+  emit('update:days', selectedDays.value)
 })
 </script>
 
@@ -53,7 +35,7 @@ watch(value, () => {
     <v-slider
       v-model="value"
       :min="0"
-      :max="DAYS_RANGE"
+      :max="DAYS_OPTIONS.length - 1"
       :step="1"
       show-ticks="always"
       :ticks="marks"
@@ -62,7 +44,7 @@ watch(value, () => {
     >
       <template #thumb-label>
         <span class="date">
-          {{ format(currentDate, 'dd MMMM yyyy') }}
+          {{ selectedDays }} days
         </span>
       </template>
     </v-slider>

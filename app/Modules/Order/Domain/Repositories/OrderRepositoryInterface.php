@@ -6,7 +6,9 @@ namespace App\Modules\Order\Domain\Repositories;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Order\Domain\Data\OrderFilterData;
+use App\Modules\Order\Domain\Enums\OrderStatusEnum;
 use App\Modules\Order\Domain\Models\Order;
+use App\Modules\Report\Domain\Data\SalesStatsData;
 use Carbon\CarbonInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -28,4 +30,8 @@ interface OrderRepositoryInterface
     public function update(Order $order, array $data): Order;
 
     public function getPaginatedOrders(OrderFilterData $filter): LengthAwarePaginator;
+
+    public function sumTotalAmountByStatus(OrderStatusEnum $status): int;
+
+    public function getSalesStatsByCurrency(): ?SalesStatsData;
 }

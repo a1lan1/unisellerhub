@@ -6,8 +6,10 @@ namespace App\Modules\Order\Infrastructure\Repositories;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Order\Domain\Data\OrderFilterData;
+use App\Modules\Order\Domain\Enums\OrderStatusEnum;
 use App\Modules\Order\Domain\Models\Order;
 use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
+use App\Modules\Report\Domain\Data\SalesStatsData;
 use Carbon\CarbonInterface;
 use Flowframe\Trend\Trend;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -79,5 +81,29 @@ class EloquentOrderRepository implements OrderRepositoryInterface
             ->filter($filter)
             ->with('items.listing.product')
             ->paginate($filter->per_page, ['*'], 'page', $filter->page);
+    }
+
+    public function sumTotalAmountByStatus(OrderStatusEnum $status): int
+    {
+        return (int) Order::query()
+            ->where('status', $status)
+            ->sum('total_amount');
+    }
+
+    public function getSalesStatsByCurrency(): ?SalesStatsData
+    {
+        $stats = Order::query()
+            ->selectRaw('count(*) as count, sum(total_amount) as total')
+            ->toBase()
+            ->first();
+
+        if (! $stats || ! $stats->count) {
+            return null;
+        }
+
+        return new SalesStatsData(
+            count: (int) $stats->count,
+            totalCents: (int) $stats->total
+        );
     }
 }

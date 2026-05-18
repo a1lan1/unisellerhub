@@ -16,13 +16,14 @@ readonly class ProductRevenueExport implements FromQuery, ShouldAutoSize, WithCh
 {
     public function __construct(
         private int $organizationId,
+        private string $endDate,
         private int $days = 30,
     ) {}
 
     public function query(): Builder
     {
         return OrderItem::query()
-            ->revenue($this->organizationId, $this->days);
+            ->revenue($this->organizationId, $this->endDate, $this->days);
     }
 
     public function headings(): array

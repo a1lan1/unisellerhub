@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseAnalyticsRepository implements AnalyticsRepositoryInterface
 {
-    public function getProductRevenue(int $organizationId, int $days = 30): Collection
+    public function getProductRevenue(int $organizationId, string $endDate, int $days = 30): Collection
     {
         return OrderItem::query()
-            ->revenue($organizationId, $days)
+            ->revenue($organizationId, $endDate, $days)
             ->get();
     }
 

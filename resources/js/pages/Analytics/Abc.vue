@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
+import { format } from 'date-fns'
 import { BarChart3 } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import BaseDonutChart from '@/components/charts/BaseDonutChart.vue'
+import DaysRangeSlider from '@/components/DaysRangeSlider.vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { api } from '@/plugins/axios'
 import { snackbar } from '@/plugins/snackbar'
 import { dashboard } from '@/routes'
+import { abc as abcAnalytics } from '@/routes/analytics'
 import { formatCurrency } from '@/utils/formatters'
 
 interface AbcItem {
@@ -17,7 +20,7 @@ interface AbcItem {
   group: 'A' | 'B' | 'C';
 }
 
-const { abc, days } = defineProps<{
+const props = defineProps<{
   abc: {
     summary: { A: number; B: number; C: number };
     items: AbcItem[];
@@ -34,12 +37,30 @@ defineOptions({
   }
 })
 
-const selectedDays = ref(days || 30)
+const currentSelectedDays = ref(props.days || 30)
+
+const currentSelectedEndDate = ref(format(new Date(), 'yyyy-MM-dd'))
+
+watch(currentSelectedDays, (newDays) => {
+  console.log('currentSelectedDays', newDays)
+  console.log('currentSelectedEndDate', currentSelectedEndDate.value)
+  router.get(abcAnalytics(), { endDate: currentSelectedEndDate.value, days: newDays }, {
+    preserveState: true,
+    preserveScroll: true,
+    replace: true
+  })
+})
+
+onMounted(() => {
+  if (!props.days) {
+    currentSelectedDays.value = 30
+  }
+})
 
 const chartSeries = computed(() => [
-  abc.summary.A,
-  abc.summary.B,
-  abc.summary.C
+  props.abc.summary.A,
+  props.abc.summary.B,
+  props.abc.summary.C
 ])
 
 const chartLabels = ['Group A (80%)', 'Group B (15%)', 'Group C (5%)']
@@ -62,7 +83,8 @@ const generateReport = async() => {
   try {
     await api.post('/api/exports/analytics', {
       report_type: 'product_revenue_analysis',
-      days: selectedDays.value
+      days: currentSelectedDays.value,
+      endDate: currentSelectedEndDate.value
     })
     snackbar.success({ text: 'Product Revenue Analysis report generation started. You will be notified when it\'s ready.' })
   } catch (error) {
@@ -77,10 +99,15 @@ const generateReport = async() => {
 <template>
   <Head title="ABC Analysis" />
 
+  <DaysRangeSlider
+    :initial-days="currentSelectedDays"
+    @update:days="currentSelectedDays = $event"
+  />
+
   <div class="flex items-center justify-between">
     <h1 class="text-2xl font-bold flex items-center gap-2">
       <BarChart3 class="text-primary" />
-      ABC Analysis ({{ selectedDays }} Days)
+      ABC Analysis ({{ currentSelectedDays }} Days ending {{ currentSelectedEndDate }})
     </h1>
     <div class="flex items-center gap-2">
       <v-btn
@@ -108,7 +135,6 @@ const generateReport = async() => {
   </div>
 
   <div class="grid gap-6 grid-cols-1 lg:grid-cols-3">
-    <!-- Summary Chart -->
     <Card class="lg:col-span-1">
       <CardHeader>
         <CardTitle>Product Distribution</CardTitle>
@@ -123,21 +149,20 @@ const generateReport = async() => {
         <div class="mt-4 space-y-2">
           <div class="flex justify-between text-sm">
             <span class="font-medium text-success">Group A (Cash Cows)</span>
-            <span>{{ abc.summary.A }} SKUs</span>
+            <span>{{ props.abc.summary.A }} SKUs</span>
           </div>
           <div class="flex justify-between text-sm">
             <span class="font-medium text-warning">Group B (Regulars)</span>
-            <span>{{ abc.summary.B }} SKUs</span>
+            <span>{{ props.abc.summary.B }} SKUs</span>
           </div>
           <div class="flex justify-between text-sm">
             <span class="font-medium text-error">Group C (Long Tail)</span>
-            <span>{{ abc.summary.C }} SKUs</span>
+            <span>{{ props.abc.summary.C }} SKUs</span>
           </div>
         </div>
       </CardContent>
     </Card>
 
-    <!-- Details Table -->
     <Card class="lg:col-span-2">
       <CardHeader>
         <CardTitle>Performance by SKU</CardTitle>
@@ -167,7 +192,7 @@ const generateReport = async() => {
           </thead>
           <tbody>
             <tr
-              v-for="item in abc.items"
+              v-for="item in props.abc.items"
               :key="item.sku"
             >
               <td>
@@ -198,7 +223,7 @@ const generateReport = async() => {
                 </v-chip>
               </td>
             </tr>
-            <tr v-if="abc.items.length === 0">
+            <tr v-if="props.abc.items.length === 0">
               <td
                 colspan="4"
                 class="text-center py-10 text-muted-foreground"

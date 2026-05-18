@@ -51,8 +51,10 @@ class GenerateAnalyticsReportJob implements ShouldQueue
             switch ($this->reportType) {
                 case 'product_revenue_analysis':
                     $displayName = 'Product Revenue Analysis Report';
+                    $days = (int) ($this->reportParams['days'] ?? 30);
+                    $endDate = (string) ($this->reportParams['endDate'] ?? now()->format('Y-m-d'));
                     Excel::store(
-                        new ProductRevenueExport($this->user->organization_id, $this->reportParams['days'] ?? 30),
+                        new ProductRevenueExport($this->user->organization_id, $endDate, $days),
                         $fileName,
                         'reports'
                     );

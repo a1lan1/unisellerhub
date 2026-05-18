@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Report\Application\Services;
 
+use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
 use App\Modules\Report\Domain\Data\AbcAnalysisData;
 use App\Modules\Report\Domain\Data\AbcAnalysisItemData;
 use App\Modules\Report\Domain\Data\ProfitabilityItemData;
@@ -12,18 +13,21 @@ use App\Modules\User\Domain\Models\User;
 
 class AnalyticsService
 {
-    public function __construct(protected AnalyticsRepositoryInterface $repository) {}
+    public function __construct(
+        protected AnalyticsRepositoryInterface $repository,
+        protected OrderRepositoryInterface $orderRepository
+    ) {}
 
     /**
-     * Perform ABC Analysis based on revenue for the last 30 days.
+     * Perform ABC Analysis based on revenue for a given period.
      */
-    public function getAbcAnalysis(User $user): AbcAnalysisData
+    public function getAbcAnalysis(User $user, string $endDate, int $days): AbcAnalysisData
     {
         if (! $user->has_organization) {
             return AbcAnalysisData::emptyAnalysis();
         }
 
-        $productRevenue = $this->repository->getProductRevenue((int) $user->organization_id);
+        $productRevenue = $this->repository->getProductRevenue((int) $user->organization_id, $endDate, $days);
 
         if ($productRevenue->isEmpty()) {
             return AbcAnalysisData::emptyAnalysis();
