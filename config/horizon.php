@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use Illuminate\Support\Str;
 
 return [
@@ -197,9 +198,9 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
-            'connection' => env('QUEUE_CONNECTION', 'rabbitmq'),
-            'queue' => ['default'],
+        'supervisor-default' => [
+            'connection' => 'rabbitmq',
+            'queue' => [QueueNameEnum::Default->value],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
@@ -210,20 +211,83 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+        'supervisor-high' => [
+            'connection' => 'rabbitmq',
+            'queue' => [QueueNameEnum::HighPriority->value],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
+        'supervisor-low' => [
+            'connection' => 'rabbitmq',
+            'queue' => [QueueNameEnum::LowPriority->value],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
+        'supervisor-meilisearch' => [
+            'connection' => 'rabbitmq',
+            'queue' => [QueueNameEnum::MeilisearchTasks->value],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 256, // Meilisearch tasks might be memory intensive
+            'tries' => 1, // If Meilisearch fails, retrying immediately might not help
+            'timeout' => 120, // Meilisearch tasks might take longer
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
+            'supervisor-default' => [
+                'maxProcesses' => 5,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-high' => [
                 'maxProcesses' => 10,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-low' => [
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-meilisearch' => [
+                'maxProcesses' => 2, // Adjust based on Meilisearch load
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
         ],
 
         'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
+            'supervisor-default' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-high' => [
+                'maxProcesses' => 2,
+            ],
+            'supervisor-low' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-meilisearch' => [
+                'maxProcesses' => 1,
             ],
         ],
     ],
