@@ -52,9 +52,7 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
-            return $user && in_array($user->email, [
-                'test@example.com',
-            ]);
+            return $user && $user->email == 'test@example.com';
         });
 
     }

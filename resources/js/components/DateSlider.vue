@@ -21,9 +21,10 @@ const DAYS_RANGE = 30
 const today = new Date()
 
 const parsedInitialDate = computed(() => {
-  const date = parseISO(props.initialDate);
-  return isValid(date) ? date : today;
-});
+  const date = parseISO(props.initialDate)
+
+  return isValid(date) ? date : today
+})
 
 const initialOffset = differenceInCalendarDays(today, parsedInitialDate.value)
 
