@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import NotificationBell from '@/components/NotificationBell.vue'
 import GlobalSearch from '@/components/search/GlobalSearch.vue'
+import SyncAllBtn from '@/components/shared/SyncAllBtn.vue'
 import BackgroundToggleButton from '@/components/theme/BackgroundToggleButton.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -31,6 +32,8 @@ const { user } = storeToRefs(authStore)
       <div class="ml-auto flex items-center space-x-4">
         <!-- Search Widget -->
         <GlobalSearch />
+        <!-- Sync All Button -->
+        <SyncAllBtn />
         <!-- Notifications -->
         <NotificationBell />
         <!-- Background -->
