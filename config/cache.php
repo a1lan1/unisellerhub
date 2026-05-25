@@ -2,7 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Modules\Geo\Domain\Models\Location;
+use App\Modules\Geo\Domain\Models\Review;
+use App\Modules\Product\Domain\Models\Product;
+use App\Modules\User\Domain\Models\User;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 return [
 
@@ -127,6 +135,15 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        User::class,
+        Product::class,
+        Location::class,
+        Review::class,
+        Media::class,
+        EloquentCollection::class,
+        SupportCollection::class,
+        LengthAwarePaginator::class,
+    ],
 
 ];
