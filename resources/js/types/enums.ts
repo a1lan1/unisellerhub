@@ -15,3 +15,10 @@ export enum MarketplaceEnum {
   YANDEX = 'yandex',
   AVITO = 'avito',
 }
+
+export enum IdempotencyOperation {
+  SyncAll = 'syncAll',
+  SyncProducts = 'syncProducts',
+  SyncOrders = 'syncOrders',
+  SyncInventory = 'syncInventory',
+}
