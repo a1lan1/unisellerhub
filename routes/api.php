@@ -14,6 +14,7 @@ use App\Modules\PriceAnalysis\Interfaces\Http\Controllers\Api\PriceAnalysisContr
 use App\Modules\Product\Interfaces\Http\Controllers\Api\ProductSyncController;
 use App\Modules\Report\Interfaces\Http\Controllers\AnalyticsController;
 use App\Modules\Report\Interfaces\Http\Controllers\Api\ExportController;
+use App\Modules\Shared\Interfaces\Http\Controllers\SyncController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\NotificationController;
 use App\Modules\User\Interfaces\Http\Controllers\Api\OrganizationController;
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function (): void {
     Route::get('/user', fn (Request $request) => $request->user());
-
     Route::post('organizations', [OrganizationController::class, 'store'])->name('api.organizations.store');
 
     // Notifications
@@ -39,6 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
         Route::get('search', SearchController::class)->name('api.search');
 
         Route::apiResource('marketplace-connections', MarketplaceConnectionController::class)->names('api.marketplace-connections');
+
+        Route::post('sync/all', SyncController::class)->middleware(['idempotency'])->name('api.sync.all');
 
         // Products
         Route::prefix('products')->name('api.products.')->group(function (): void {
