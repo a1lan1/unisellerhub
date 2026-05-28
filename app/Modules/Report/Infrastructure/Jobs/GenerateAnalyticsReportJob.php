@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Report\Infrastructure\Jobs;
 
+use App\Modules\Report\Domain\Data\GenerateAnalyticsReportData;
+use App\Modules\Report\Domain\Enums\ReportTypeEnum;
 use App\Modules\Report\Domain\Events\ExportReadyEvent;
 use App\Modules\Report\Domain\Exports\ProductListingsWithCostsExport;
 use App\Modules\Report\Domain\Exports\ProductRevenueExport;
 use App\Modules\Shared\Application\Services\TenantManager;
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Application\Services\NotificationService;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
@@ -19,7 +22,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\URL as URLFacade;
 use Maatwebsite\Excel\Facades\Excel;
 
 class GenerateAnalyticsReportJob implements ShouldQueue
@@ -30,9 +33,8 @@ class GenerateAnalyticsReportJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        private readonly User $user,
-        private readonly string $reportType,
-        private readonly array $reportParams = [],
+        public readonly User $user,
+        public readonly GenerateAnalyticsReportData $reportData,
     ) {}
 
     /**
@@ -43,23 +45,23 @@ class GenerateAnalyticsReportJob implements ShouldQueue
         NotificationService $notificationService,
         TenantManager $tenantManager
     ): void {
-        $fileName = sprintf('analytics_export_%s_', $this->reportType).now()->format('Y-m-d_H-i-s').'.xlsx';
+        $fileName = sprintf('analytics_export_%s_', $this->reportData->reportType->value).now()->format('Y-m-d_H-i-s').'.xlsx';
 
         try {
             $tenantManager->setOrganizationId($this->user->organization_id);
 
-            switch ($this->reportType) {
-                case 'product_revenue_analysis':
+            switch ($this->reportData->reportType) {
+                case ReportTypeEnum::PRODUCT_REVENUE_ANALYSIS:
                     $displayName = 'Product Revenue Analysis Report';
-                    $days = (int) ($this->reportParams['days'] ?? 30);
-                    $endDate = (string) ($this->reportParams['endDate'] ?? now()->format('Y-m-d'));
+                    $days = $this->reportData->days;
+                    $endDate = $this->reportData->endDate;
                     Excel::store(
                         new ProductRevenueExport($this->user->organization_id, $endDate, $days),
                         $fileName,
                         'reports'
                     );
                     break;
-                case 'product_profitability_analysis':
+                case ReportTypeEnum::PRODUCT_PROFITABILITY_ANALYSIS:
                     $displayName = 'Product Profitability Analysis Report';
                     Excel::store(
                         new ProductListingsWithCostsExport($this->user->organization_id),
@@ -68,18 +70,17 @@ class GenerateAnalyticsReportJob implements ShouldQueue
                     );
                     break;
                 default:
-                    throw new Exception('Unknown report type: '.$this->reportType);
+                    throw new Exception('Unknown report type: '.$this->reportData->reportType->value);
             }
 
-            // Changed 'filename' to 'path' to match the route definition
-            $fileUrl = URL::temporarySignedRoute(
+            $fileUrl = URLFacade::temporarySignedRoute(
                 'exports.download',
                 now()->addMinutes(30),
                 ['path' => $fileName]
             );
 
             // Dispatch broadcast event for immediate download
-            event(new ExportReadyEvent($this->user->id, $fileUrl, 'orders'));
+            event(new ExportReadyEvent($this->user->id, $fileUrl, 'analytics_report'));
 
             $notificationService->sendToUser(
                 $this->user,
@@ -87,17 +88,17 @@ class GenerateAnalyticsReportJob implements ShouldQueue
                     title: 'Analytics Report Ready',
                     message: sprintf('Your "%s" report is ready for download.', $displayName),
                     type: NotificationTypeEnum::INFO,
-                    actionUrl: $fileUrl,
+                    actionUrl: new Url($fileUrl),
                     icon: 'mdi-chart-line'
                 )
             );
 
-            Log::info(sprintf('Analytics report generation requested for user %d, type: %s', $this->user->id, $this->reportType));
+            Log::info(sprintf('Analytics report generation requested for user %d, type: %s', $this->user->id, $this->reportData->reportType->value));
         } catch (Exception $exception) {
-            Log::error(sprintf('Analytics report generation failed for user %d, type: %s. Error: %s', $this->user->id, $this->reportType, $exception->getMessage()), [
+            Log::error(sprintf('Analytics report generation failed for user %d, type: %s. Error: %s', $this->user->id, $this->reportData->reportType->value, $exception->getMessage()), [
                 'exception' => $exception,
                 'user_id' => $this->user->id,
-                'report_type' => $this->reportType,
+                'report_type' => $this->reportData->reportType->value,
             ]);
 
             $notificationService->sendToUser(

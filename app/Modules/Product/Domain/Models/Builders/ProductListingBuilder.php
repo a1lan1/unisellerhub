@@ -40,14 +40,16 @@ class ProductListingBuilder extends Builder
                     });
                 }
             })
-            ->when($filter->sort, function (Builder $q, $s) use ($filter): void {
-                $direction = $filter->direction ?? 'asc';
-                if ($s === 'product_name') {
+            ->when($filter->sortOrder, function (Builder $q, $sortOrder): void {
+                $field = $sortOrder->getField();
+                $direction = $sortOrder->getDirection();
+
+                if ($field === 'name') {
                     $q->join('products', 'product_listings.product_id', '=', 'products.id')
                         ->select('product_listings.*')
                         ->orderBy('products.name', $direction);
                 } else {
-                    $q->orderBy($s, $direction);
+                    $q->orderBy($field, $direction);
                 }
             }, fn (Builder $q) => $q->orderBy('id', 'desc'));
     }

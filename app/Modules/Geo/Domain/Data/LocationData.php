@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\Geo\Domain\Data;
 
 use App\Modules\Geo\Domain\Enums\LocationTypeEnum;
+use App\Modules\Geo\Domain\ValueObjects\Coordinates;
+use App\Modules\Shared\Domain\ValueObjects\Address;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -20,9 +22,8 @@ class LocationData extends Data
         public int $userId,
         public string $name,
         public LocationTypeEnum $type,
-        public AddressData $address,
-        public float $latitude,
-        public float $longitude,
+        public Address $address,
+        public Coordinates $coordinates,
         public ?array $externalIds = null,
     ) {}
 }

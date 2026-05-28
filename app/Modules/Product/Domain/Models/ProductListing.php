@@ -8,6 +8,8 @@ use App\Modules\Inventory\Domain\Models\Inventory;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Product\Domain\Data\ProductListingsFilterData;
 use App\Modules\Product\Domain\Models\Builders\ProductListingBuilder;
+use App\Modules\Shared\Domain\Casts\PercentageCast;
+use App\Modules\Shared\Domain\ValueObjects\Percentage;
 use Carbon\CarbonImmutable;
 use Cknow\Money\Casts\MoneyIntegerCast;
 use Cknow\Money\Money;
@@ -31,7 +33,7 @@ use Override;
  * @property Money|null $price
  * @property Money|null $old_price
  * @property int $discount
- * @property float $commission_percent
+ * @property Percentage $commission_percent
  * @property Money $logistic_cost
  * @property string $status
  * @property CarbonImmutable|null $last_synced_at
@@ -83,7 +85,7 @@ class ProductListing extends Model
             'price' => MoneyIntegerCast::class,
             'old_price' => MoneyIntegerCast::class,
             'discount' => 'integer',
-            'commission_percent' => 'float',
+            'commission_percent' => PercentageCast::class,
             'logistic_cost' => MoneyIntegerCast::class,
             'marketplace' => MarketplaceEnum::class,
         ];

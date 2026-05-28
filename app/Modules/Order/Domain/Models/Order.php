@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Order\Domain\Models;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Order\Domain\Casts\ExternalOrderIdCast;
 use App\Modules\Order\Domain\Data\OrderFilterData;
 use App\Modules\Order\Domain\Enums\OrderStatusEnum;
 use App\Modules\Order\Domain\Models\Builders\OrderBuilder;
+use App\Modules\Order\Domain\ValueObjects\ExternalOrderId;
 use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Scopes\UserOrganizationScope;
@@ -34,7 +36,7 @@ use Override;
  * @property int $id
  * @property int|null $organization_id
  * @property MarketplaceEnum $marketplace
- * @property string $external_id
+ * @property ExternalOrderId $external_id
  * @property OrderStatusEnum $status
  * @property Money $total_price
  * @property CarbonImmutable $order_date
@@ -85,6 +87,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'external_id' => ExternalOrderIdCast::class,
             'delivery_info' => 'array',
             'order_date' => 'datetime',
             'last_synced_at' => 'datetime',
@@ -103,7 +106,7 @@ class Order extends Model
     {
         return [
             'id' => (int) $this->id,
-            'external_id' => (string) $this->external_id,
+            'external_id' => $this->external_id->getValue(),
             'total_price' => $this->total_price->getAmount(),
             'organization_id' => (int) $this->organization_id,
         ];

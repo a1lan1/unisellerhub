@@ -6,11 +6,15 @@ namespace App\Modules\Inventory\Domain\Actions;
 
 use App\Modules\Inventory\Domain\Data\StockData;
 use App\Modules\Inventory\Domain\Models\Inventory;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
 use App\Modules\Marketplace\Infrastructure\Factories\MarketplaceClientFactory;
 use App\Modules\Product\Domain\Models\ProductListing;
+use App\Modules\Product\ValueObjects\Sku;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
@@ -79,10 +83,10 @@ readonly class PushStockToMarketplaceAction
                 if ($localInventory instanceof Inventory) {
                     $localWarehouse = $localInventory->warehouse;
                     $stocksToPush->push(new StockData(
-                        external_product_id: $listing->external_id,
-                        external_warehouse_id: $localWarehouse->external_id,
-                        quantity: $localInventory->quantity,
-                        sku: $listing->vendor_code,
+                        external_product_id: new ExternalProductId($listing->external_id),
+                        external_warehouse_id: new ExternalWarehouseId($localWarehouse->external_id->getValue()),
+                        quantity: new Quantity($localInventory->quantity->getValue()),
+                        sku: $listing->vendor_code ? new Sku($listing->vendor_code) : null,
                     ));
                 }
             }

@@ -10,8 +10,11 @@ use App\Modules\Inventory\Domain\Data\PullBulkInventoryData;
 use App\Modules\Inventory\Domain\Data\PullInventoryData;
 use App\Modules\Inventory\Domain\Data\StockData;
 use App\Modules\Inventory\Domain\Data\SyncMoySkladStockData;
+use App\Modules\Inventory\Domain\Interfaces\InventoryServiceInterface;
 use App\Modules\Inventory\Domain\Models\Inventory;
 use App\Modules\Inventory\Domain\Repositories\InventoryRepositoryInterface;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Inventory\Infrastructure\Jobs\SyncBulkInventoryJob;
 use App\Modules\Inventory\Infrastructure\Jobs\SyncInventoryJob;
 use App\Modules\Inventory\Infrastructure\Jobs\SyncMoySkladStockJob;
@@ -20,13 +23,14 @@ use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
 use App\Modules\Marketplace\Infrastructure\Factories\MarketplaceClientFactory;
 use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\User\Domain\Models\User;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
-readonly class InventoryService
+readonly class InventoryService implements InventoryServiceInterface
 {
     public function __construct(
         private InventoryRepositoryInterface $repository,
@@ -39,7 +43,7 @@ readonly class InventoryService
     public function getPaginatedInventory(User $user, InventoryFilterData $filter): LengthAwarePaginator
     {
         if (! $user->has_organization) {
-            return new LengthAwarePaginator([], 0, $filter->per_page);
+            return new LengthAwarePaginator([], 0, $filter->pagination->getPerPage());
         }
 
         return $this->repository->getPaginatedInventory($filter);
@@ -102,10 +106,10 @@ readonly class InventoryService
             try {
                 $msClient->updateStocks(collect([
                     new StockData(
-                        external_product_id: $inventory->listing->external_id,
+                        external_product_id: new ExternalProductId($inventory->listing->external_id),
                         external_warehouse_id: $inventory->warehouse->external_id,
-                        quantity: $quantity,
-                        sku: $inventory->listing->vendor_code
+                        quantity: new Quantity($quantity),
+                        sku: $inventory->listing->vendor_code ? new Sku($inventory->listing->vendor_code) : null
                     ),
                 ]));
             } catch (Exception $e) {

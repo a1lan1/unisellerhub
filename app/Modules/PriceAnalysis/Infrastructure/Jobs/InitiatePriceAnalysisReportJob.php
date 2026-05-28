@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\PriceAnalysis\Infrastructure\Jobs;
 
-use App\Modules\PriceAnalysis\Application\Services\PriceAnalyzeAction;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\PriceAnalysis\Domain\Data\PriceAnalysisTaskData;
+use App\Modules\PriceAnalysis\Domain\Interfaces\PriceAnalysisActionInterface;
 use App\Modules\PriceAnalysis\Domain\Repositories\PriceAnalysisRepositoryInterface;
+use App\Modules\PriceAnalysis\Domain\ValueObjects\SalesHistoryItem;
 use App\Modules\Product\Domain\Models\Product;
+use App\Modules\Report\Domain\ValueObjects\BatchId;
 use App\Modules\Shared\Application\Services\TenantManager;
+use DateTimeImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,7 +52,7 @@ final class InitiatePriceAnalysisReportJob implements ShouldQueue
 
     public function handle(
         PriceAnalysisRepositoryInterface $repository,
-        PriceAnalyzeAction $priceAnalysisService,
+        PriceAnalysisActionInterface $priceAnalysisService,
         TenantManager $tenantManager
     ): void {
         $tenantManager->setOrganizationId($this->organizationId);
@@ -111,24 +115,24 @@ final class InitiatePriceAnalysisReportJob implements ShouldQueue
                     continue;
                 }
 
-                $currentStock = $listing->inventory->sum('quantity');
+                $currentStock = $listing->inventory->sum(fn ($item) => $item->quantity->getValue());
 
                 // Get sales history for the current listing
                 $salesHistoryForThisListing = $salesHistoryByListing->get($listing->id, collect());
 
-                $salesHistoryFormatted = $salesHistoryForThisListing->map(fn (array $item): array => [
-                    'date' => $item['date'],
-                    'quantity' => $item['quantity'],
-                ])->all();
+                $salesHistoryFormatted = $salesHistoryForThisListing->map(fn (array $item): SalesHistoryItem => new SalesHistoryItem(
+                    date: new DateTimeImmutable($item['date']),
+                    quantity: new Quantity($item['quantity']),
+                ));
 
                 $batchDataForPriceAnalyzer[] = new PriceAnalysisTaskData(
                     organization_id: $this->organizationId,
                     sku: $product->sku,
-                    current_stock: $currentStock,
+                    current_stock: new Quantity($currentStock),
                     sales_history: $salesHistoryFormatted,
-                    marketplace: $listing->marketplace->value,
+                    marketplace: $listing->marketplace,
                     product_id: $product->id,
-                    batch_id: $this->batchId,
+                    batch_id: new BatchId($this->batchId),
                 );
             }
         }
@@ -157,7 +161,7 @@ final class InitiatePriceAnalysisReportJob implements ShouldQueue
         // All items in the batch should have the same batch_id and organization_id
         $firstItem = $batchDataForPriceAnalyzer[0];
         Log::info('Price analysis batch task successfully forwarded to microservice queue.', [
-            'batch_id' => $firstItem->batch_id,
+            'batch_id' => $firstItem->batch_id->getValue(),
             'organization_id' => $firstItem->organization_id,
             'items_count' => count($batchDataForPriceAnalyzer),
         ]);

@@ -25,6 +25,7 @@ class ProductFactory extends Factory
             'description' => fake()->paragraph(),
             'images' => [],
             'attributes' => [],
+            'cost_price' => fake()->numberBetween(1000, 50000),
         ];
     }
 }

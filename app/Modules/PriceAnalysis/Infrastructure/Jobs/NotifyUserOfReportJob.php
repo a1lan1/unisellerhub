@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\PriceAnalysis\Infrastructure\Jobs;
 
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Application\Services\NotificationService;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
@@ -59,7 +60,7 @@ final class NotifyUserOfReportJob implements ShouldQueue
             title: 'Price Analysis Report Ready',
             message: 'Your price analysis report is ready for download.',
             type: NotificationTypeEnum::SUCCESS,
-            actionUrl: $downloadUrl,
+            actionUrl: new Url($downloadUrl),
             icon: 'mdi-microsoft-excel'
         );
 

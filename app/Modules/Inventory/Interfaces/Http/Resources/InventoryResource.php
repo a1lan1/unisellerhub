@@ -22,11 +22,11 @@ class InventoryResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'product_name' => $product->name,
-            'sku' => $product->sku,
+            'sku' => $product->sku->getValue(),
             'marketplace' => $listing->marketplace->value,
             'warehouse_name' => $warehouse->name,
-            'quantity' => (int) $this->resource->quantity,
-            'reserved' => (int) $this->resource->reserved,
+            'quantity' => $this->resource->quantity->getValue(),
+            'reserved' => $this->resource->reserved->getValue(),
             'listing_id' => $this->resource->product_listing_id,
             'updated_at' => $this->resource->updated_at?->toDateTimeString(),
         ];

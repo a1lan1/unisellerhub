@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Infrastructure\Clients;
 
 use App\Modules\Inventory\Domain\Data\StockData;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Marketplace\Domain\Data\MarketplaceOrderItemData;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Interfaces\MarketplaceClientInterface;
+use App\Modules\Marketplace\Domain\ValueObjects\MarketplaceProductId;
 use App\Modules\Order\Domain\Data\OrderData;
+use App\Modules\Order\Domain\ValueObjects\ExternalOrderId;
 use App\Modules\Product\Domain\Data\ProductData;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\Shared\Infrastructure\Money\MoneyHelper;
 use DateTime;
 use Illuminate\Http\Client\ConnectionException;
@@ -38,10 +44,10 @@ class WbClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['stocks'])->map(fn ($item): StockData => new StockData(
-            external_product_id: (string) $item['sku'],
-            external_warehouse_id: (string) $item['warehouseId'],
-            quantity: $item['amount'],
-            sku: (string) $item['sku']
+            external_product_id: new ExternalProductId((string) $item['sku']),
+            external_warehouse_id: new ExternalWarehouseId((string) $item['warehouseId']),
+            quantity: new Quantity($item['amount']),
+            sku: new Sku((string) $item['sku'])
         ));
     }
 
@@ -59,14 +65,14 @@ class WbClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['orders'])->map(fn ($order): OrderData => new OrderData(
-            external_id: (string) $order['id'],
-            status: $order['status'],
+            external_id: new ExternalOrderId((string) $order['id']),
+            status: (string) $order['status'],
             total_price: MoneyHelper::fromMarketplace($order['price'], MarketplaceEnum::WB),
             items: array_map(fn (array $item): MarketplaceOrderItemData => new MarketplaceOrderItemData(
-                product_id: (string) ($item['nmId'] ?? ''),
-                quantity: (int) ($item['quantity'] ?? 1),
+                product_id: new MarketplaceProductId((string) ($item['nmId'] ?? '')),
+                quantity: new Quantity((int) ($item['quantity'] ?? 1)),
                 price: MoneyHelper::fromMarketplace($item['price'] ?? 0, MarketplaceEnum::WB),
-                sku: (string) ($item['sku'] ?? ''),
+                sku: ($item['sku'] ?? null) ? new Sku((string) ($item['sku'])) : null,
             ), $order['items']),
             order_date: new DateTime($order['createdAt']),
         ));
@@ -124,10 +130,10 @@ class WbClientAdapter implements MarketplaceClientInterface
     public function updateStocks(Collection $stocks): bool
     {
         // WB requires warehouseId in URL
-        $stocksByWarehouse = $stocks->groupBy('external_warehouse_id');
+        $stocksByWarehouse = $stocks->groupBy(fn ($s) => $s->external_warehouse_id->getValue());
 
         foreach ($stocksByWarehouse as $warehouseId => $items) {
-            $payload = ['stocks' => $items->map(fn ($s): array => ['sku' => $s->sku, 'amount' => $s->quantity])->all()];
+            $payload = ['stocks' => $items->map(fn ($s): array => ['sku' => $s->sku->getValue(), 'amount' => $s->quantity->getValue()])->all()];
 
             $response = Http::withHeader('Authorization', $this->token)
                 ->timeout($this->timeout)

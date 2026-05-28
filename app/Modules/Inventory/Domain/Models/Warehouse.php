@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Domain\Models;
 
+use App\Modules\Inventory\Domain\Casts\ExternalWarehouseIdCast;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Scopes\UserOrganizationScope;
 use App\Observers\OrganizationIdObserver;
@@ -17,13 +20,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property int $id
  * @property int $organization_id
  * @property string $name
- * @property string|null $marketplace
- * @property string|null $external_id
+ * @property MarketplaceEnum|null $marketplace
+ * @property ExternalWarehouseId|null $external_id
  * @property string|null $address
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -51,6 +55,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Warehouse extends Model
 {
     use HasFactory;
+
+    /**
+     * @return array<string, string>
+     */
+    #[Override]
+    protected function casts(): array
+    {
+        return [
+            'marketplace' => MarketplaceEnum::class,
+            'external_id' => ExternalWarehouseIdCast::class,
+        ];
+    }
 
     public function organization(): BelongsTo
     {

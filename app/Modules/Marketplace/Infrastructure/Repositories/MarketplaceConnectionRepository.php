@@ -22,7 +22,7 @@ class MarketplaceConnectionRepository implements MarketplaceConnectionRepository
         $connection = MarketplaceConnection::query()
             ->where('marketplace', $marketplace)
             ->get()
-            ->first(fn (MarketplaceConnection $connection): bool => ($connection->credentials[$credentialKey] ?? null) === $credentialValue);
+            ->first(fn (MarketplaceConnection $connection): bool => ($connection->credentials->getValue()[$credentialKey] ?? null) === $credentialValue);
 
         return $connection;
     }

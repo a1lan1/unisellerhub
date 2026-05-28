@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Order\Domain\Models;
 
+use App\Modules\Inventory\Domain\Casts\QuantityCast;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
+use App\Modules\Marketplace\Domain\Casts\MarketplaceProductIdCast;
+use App\Modules\Marketplace\Domain\ValueObjects\MarketplaceProductId;
 use App\Modules\Order\Domain\Models\Builders\OrderItemBuilder;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Carbon\CarbonImmutable;
@@ -19,8 +23,8 @@ use Override;
  * @property int $id
  * @property int $order_id
  * @property int|null $product_listing_id
- * @property string $external_product_id
- * @property int $quantity
+ * @property MarketplaceProductId $external_product_id
+ * @property Quantity $quantity
  * @property Money $price
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -30,7 +34,7 @@ use Override;
  * @method static OrderItemBuilder<static>|OrderItem newModelQuery()
  * @method static OrderItemBuilder<static>|OrderItem newQuery()
  * @method static OrderItemBuilder<static>|OrderItem query()
- * @method static OrderItemBuilder<static>|OrderItem revenue(int $organizationId, ?int $days = 30)
+ * @method static OrderItemBuilder<static>|OrderItem revenue(int $organizationId, string $endDate, int $days = 30)
  * @method static OrderItemBuilder<static>|OrderItem whereCreatedAt($value)
  * @method static OrderItemBuilder<static>|OrderItem whereExternalProductId($value)
  * @method static OrderItemBuilder<static>|OrderItem whereId($value)
@@ -53,7 +57,8 @@ class OrderItem extends Model
     protected function casts(): array
     {
         return [
-            'quantity' => 'integer',
+            'quantity' => QuantityCast::class,
+            'external_product_id' => MarketplaceProductIdCast::class,
             'price' => MoneyIntegerCast::class,
         ];
     }

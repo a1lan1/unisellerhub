@@ -6,6 +6,7 @@ namespace App\Listeners;
 
 use App\Ai\Agents\ReviewResponder;
 use App\Modules\Geo\Domain\Events\ReviewAnalyzed;
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
@@ -41,7 +42,7 @@ final readonly class GenerateAiReviewResponse implements ShouldQueue
                         $aiResponse
                     ),
                     type: NotificationTypeEnum::INFO,
-                    actionUrl: route('geo.dashboard'),
+                    actionUrl: new Url(route('geo.dashboard')),
                 );
 
                 $this->notificationService->sendToOrganizationById($event->data->organizationId, $notificationData);

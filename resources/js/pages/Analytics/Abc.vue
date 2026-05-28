@@ -10,15 +10,7 @@ import { api } from '@/plugins/axios'
 import { snackbar } from '@/plugins/snackbar'
 import { dashboard } from '@/routes'
 import { abc as abcAnalytics } from '@/routes/analytics'
-import { formatCurrency } from '@/utils/formatters'
-
-interface AbcItem {
-  sku: string;
-  name: string;
-  revenue: number;
-  share: number;
-  group: 'A' | 'B' | 'C';
-}
+import type { AbcItem } from '@/types'
 
 const props = defineProps<{
   abc: {
@@ -38,12 +30,9 @@ defineOptions({
 })
 
 const currentSelectedDays = ref(props.days || 30)
-
 const currentSelectedEndDate = ref(format(new Date(), 'yyyy-MM-dd'))
 
 watch(currentSelectedDays, (newDays) => {
-  console.log('currentSelectedDays', newDays)
-  console.log('currentSelectedEndDate', currentSelectedEndDate.value)
   router.get(abcAnalytics(), { endDate: currentSelectedEndDate.value, days: newDays }, {
     preserveState: true,
     preserveScroll: true,
@@ -63,7 +52,7 @@ const chartSeries = computed(() => [
   props.abc.summary.C
 ])
 
-const chartLabels = ['Group A (80%)', 'Group B (15%)', 'Group C (5%)']
+const chartLabels = ['Group A', 'Group B', 'Group C']
 const chartColors = ['#10b981', '#f59e0b', '#ef4444']
 
 const getGroupColor = (group: string) => {
@@ -163,7 +152,7 @@ const generateReport = async() => {
       </CardContent>
     </Card>
 
-    <Card class="lg:col-span-2">
+    <Card class="lg:col-span-2 gap-0">
       <CardHeader>
         <CardTitle>Performance by SKU</CardTitle>
       </CardHeader>
@@ -172,7 +161,7 @@ const generateReport = async() => {
           hover
           density="comfortable"
           fixed-header
-          style="height: calc(100vh - 265px)"
+          style="height: calc(100vh - 330px)"
         >
           <thead>
             <tr>
@@ -207,7 +196,7 @@ const generateReport = async() => {
                 </div>
               </td>
               <td class="text-right font-mono">
-                {{ formatCurrency(item.revenue) }}
+                {{ item.revenue.formatted }}
               </td>
               <td class="text-right">
                 {{ item.share }}%

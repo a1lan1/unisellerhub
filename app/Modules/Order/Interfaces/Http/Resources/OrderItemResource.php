@@ -20,8 +20,8 @@ class OrderItemResource extends JsonResource
 
         return [
             'product_name' => $product ? $product->name : 'Unknown Product',
-            'sku' => $product ? $product->sku : 'Unknown SKU',
-            'quantity' => (int) $this->resource->quantity,
+            'sku' => $product ? $product->sku->getValue() : 'Unknown SKU',
+            'quantity' => (int) $this->resource->quantity->getValue(),
             'price' => (int) $this->resource->price->getAmount(),
             'formatted_price' => $this->resource->price->format(),
         ];

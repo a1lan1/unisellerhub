@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Modules\Report\Domain\Events\ReportGenerated;
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
@@ -22,7 +23,7 @@ final readonly class SendReportReadyNotification implements ShouldQueue
                 title: 'Report Ready',
                 message: sprintf('Your %s report is ready for download.', $event->reportType),
                 type: NotificationTypeEnum::SUCCESS,
-                actionUrl: $event->downloadUrl,
+                actionUrl: new Url($event->downloadUrl),
                 icon: 'mdi-file-excel'
             )
         );

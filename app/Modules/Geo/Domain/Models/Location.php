@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\Geo\Domain\Models;
 
 use App\Modules\Geo\Domain\Casts\AddressCast;
+use App\Modules\Geo\Domain\Casts\CoordinatesCast;
 use App\Modules\Geo\Domain\Enums\LocationTypeEnum;
 use App\Modules\Geo\Domain\Observers\LocationObserver;
 use App\Modules\Geo\Domain\Policies\LocationPolicy;
-use App\Modules\Shared\ValueObjects\Address;
+use App\Modules\Geo\Domain\ValueObjects\Coordinates;
+use App\Modules\Shared\Domain\ValueObjects\Address;
 use App\Modules\User\Domain\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Factories\LocationFactory;
@@ -31,11 +33,12 @@ use Override;
  * @property string $name
  * @property LocationTypeEnum $type
  * @property Address|null $address
- * @property float $latitude
- * @property float $longitude
+ * @property numeric $latitude
+ * @property numeric $longitude
  * @property array<array-key, mixed>|null $external_ids
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
+ * @property Coordinates $coordinates
  * @property-read Collection<int, Review> $reviews
  * @property-read int|null $reviews_count
  * @property-read User $seller
@@ -64,8 +67,7 @@ use Override;
     'name',
     'type',
     'address',
-    'latitude',
-    'longitude',
+    'coordinates',
     'external_ids',
 ])]
 #[UseFactory(LocationFactory::class)]
@@ -100,8 +102,8 @@ class Location extends Model
             'address_postal_code' => $this->address->postalCode,
             'address_country' => $this->address->country,
             '_geo' => [
-                'lat' => $this->latitude,
-                'lng' => $this->longitude,
+                'lat' => $this->coordinates->latitude,
+                'lng' => $this->coordinates->longitude,
             ],
         ];
     }
@@ -112,8 +114,7 @@ class Location extends Model
         return [
             'type' => LocationTypeEnum::class,
             'address' => AddressCast::class,
-            'latitude' => 'float',
-            'longitude' => 'float',
+            'coordinates' => CoordinatesCast::class,
             'external_ids' => 'array',
         ];
     }

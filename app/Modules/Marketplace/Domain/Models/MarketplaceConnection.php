@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Domain\Models;
 
+use App\Modules\Marketplace\Domain\Casts\CredentialsCast;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Marketplace\Domain\ValueObjects\Credentials;
 use App\Modules\User\Domain\Models\Organization;
 use Carbon\CarbonImmutable;
 use Database\Factories\MarketplaceConnectionFactory;
@@ -21,7 +23,7 @@ use Override;
  * @property int $organization_id
  * @property MarketplaceEnum $marketplace
  * @property string $name
- * @property array<array-key, mixed> $credentials
+ * @property Credentials $credentials
  * @property bool $is_active
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -55,7 +57,7 @@ class MarketplaceConnection extends Model
     protected function casts(): array
     {
         return [
-            'credentials' => 'encrypted:array',
+            'credentials' => CredentialsCast::class,
             'marketplace' => MarketplaceEnum::class,
             'is_active' => 'boolean',
         ];

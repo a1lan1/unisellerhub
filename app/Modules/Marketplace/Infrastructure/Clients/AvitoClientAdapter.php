@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Infrastructure\Clients;
 
 use App\Modules\Inventory\Domain\Data\StockData;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Marketplace\Domain\Data\MarketplaceOrderItemData;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Interfaces\MarketplaceClientInterface;
+use App\Modules\Marketplace\Domain\ValueObjects\MarketplaceProductId;
 use App\Modules\Order\Domain\Data\OrderData;
+use App\Modules\Order\Domain\ValueObjects\ExternalOrderId;
 use App\Modules\Product\Domain\Data\ProductData;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\Shared\Infrastructure\Money\MoneyHelper;
 use DateTime;
 use Illuminate\Http\Client\ConnectionException;
@@ -40,10 +46,10 @@ class AvitoClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['stocks'])->map(fn ($item): StockData => new StockData(
-            external_product_id: (string) $item['item_id'],
-            external_warehouse_id: (string) $item['warehouse_id'],
-            quantity: (int) $item['quantity'],
-            sku: (string) $item['item_id']
+            external_product_id: new ExternalProductId((string) $item['item_id']),
+            external_warehouse_id: new ExternalWarehouseId((string) $item['warehouse_id']),
+            quantity: new Quantity((int) $item['quantity']),
+            sku: new Sku((string) $item['item_id'])
         ));
     }
 
@@ -61,12 +67,12 @@ class AvitoClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['orders'])->map(fn ($order): OrderData => new OrderData(
-            external_id: (string) $order['id'],
+            external_id: new ExternalOrderId((string) $order['id']),
             status: (string) $order['status'],
             total_price: MoneyHelper::fromMarketplace($order['totalPrice'], MarketplaceEnum::AVITO),
             items: array_map(fn (array $item): MarketplaceOrderItemData => new MarketplaceOrderItemData(
-                product_id: (string) $item['id'],
-                quantity: (int) $item['count'],
+                product_id: new MarketplaceProductId((string) $item['id']),
+                quantity: new Quantity((int) $item['count']),
                 price: MoneyHelper::fromMarketplace($item['price'], MarketplaceEnum::AVITO),
             ), $order['items']),
             order_date: new DateTime($order['createdAt']),

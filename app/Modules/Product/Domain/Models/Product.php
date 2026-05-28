@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Product\Domain\Models;
 
+use App\Modules\Product\Domain\Casts\SkuCast;
 use App\Modules\Product\Domain\Observers\ProductObserver;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use App\Modules\User\Domain\Models\Organization;
 use App\Modules\User\Domain\Scopes\UserOrganizationScope;
@@ -29,7 +31,7 @@ use Override;
 /**
  * @property int $id
  * @property int $organization_id
- * @property string $sku
+ * @property Sku $sku
  * @property string $name
  * @property string|null $description
  * @property int|null $category_id
@@ -77,6 +79,7 @@ class Product extends Model
     protected function casts(): array
     {
         return [
+            'sku' => SkuCast::class,
             'images' => 'array',
             'attributes' => 'array',
             'cost_price' => MoneyIntegerCast::class,
@@ -93,7 +96,7 @@ class Product extends Model
     {
         return [
             'id' => $this->id,
-            'sku' => $this->sku,
+            'sku' => $this->sku->getValue(),
             'name' => $this->name,
             'cost_price' => $this->cost_price->getAmount(),
             'organization_id' => $this->organization_id,

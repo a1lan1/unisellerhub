@@ -5,14 +5,22 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Application\Mappers;
 
 use App\Modules\Inventory\Domain\Data\StockData;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Marketplace\Domain\Data\MarketplaceOrderItemData;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
+use App\Modules\Marketplace\Domain\Exceptions\InvalidMarketplaceDataException;
+use App\Modules\Marketplace\Domain\ValueObjects\MarketplaceProductId;
 use App\Modules\Order\Domain\Data\OrderData;
+use App\Modules\Order\Domain\ValueObjects\ExternalOrderId;
 use App\Modules\Product\Domain\Data\ProductData;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\Shared\Infrastructure\Money\MoneyHelper;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 
-final readonly class MarketplaceDataMapper
+class MarketplaceDataMapper
 {
     /**
      * @param  array<string, mixed>  $rawItems
@@ -29,7 +37,20 @@ final readonly class MarketplaceDataMapper
      */
     public function mapStocks(MarketplaceEnum $marketplace, array $rawItems): array
     {
-        return array_map(fn (array $item): StockData => $this->mapOneStock($marketplace, $item), $rawItems);
+        $mappedStocks = [];
+        foreach ($rawItems as $item) {
+            try {
+                $mappedStocks[] = $this->mapOneStock($marketplace, $item);
+            } catch (InvalidMarketplaceDataException $e) {
+                Log::warning(sprintf('Skipping stock item due to invalid data: %s', $e->getMessage()), [
+                    'marketplace' => $marketplace->value,
+                    'raw_item' => $e->rawData,
+                    'exception' => $e->getTraceAsString(),
+                ]);
+            }
+        }
+
+        return $mappedStocks;
     }
 
     /**
@@ -77,55 +98,94 @@ final readonly class MarketplaceDataMapper
         };
     }
 
+    /**
+     * @throws InvalidMarketplaceDataException
+     */
     private function mapOneStock(MarketplaceEnum $marketplace, array $item): StockData
     {
-        $data = match ($marketplace) {
-            MarketplaceEnum::WB => [
-                'external_product_id' => (string) ($item['nmId'] ?? ''),
-                'external_warehouse_id' => (string) ($item['warehouseName'] ?? 'default'),
-                'quantity' => (int) ($item['amount'] ?? 0),
-                'sku' => (string) ($item['sku'] ?? ''),
-            ],
-            MarketplaceEnum::OZON => [
-                'external_product_id' => (string) ($item['productId'] ?? ''),
-                'external_warehouse_id' => 'ozon_wh',
-                'quantity' => (int) ($item['stocks'][0]['present'] ?? 0),
-                'sku' => (string) ($item['offerId'] ?? ''),
-            ],
-            MarketplaceEnum::YANDEX => [
-                'external_product_id' => (string) ($item['offerId'] ?? ''),
-                'external_warehouse_id' => (string) ($item['warehouseStocks'][0]['warehouseId'] ?? 'yandex_wh'),
-                'quantity' => (int) ($item['warehouseStocks'][0]['count'] ?? 0),
-                'sku' => (string) ($item['offerId'] ?? ''),
-            ],
-            MarketplaceEnum::AVITO => [
-                'external_product_id' => (string) ($item['item_id'] ?? ''),
-                'external_warehouse_id' => (string) ($item['warehouse_id'] ?? 'avito_wh'),
-                'quantity' => (int) ($item['quantity'] ?? 0),
-                'sku' => (string) ($item['item_id'] ?? ''),
-            ],
-            MarketplaceEnum::MOYSKLAD => [
-                'external_product_id' => (string) ($item['article'] ?? ''),
-                'external_warehouse_id' => 'ms_wh',
-                'quantity' => (int) (($item['stock'] ?? 0) - ($item['reserve'] ?? 0)),
-                'sku' => (string) ($item['article'] ?? ''),
-            ],
-        };
+        $sku = '';
+        $quantity = 0;
+        $externalProductId = '';
+        $externalWarehouseId = '';
 
-        return StockData::from($data);
+        switch ($marketplace) {
+            case MarketplaceEnum::WB:
+                $externalProductId = (string) ($item['nmId'] ?? $item['sku'] ?? '');
+                $externalWarehouseId = (string) (empty($item['warehouseName']) ? 'default' : $item['warehouseName']);
+                $quantity = (int) ($item['amount'] ?? 0);
+                $sku = (string) ($item['sku'] ?? '');
+                break;
+            case MarketplaceEnum::OZON:
+                $externalProductId = (string) ($item['productId'] ?? '');
+                $externalWarehouseId = 'ozon_wh'; // Default or derive from item
+                $quantity = (int) ($item['stocks'][0]['present'] ?? 0);
+                $sku = (string) ($item['offerId'] ?? '');
+                break;
+            case MarketplaceEnum::YANDEX:
+                $externalProductId = (string) ($item['offerId'] ?? '');
+                $externalWarehouseId = (string) ($item['warehouseStocks'][0]['warehouseId'] ?? 'yandex_wh');
+                $quantity = (int) ($item['warehouseStocks'][0]['count'] ?? 0);
+                $sku = (string) ($item['offerId'] ?? '');
+                break;
+            case MarketplaceEnum::AVITO:
+                $externalProductId = (string) ($item['item_id'] ?? '');
+                $externalWarehouseId = (string) ($item['warehouse_id'] ?? 'avito_wh');
+                $quantity = (int) ($item['quantity'] ?? 0);
+                $sku = (string) ($item['item_id'] ?? '');
+                break;
+            case MarketplaceEnum::MOYSKLAD:
+                $externalProductId = (string) ($item['article'] ?? '');
+                $externalWarehouseId = 'ms_wh'; // Default or derive from item
+                $calculatedQuantity = (int) (($item['stock'] ?? 0) - ($item['reserve'] ?? 0));
+                if ($calculatedQuantity < 0) {
+                    throw new InvalidMarketplaceDataException(
+                        sprintf('Calculated quantity is negative (%d) for MoySklad item.', $calculatedQuantity),
+                        rawData: $item,
+                        marketplace: $marketplace->value
+                    );
+                }
+
+                $quantity = $calculatedQuantity;
+                $sku = (string) ($item['article'] ?? '');
+                break;
+        }
+
+        if ($externalProductId === '' || $externalProductId === '0') {
+            throw new InvalidMarketplaceDataException(
+                sprintf('External Product ID is empty for marketplace %s.', $marketplace->value),
+                rawData: $item,
+                marketplace: $marketplace->value
+            );
+        }
+
+        return new StockData(
+            external_product_id: new ExternalProductId($externalProductId),
+            external_warehouse_id: new ExternalWarehouseId($externalWarehouseId),
+            quantity: new Quantity($quantity),
+            sku: $sku !== '' && $sku !== '0' ? new Sku($sku) : null,
+        );
     }
 
     private function mapOneOrder(MarketplaceEnum $marketplace, array $item): OrderData
     {
-        $items = array_map(fn (array $i): MarketplaceOrderItemData => new MarketplaceOrderItemData(
-            product_id: (string) ($i['nmId'] ?? $i['sku'] ?? $i['productId'] ?? $i['id'] ?? ''),
-            quantity: (int) ($i['quantity'] ?? $i['count'] ?? 1),
-            price: MoneyHelper::fromMarketplace($i['price'] ?? 0, $marketplace),
-            sku: (string) ($i['sku'] ?? $i['offerId'] ?? ''),
-        ), $item['items'] ?? $item['products'] ?? []);
+        $items = array_map(function (array $i) use ($marketplace): MarketplaceOrderItemData {
+            $skuValue = null;
+            if (! empty($i['sku'])) {
+                $skuValue = (string) $i['sku'];
+            } elseif (! empty($i['offerId'])) {
+                $skuValue = (string) $i['offerId'];
+            }
+
+            return new MarketplaceOrderItemData(
+                product_id: new MarketplaceProductId((string) ($i['nmId'] ?? $i['sku'] ?? $i['productId'] ?? $i['id'] ?? '')),
+                quantity: new Quantity((int) ($i['quantity'] ?? $i['count'] ?? 1)),
+                price: MoneyHelper::fromMarketplace($i['price'] ?? 0, $marketplace),
+                sku: $skuValue ? new Sku($skuValue) : null,
+            );
+        }, $item['items'] ?? $item['products'] ?? []);
 
         return new OrderData(
-            external_id: (string) ($item['id'] ?? $item['postingNumber'] ?? $item['article'] ?? ''),
+            external_id: new ExternalOrderId((string) ($item['id'] ?? $item['postingNumber'] ?? $item['article'] ?? '')),
             status: (string) ($item['status'] ?? $item['state']['name'] ?? 'new'),
             total_price: MoneyHelper::fromMarketplace($item['totalPrice'] ?? $item['price'] ?? $item['sum'] ?? 0, $marketplace),
             items: $items,

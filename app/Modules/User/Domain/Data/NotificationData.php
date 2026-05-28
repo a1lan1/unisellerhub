@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Domain\Data;
 
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 
 final readonly class NotificationData
@@ -12,7 +13,7 @@ final readonly class NotificationData
         public string $title,
         public string $message,
         public NotificationTypeEnum $type = NotificationTypeEnum::INFO,
-        public ?string $actionUrl = null,
+        public ?Url $actionUrl = null,
         public ?string $icon = null,
         public array $channels = ['database', 'broadcast'],
     ) {}
@@ -25,7 +26,7 @@ final readonly class NotificationData
             type: $data['type'] instanceof NotificationTypeEnum
                 ? $data['type']
                 : NotificationTypeEnum::tryFrom((string) ($data['type'] ?? 'info')) ?? NotificationTypeEnum::INFO,
-            actionUrl: $data['action_url'] ?? null,
+            actionUrl: isset($data['action_url']) ? new Url((string) $data['action_url']) : null,
             icon: $data['icon'] ?? null,
             channels: $data['channels'] ?? ['database', 'broadcast'],
         );
@@ -37,7 +38,7 @@ final readonly class NotificationData
             'title' => $this->title,
             'message' => $this->message,
             'type' => $this->type->value,
-            'action_url' => $this->actionUrl,
+            'action_url' => $this->actionUrl?->getValue(),
             'icon' => $this->icon,
             'channels' => $this->channels,
         ];

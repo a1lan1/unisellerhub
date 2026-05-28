@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Report\Domain\Data;
 
+use App\Modules\Report\Domain\Enums\ReportTypeEnum;
+use App\Modules\Report\Domain\ValueObjects\BatchId;
+use App\Modules\Report\Domain\ValueObjects\ReportDisplayName;
 use Override;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
@@ -14,11 +17,11 @@ class RequestReportTaskData extends Data
 {
     public function __construct(
         public int $organization_id,
-        public string $report_type,
+        public ReportTypeEnum $report_type,
         public array $data,
-        public ?string $batch_id = null,
+        public ?BatchId $batch_id = null,
         public ?string $id = null,
-        public ?string $display_name = null,
+        public ?ReportDisplayName $display_name = null,
     ) {}
 
     #[Override]
@@ -26,11 +29,11 @@ class RequestReportTaskData extends Data
     {
         return [
             'organization_id' => $this->organization_id,
-            'report_type' => $this->report_type,
+            'report_type' => $this->report_type->value,
             'data' => $this->data,
-            'batch_id' => $this->batch_id,
+            'batch_id' => $this->batch_id?->getValue(),
             'id' => $this->id,
-            'displayName' => $this->display_name,
+            'displayName' => $this->display_name?->getValue(),
         ];
     }
 

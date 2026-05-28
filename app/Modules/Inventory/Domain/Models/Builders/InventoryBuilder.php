@@ -24,9 +24,9 @@ class InventoryBuilder extends Builder
                         ->orWhereHas('listing.product', fn (Builder $pq) => $pq->where('name', 'like', sprintf('%%%s%%', $s)));
                 });
             })
-            ->when($filter->sort, function (Builder $q, $s) use ($filter): void {
-                $direction = $filter->direction ?? 'asc';
-                match ($s) {
+            ->when($filter->sortOrder, function (Builder $q, $sortOrder): void {
+                $direction = $sortOrder->getDirection();
+                match ($sortOrder->getField()) {
                     'product_name' => $q->join('product_listings', 'inventory.product_listing_id', '=', 'product_listings.id')
                         ->join('products', 'product_listings.product_id', '=', 'products.id')
                         ->select('inventory.*')

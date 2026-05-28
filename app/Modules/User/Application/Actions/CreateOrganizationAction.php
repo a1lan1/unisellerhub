@@ -20,8 +20,8 @@ class CreateOrganizationAction
     {
         return DB::transaction(function () use ($dto) {
             $organization = Organization::create([
-                'name' => $dto->name,
-                'slug' => Str::slug($dto->name),
+                'name' => $dto->name->getValue(),
+                'slug' => Str::slug($dto->name->getValue()),
             ]);
 
             /** @var User $user */

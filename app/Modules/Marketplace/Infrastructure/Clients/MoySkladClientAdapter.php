@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Infrastructure\Clients;
 
 use App\Modules\Inventory\Domain\Data\StockData;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Interfaces\MarketplaceClientInterface;
 use App\Modules\Order\Domain\Data\OrderData;
+use App\Modules\Order\Domain\ValueObjects\ExternalOrderId;
 use App\Modules\Product\Domain\Data\ProductData;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\Shared\Infrastructure\Money\MoneyHelper;
 use DateTime;
 use Illuminate\Http\Client\ConnectionException;
@@ -37,10 +42,10 @@ class MoySkladClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['rows'])->map(fn ($item): StockData => new StockData(
-            external_product_id: $item['article'] ?? '',
-            external_warehouse_id: 'ms_main',
-            quantity: (int) $item['stock'],
-            sku: $item['article'] ?? ''
+            external_product_id: new ExternalProductId($item['article'] ?? ''),
+            external_warehouse_id: new ExternalWarehouseId('ms_main'),
+            quantity: new Quantity((int) $item['stock']),
+            sku: new Sku($item['article'] ?? '')
         ));
     }
 
@@ -58,7 +63,7 @@ class MoySkladClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['rows'])->map(fn ($order): OrderData => new OrderData(
-            external_id: (string) $order['id'],
+            external_id: new ExternalOrderId((string) $order['id']),
             status: $order['state']['name'] ?? 'unknown',
             total_price: MoneyHelper::fromMarketplace($order['sum'] ?? 0, MarketplaceEnum::MOYSKLAD),
             items: [],

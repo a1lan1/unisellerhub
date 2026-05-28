@@ -17,9 +17,9 @@ class OrderResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'external_id' => $this->resource->external_id,
+            'external_id' => $this->resource->external_id->getValue(),
             'marketplace' => $this->resource->marketplace->value,
-            'status' => $this->resource->status,
+            'status' => $this->resource->status->value,
             'total_price' => (float) $this->resource->total_price->getAmount(),
             'formatted_total_price' => $this->resource->total_price->format(),
             'order_date' => $this->resource->order_date->toDateTimeString(),

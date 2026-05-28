@@ -30,13 +30,12 @@ class OrderBuilder extends Builder
     {
         return $this->when($filter->marketplace, fn (Builder $q, $m) => $q->where('marketplace', $m))
             ->when($filter->statuses, fn (Builder $q, array $s) => $q->whereIn('status', $s))
-            ->when($filter->date_from, fn (Builder $q, $d) => $q->whereDate('order_date', '>=', $d))
-            ->when($filter->date_to, fn (Builder $q, $d) => $q->whereDate('order_date', '<=', $d))
+            ->when($filter->dateRange, fn (Builder $q, $dr) => $q->whereDate('order_date', '>=', $dr->from)->whereDate('order_date', '<=', $dr->to))
             ->when($filter->search, function (Builder $q, string $s): void {
                 $q->where('external_id', 'like', sprintf('%%%s%%', $s));
             })
-            ->when($filter->sort, function (Builder $q, $s) use ($filter): void {
-                $q->orderBy($s, $filter->direction ?? 'desc');
+            ->when($filter->sortOrder, function (Builder $q, $sortOrder): void {
+                $q->orderBy($sortOrder->getField(), $sortOrder->getDirection());
             }, fn (Builder $q) => $q->latest('order_date'));
     }
 

@@ -18,7 +18,7 @@ class EloquentInventoryRepository implements InventoryRepositoryInterface
             ->whereHas('warehouse')
             ->with(['listing.product', 'warehouse'])
             ->filter($filter)
-            ->paginate($filter->per_page, ['*'], 'page', $filter->page);
+            ->paginate($filter->pagination->getPerPage(), ['*'], 'page', $filter->pagination->getPage());
     }
 
     public function findById(int $id): ?Inventory

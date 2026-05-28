@@ -19,12 +19,19 @@ class ProductListingFactory extends Factory
      */
     public function definition(): array
     {
+        $price = fake()->numberBetween(10000, 100000);
+        $oldPrice = fake()->boolean(30) ? fake()->numberBetween($price, $price * 1.5) : null;
+
         return [
             'product_id' => Product::factory(),
             'marketplace' => fake()->randomElement(MarketplaceEnum::cases()),
             'external_id' => fake()->uuid(),
             'vendor_code' => fake()->bothify('???-###'),
-            'price' => fake()->randomFloat(2, 100, 10000),
+            'price' => $price,
+            'old_price' => $oldPrice,
+            'discount' => $oldPrice ? fake()->numberBetween(5, 50) : 0,
+            'commission_percent' => fake()->randomFloat(2, 1, 20),
+            'logistic_cost' => fake()->numberBetween(100, 1000),
             'status' => 'active',
             'last_synced_at' => null,
         ];

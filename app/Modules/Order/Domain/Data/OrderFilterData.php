@@ -6,6 +6,9 @@ namespace App\Modules\Order\Domain\Data;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Order\Domain\Enums\OrderStatusEnum;
+use App\Modules\Shared\Domain\ValueObjects\DateRange;
+use App\Modules\Shared\Domain\ValueObjects\Pagination;
+use App\Modules\Shared\Domain\ValueObjects\SortOrder;
 use Spatie\LaravelData\Data;
 
 class OrderFilterData extends Data
@@ -14,14 +17,11 @@ class OrderFilterData extends Data
      * @param  OrderStatusEnum[]|null  $statuses
      */
     public function __construct(
+        public Pagination $pagination,
         public ?string $search = null,
         public ?MarketplaceEnum $marketplace = null,
         public ?array $statuses = null,
-        public ?string $date_from = null,
-        public ?string $date_to = null,
-        public ?string $sort = null,
-        public ?string $direction = null,
-        public int $per_page = 15,
-        public int $page = 1,
+        public ?DateRange $dateRange = null,
+        public ?SortOrder $sortOrder = null,
     ) {}
 }

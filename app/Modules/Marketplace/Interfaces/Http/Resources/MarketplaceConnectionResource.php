@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Interfaces\Http\Resources;
 
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
+use App\Modules\Marketplace\Domain\ValueObjects\Credentials;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Override;
@@ -32,7 +33,10 @@ class MarketplaceConnectionResource extends JsonResource
 
     private function getMaskedCredentials(): array
     {
-        $credentials = $this->credentials;
+        /** @var Credentials $credentialsVo */
+        $credentialsVo = $this->credentials;
+        $credentials = $credentialsVo->getValue();
+
         foreach ($credentials as $key => $value) {
             $credentials[$key] = strlen((string) $value) > 8
                 ? substr((string) $value, 0, 4).'...'.substr((string) $value, -4)

@@ -60,7 +60,7 @@ class EloquentProductListingRepository implements ProductListingRepositoryInterf
             ->whereHas('product')
             ->with('product')
             ->filter($filter)
-            ->paginate($filter->per_page, ['*'], 'page', $filter->page);
+            ->paginate($filter->pagination->getPerPage(), ['*'], 'page', $filter->pagination->getPage());
     }
 
     public function findListingByExternalId(MarketplaceEnum $marketplace, string $externalId): ?ProductListing

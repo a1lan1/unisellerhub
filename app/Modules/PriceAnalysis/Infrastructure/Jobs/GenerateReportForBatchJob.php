@@ -6,6 +6,8 @@ namespace App\Modules\PriceAnalysis\Infrastructure\Jobs;
 
 use App\Modules\Report\Application\Actions\RequestReportAction;
 use App\Modules\Report\Domain\Data\RequestReportTaskData;
+use App\Modules\Report\Domain\Enums\ReportTypeEnum;
+use App\Modules\Report\Domain\ValueObjects\BatchId;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -72,9 +74,9 @@ final class GenerateReportForBatchJob implements ShouldQueue
 
         $taskData = new RequestReportTaskData(
             organization_id: $organizationId,
-            report_type: 'price_analysis_report',
+            report_type: ReportTypeEnum::PRICE_ANALYSIS,
             data: $reportData,
-            batch_id: $this->batchId,
+            batch_id: new BatchId($this->batchId),
         );
 
         $requestReportAction->execute($taskData);

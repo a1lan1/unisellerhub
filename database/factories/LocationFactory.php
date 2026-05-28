@@ -6,7 +6,8 @@ namespace Database\Factories;
 
 use App\Modules\Geo\Domain\Enums\LocationTypeEnum;
 use App\Modules\Geo\Domain\Models\Location;
-use App\Modules\Shared\ValueObjects\Address;
+use App\Modules\Geo\Domain\ValueObjects\Coordinates;
+use App\Modules\Shared\Domain\ValueObjects\Address;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,15 +25,17 @@ class LocationFactory extends Factory
             'name' => fake()->company().fake()->randomDigit(),
             'type' => fake()->randomElement(LocationTypeEnum::cases()),
             'address' => new Address(
+                fullAddress: fake()->address(),
                 country: fake()->countryCode(),
                 city: fake()->city(),
                 street: fake()->streetName(),
                 houseNumber: fake()->buildingNumber(),
                 postalCode: fake()->postcode(),
-                fullAddress: fake()->address(),
             ),
-            'latitude' => fake()->latitude(),
-            'longitude' => fake()->longitude(),
+            'coordinates' => new Coordinates(
+                latitude: fake()->latitude(),
+                longitude: fake()->longitude(),
+            ),
             'external_ids' => ['google' => fake()->uuid()],
         ];
     }

@@ -72,10 +72,10 @@ abstract class AbstractMarketplaceSyncJob implements ShouldQueue
                         organizationId: $this->organizationId,
                         marketplace: $connection->marketplace,
                         operation: $operationType,
-                        payload: [
-                            'connection_id' => $connection->id,
-                            ...$connection->credentials,
-                        ]
+                        payload: array_merge(
+                            ['connection_id' => $connection->id],
+                            $connection->credentials->getValue()
+                        )
                     )
                 );
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Modules\Geo\Domain\Events\NegativeSentimentDetected;
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Application\Services\NotificationService;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
@@ -26,7 +27,7 @@ class SendNegativeSentimentNotification implements ShouldQueue
             title: 'Negative Review Detected!',
             message: sprintf("A negative review has been detected for your location '%s'. Review: '%s'", $review->location->name, $review->text),
             type: NotificationTypeEnum::WARNING,
-            actionUrl: route('geo.dashboard'),
+            actionUrl: new Url(route('geo.dashboard')),
             icon: 'mdi-alert-circle',
             channels: ['database', 'broadcast', 'mail']
         );

@@ -6,6 +6,8 @@ namespace App\Modules\Product\Interfaces\Http\Requests;
 
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Product\Domain\Data\ProductListingsFilterData;
+use App\Modules\Shared\Domain\ValueObjects\Pagination;
+use App\Modules\Shared\Domain\ValueObjects\SortOrder;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -51,14 +53,20 @@ class ProductListingsRequest extends FormRequest
 
     public function toDto(): ProductListingsFilterData
     {
-        return ProductListingsFilterData::from([
-            'search' => $this->query('search'),
-            'semanticSearch' => $this->query('semantic_query'),
-            'marketplace' => $this->query('marketplace'),
-            'sort' => $this->query('sort'),
-            'direction' => $this->query('direction'),
-            'per_page' => (int) $this->query('per_page', 15),
-            'page' => (int) $this->query('page', 1),
-        ]);
+        $perPage = (int) $this->query('per_page', 15);
+        $page = (int) $this->query('page', 1);
+        $pagination = new Pagination($perPage, $page);
+
+        $sort = $this->query('sort');
+        $direction = $this->query('direction');
+        $sortOrder = ($sort && $direction) ? new SortOrder($sort, $direction) : null;
+
+        return new ProductListingsFilterData(
+            search: $this->query('search'),
+            semanticSearch: $this->query('semantic_query'),
+            marketplace: $this->query('marketplace') ? MarketplaceEnum::from($this->query('marketplace')) : null,
+            sortOrder: $sortOrder,
+            pagination: $pagination,
+        );
     }
 }

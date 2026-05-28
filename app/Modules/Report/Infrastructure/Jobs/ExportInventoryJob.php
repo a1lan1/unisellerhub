@@ -8,6 +8,7 @@ use App\Modules\Product\Domain\Data\ProductListingsFilterData;
 use App\Modules\Report\Domain\Events\ExportReadyEvent;
 use App\Modules\Report\Domain\Exports\InventoryExport;
 use App\Modules\Shared\Application\Services\TenantManager;
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Application\Services\NotificationService;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Enums\NotificationTypeEnum;
@@ -19,7 +20,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\URL as URLFacade;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportInventoryJob implements ShouldQueue
@@ -30,8 +31,8 @@ class ExportInventoryJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        private readonly User $user,
-        private readonly ?ProductListingsFilterData $filters
+        public readonly User $user,
+        public readonly ?ProductListingsFilterData $filters
     ) {}
 
     /**
@@ -51,7 +52,7 @@ class ExportInventoryJob implements ShouldQueue
                 'reports'
             );
 
-            $fileUrl = URL::temporarySignedRoute(
+            $fileUrl = URLFacade::temporarySignedRoute(
                 'exports.download',
                 now()->addMinutes(30),
                 ['path' => $fileName]
@@ -67,7 +68,7 @@ class ExportInventoryJob implements ShouldQueue
                     title: 'Inventory Export Ready',
                     message: 'Your inventory export file is ready for download.',
                     type: NotificationTypeEnum::SUCCESS,
-                    actionUrl: $fileUrl,
+                    actionUrl: new Url($fileUrl),
                     icon: 'mdi-microsoft-excel'
                 )
             );

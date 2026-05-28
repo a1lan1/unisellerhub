@@ -13,14 +13,6 @@ use Illuminate\Support\Collection;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
-    public function getSellerWithProducts(User $seller, int $productsLimit = 8): User
-    {
-        return $seller->load(['organization.products' => function (HasMany $query) use ($productsLimit): void {
-            $query->latest()
-                ->take($productsLimit);
-        }]);
-    }
-
     /**
      * @throws ModelNotFoundException
      */
@@ -68,5 +60,10 @@ class EloquentUserRepository implements UserRepositoryInterface
             ->with('media')
             ->limit($limit)
             ->get();
+    }
+
+    public function getSellerWithProducts(User $seller, int $productsLimit = 8): User
+    {
+        return $seller->load(['organization.products' => fn (HasMany $query) => $query->latest()->take($productsLimit)]);
     }
 }

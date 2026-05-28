@@ -20,13 +20,20 @@ class ProductListingResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $product->name,
-            'sku' => $product->sku,
+            'sku' => $product->sku->getValue(),
             'marketplace' => $this->resource->marketplace->value,
             'external_id' => $this->resource->external_id,
-            'price' => (int) ($this->resource->price?->getAmount() ?? 0),
-            'formatted_price' => $this->resource->price?->format() ?? '0.00 ₽',
+            'price' => (int) $this->resource->price->getAmount(),
+            'formatted_price' => $this->resource->price->format(),
             'status' => $this->resource->status,
             'last_synced_at' => $this->resource->last_synced_at?->toDateTimeString(),
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku->getValue(),
+                'cost_price' => (int) $product->cost_price->getAmount(),
+                'organization_id' => $product->organization_id,
+            ],
         ];
     }
 }

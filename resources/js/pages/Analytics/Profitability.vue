@@ -5,21 +5,8 @@ import { ref } from 'vue'
 import { api } from '@/plugins/axios'
 import { snackbar } from '@/plugins/snackbar'
 import { dashboard } from '@/routes'
-import { formatCurrency } from '@/utils/formatters'
+import type { ProfitabilityItem } from '@/types'
 import { getMarketplaceColor } from '@/utils/marketplace'
-
-interface ProfitabilityItem {
-  id: number;
-  marketplace: string;
-  sku: string;
-  name: string;
-  price: number;
-  cost_price: number;
-  commission_percent: number;
-  logistic_cost: number;
-  profit: number;
-  margin: number;
-}
 
 const props = defineProps<{
   items: ProfitabilityItem[];
@@ -38,9 +25,18 @@ const localItems = ref([...props.items])
 const isUpdating = ref<number | null>(null)
 
 const calculateRow = (item: ProfitabilityItem) => {
-  const commission = item.price * (item.commission_percent / 100)
-  item.profit = item.price - commission - item.logistic_cost - item.cost_price
-  item.margin = item.price > 0 ? (item.profit / item.price) * 100 : 0
+  const itemPrice = Number(item.price.amount)
+  const itemCostPrice = Number(item.cost_price.amount)
+  const itemLogisticCost = Number(item.logistic_cost.amount)
+  const commission = itemPrice * (item.commission_percent / 100)
+
+  // Calculate profit first
+  item.profit.amount = itemPrice - commission - itemLogisticCost - itemCostPrice
+
+  // Then calculate margin using the newly calculated profit
+  item.margin = itemPrice > 0
+    ? item.profit.amount / itemPrice * 100
+    : 0
 }
 
 const saveFinance = async(item: ProfitabilityItem) => {
@@ -49,9 +45,9 @@ const saveFinance = async(item: ProfitabilityItem) => {
   try {
     await api.patch('/api/analytics/update-finance', {
       listing_id: item.id,
-      cost_price: item.cost_price,
+      cost_price: item.cost_price.amount,
       commission_percent: item.commission_percent,
-      logistic_cost: item.logistic_cost
+      logistic_cost: item.logistic_cost.amount
     })
 
     if (snackbar) {
@@ -117,21 +113,37 @@ const generateReport = async() => {
   <Head title="Profitability" />
 
   <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-bold flex items-center gap-2">
-      <Calculator class="text-primary" />
-      Profitability Calculator
-    </h1>
-    <v-btn
-      color="primary"
-      variant="tonal"
-      density="compact"
-      prepend-icon="mdi-microsoft-excel"
-      :loading="isGeneratingReport"
-      :disabled="isGeneratingReport"
-      @click="generateReport"
-    >
-      Export Report
-    </v-btn>
+    <div class="flex items-center gap-2">
+      <h1 class="text-2xl font-bold flex items-center gap-2">
+        <Calculator class="text-primary" />
+        Profitability Calculator
+      </h1>
+    </div>
+
+    <div>
+      <v-btn
+        color="primary"
+        variant="tonal"
+        density="compact"
+        prepend-icon="mdi-microsoft-excel"
+        :loading="isGeneratingReport"
+        :disabled="isGeneratingReport"
+        @click="generateReport"
+      >
+        Export Report
+      </v-btn>
+
+      <v-tooltip location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            icon="mdi-help-circle-outline"
+            variant="text"
+            v-bind="tooltipProps"
+          />
+        </template>
+        <span>Calculates the profitability of each product based on its price, cost price, commission, and logistics cost.</span>
+      </v-tooltip>
+    </div>
   </div>
 
   <v-card
@@ -173,12 +185,12 @@ const generateReport = async() => {
         </template>
 
         <template #[`item.price`]="{ item }">
-          {{ formatCurrency(item.price) }}
+          {{ item.price.formatted }}
         </template>
 
         <template #[`item.cost_price`]="{ item }">
           <v-text-field
-            v-model.number="item.cost_price"
+            v-model.number="item.cost_price.amount"
             type="number"
             density="compact"
             hide-details
@@ -201,7 +213,7 @@ const generateReport = async() => {
 
         <template #[`item.logistic_cost`]="{ item }">
           <v-text-field
-            v-model.number="item.logistic_cost"
+            v-model.number="item.logistic_cost.amount"
             type="number"
             density="compact"
             hide-details
@@ -211,14 +223,14 @@ const generateReport = async() => {
         </template>
 
         <template #[`item.profit`]="{ item }">
-          <span :class="item.profit < 0 ? 'text-red-600' : 'text-green-600'">
-            {{ formatCurrency(item.profit) }}
+          <span :class="Number(item.profit.amount) < 0 ? 'text-red-600' : 'text-green-600'">
+            {{ item.profit.formatted }}
           </span>
         </template>
 
         <template #[`item.margin`]="{ item }">
           <span :class="getMarginColor(item.margin)">
-            {{ item.margin.toFixed(1) }}%
+            {{ item.margin.toFixed() }} %
           </span>
         </template>
 

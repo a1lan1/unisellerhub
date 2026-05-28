@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Domain\Data;
 
+use App\Modules\Shared\Domain\ValueObjects\Url;
+
 class SearchResultItemData
 {
     public function __construct(
@@ -11,7 +13,7 @@ class SearchResultItemData
         public int $id,
         public string $title,
         public string $subtitle,
-        public string $url,
+        public Url $url,
     ) {}
 
     public function toArray(): array
@@ -21,7 +23,7 @@ class SearchResultItemData
             'id' => $this->id,
             'title' => $this->title,
             'subtitle' => $this->subtitle,
-            'url' => $this->url,
+            'url' => $this->url->getValue(),
         ];
     }
 }

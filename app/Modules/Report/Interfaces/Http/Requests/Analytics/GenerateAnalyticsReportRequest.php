@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Report\Interfaces\Http\Requests\Analytics;
 
+use App\Modules\Report\Domain\Data\GenerateAnalyticsReportData;
+use App\Modules\Report\Domain\Enums\ReportTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Override;
 
 class GenerateAnalyticsReportRequest extends FormRequest
@@ -18,9 +20,9 @@ class GenerateAnalyticsReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'report_type' => ['required', 'string', Rule::in(['product_revenue_analysis', 'product_profitability_analysis'])],
+            'report_type' => ['required', new Enum(ReportTypeEnum::class)],
             'days' => ['nullable', 'integer', 'min:1'],
-            'endDate' => ['nullable', 'date_format:Y-m-d'],
+            'end_date' => ['nullable', 'date_format:Y-m-d'],
         ];
     }
 
@@ -29,18 +31,18 @@ class GenerateAnalyticsReportRequest extends FormRequest
     {
         $this->merge([
             'days' => $this->integer('days', 30),
-            'endDate' => $this->input('endDate', now()->format('Y-m-d')),
+            'end_date' => $this->input('end_date', now()->format('Y-m-d')),
         ]);
     }
 
-    public function toDto(): array
+    public function toDto(): GenerateAnalyticsReportData
     {
-        return [
-            'reportType' => $this->input('report_type'),
-            'reportParams' => [
-                'days' => $this->integer('days', 30),
-                'endDate' => $this->input('endDate', now()->format('Y-m-d')),
-            ],
-        ];
+        $validated = $this->validated();
+
+        return new GenerateAnalyticsReportData(
+            reportType: ReportTypeEnum::from($validated['report_type']),
+            days: (int) $validated['days'],
+            endDate: (string) $validated['end_date'],
+        );
     }
 }

@@ -17,14 +17,16 @@ class MockStockFactory extends Factory
 
     public function definition(): array
     {
+        $quantity = fake()->numberBetween(0, 500);
+
         return [
             'mock_marketplace_account_id' => MockMarketplaceAccountFactory::new(),
             'marketplace' => fake()->randomElement(MarketplaceEnum::cases()),
             'external_product_id' => fake()->uuid(),
             'sku' => fake()->bothify('SKU-###-???'),
             'external_warehouse_id' => fake()->uuid(),
-            'quantity' => fake()->numberBetween(0, 500),
-            'reserved' => fake()->numberBetween(0, 50),
+            'quantity' => $quantity,
+            'reserved' => fake()->numberBetween(0, $quantity),
         ];
     }
 }

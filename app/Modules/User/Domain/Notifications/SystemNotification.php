@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Domain\Notifications;
 
+use App\Modules\Shared\Domain\ValueObjects\Url;
 use App\Modules\User\Application\Notifications\Channels\TelegramChannel;
 use App\Modules\User\Domain\Data\NotificationData;
 use App\Modules\User\Domain\Models\User;
@@ -70,8 +71,8 @@ class SystemNotification extends Notification implements ShouldBroadcast, Should
             ->subject($this->data->title)
             ->line($this->data->message);
 
-        if ($this->data->actionUrl) {
-            $mailMessage->action('View Details', $this->data->actionUrl);
+        if ($this->data->actionUrl instanceof Url) {
+            $mailMessage->action('View Details', $this->data->actionUrl->getValue());
         }
 
         return $mailMessage;
@@ -86,7 +87,7 @@ class SystemNotification extends Notification implements ShouldBroadcast, Should
     {
         return [
             'text' => "<b>{$this->data->title}</b>\n".$this->data->message.
-                      ($this->data->actionUrl ? "\n\n<a href=\"{$this->data->actionUrl}\">View Details</a>" : ''),
+                      ($this->data->actionUrl instanceof Url ? "\n\n<a href=\"{$this->data->actionUrl->getValue()}\">View Details</a>" : ''),
             'parse_mode' => 'HTML',
         ];
     }

@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Infrastructure\Clients;
 
 use App\Modules\Inventory\Domain\Data\StockData;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalProductId;
+use App\Modules\Inventory\Domain\ValueObjects\ExternalWarehouseId;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Marketplace\Domain\Data\MarketplaceOrderItemData;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Marketplace\Domain\Interfaces\MarketplaceClientInterface;
+use App\Modules\Marketplace\Domain\ValueObjects\MarketplaceProductId;
 use App\Modules\Order\Domain\Data\OrderData;
+use App\Modules\Order\Domain\ValueObjects\ExternalOrderId;
 use App\Modules\Product\Domain\Data\ProductData;
+use App\Modules\Product\ValueObjects\Sku;
 use App\Modules\Shared\Infrastructure\Money\MoneyHelper;
 use DateTime;
 use Illuminate\Http\Client\ConnectionException;
@@ -41,10 +47,10 @@ class OzonClientAdapter implements MarketplaceClientInterface
         }
 
         return collect($response->json()['result']['items'])->flatMap(fn ($item) => collect($item['stocks'])->map(fn ($stock): StockData => new StockData(
-            external_product_id: (string) $item['product_id'],
-            external_warehouse_id: (string) $stock['warehouse_id'],
-            quantity: $stock['present'],
-            sku: $item['offer_id']
+            external_product_id: new ExternalProductId((string) $item['product_id']),
+            external_warehouse_id: new ExternalWarehouseId((string) $stock['warehouse_id']),
+            quantity: new Quantity($stock['present']),
+            sku: new Sku((string) $item['offer_id'])
         )));
     }
 
@@ -71,16 +77,16 @@ class OzonClientAdapter implements MarketplaceClientInterface
 
         return collect($response->json()['result']['postings'])->map(function (array $order): OrderData {
             $items = array_map(fn (array $p): MarketplaceOrderItemData => new MarketplaceOrderItemData(
-                product_id: (string) $p['sku'],
-                quantity: (int) $p['quantity'],
+                product_id: new MarketplaceProductId((string) $p['sku']),
+                quantity: new Quantity((int) $p['quantity']),
                 price: MoneyHelper::fromMarketplace($p['price'], MarketplaceEnum::OZON),
-                sku: (string) ($p['offer_id'] ?? ''),
+                sku: ($p['offer_id'] ?? null) ? new Sku((string) $p['offer_id']) : null,
             ), $order['products']);
 
-            $totalPrice = array_reduce($items, fn ($sum, MarketplaceOrderItemData $item) => $sum->add($item->price->multiply($item->quantity)), MoneyHelper::fromMarketplace(0, MarketplaceEnum::OZON));
+            $totalPrice = array_reduce($items, fn ($sum, MarketplaceOrderItemData $item) => $sum->add($item->price->multiply($item->quantity->getValue())), MoneyHelper::fromMarketplace(0, MarketplaceEnum::OZON));
 
             return new OrderData(
-                external_id: (string) $order['posting_number'],
+                external_id: new ExternalOrderId((string) $order['posting_number']),
                 status: $order['status'],
                 total_price: $totalPrice,
                 items: $items,
@@ -154,7 +160,7 @@ class OzonClientAdapter implements MarketplaceClientInterface
      */
     public function updateStocks(Collection $stocks): bool
     {
-        $payload = ['stocks' => $stocks->map(fn ($s): array => ['offer_id' => $s->sku, 'stock' => $s->quantity])->all()];
+        $payload = ['stocks' => $stocks->map(fn ($s): array => ['offer_id' => $s->sku->getValue(), 'stock' => $s->quantity->getValue()])->all()];
 
         return Http::withHeaders($this->headers)
             ->timeout($this->timeout)

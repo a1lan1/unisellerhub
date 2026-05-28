@@ -43,8 +43,7 @@ class ExportController extends Controller
         $dto = $request->toDto();
         dispatch(new GenerateAnalyticsReportJob(
             $request->user(),
-            $dto['reportType'],
-            $dto['reportParams']
+            $dto
         ));
 
         return response()->json(['message' => 'Analytics report generation started. You will be notified when the file is ready.']);

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Domain\Models;
 
+use App\Modules\Inventory\Domain\Casts\QuantityCast;
 use App\Modules\Inventory\Domain\Data\InventoryFilterData;
 use App\Modules\Inventory\Domain\Models\Builders\InventoryBuilder;
+use App\Modules\Inventory\Domain\ValueObjects\Quantity;
 use App\Modules\Product\Domain\Models\ProductListing;
 use Carbon\CarbonImmutable;
 use Database\Factories\InventoryFactory;
@@ -16,13 +18,14 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property int $id
  * @property int $product_listing_id
  * @property int $warehouse_id
- * @property int $quantity
- * @property int $reserved
+ * @property Quantity $quantity
+ * @property Quantity $reserved
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read ProductListing $listing
@@ -53,6 +56,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Inventory extends Model
 {
     use HasFactory;
+
+    /**
+     * @return array<string, string>
+     */
+    #[Override]
+    protected function casts(): array
+    {
+        return [
+            'quantity' => QuantityCast::class,
+            'reserved' => QuantityCast::class,
+        ];
+    }
 
     public function listing(): BelongsTo
     {

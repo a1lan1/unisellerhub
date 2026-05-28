@@ -55,7 +55,7 @@ readonly class OrdersExport implements FromQuery, ShouldAutoSize, WithChunkReadi
             $order->external_id,
             $order->marketplace->label(),
             $order->order_date->toDateTimeString(),
-            $order->status,
+            $order->status->value,
             $order->total_price.' ₽',
             $order->items->count(),
         ];

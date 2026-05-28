@@ -11,6 +11,7 @@ use App\Modules\Order\Domain\Models\Order;
 use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
 use App\Modules\Report\Domain\Data\SalesStatsData;
 use Carbon\CarbonInterface;
+use Cknow\Money\Money;
 use Flowframe\Trend\Trend;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -80,20 +81,20 @@ class EloquentOrderRepository implements OrderRepositoryInterface
         return Order::query()
             ->filter($filter)
             ->with('items.listing.product')
-            ->paginate($filter->per_page, ['*'], 'page', $filter->page);
+            ->paginate($filter->pagination->getPerPage(), ['*'], 'page', $filter->pagination->getPage());
     }
 
     public function sumTotalAmountByStatus(OrderStatusEnum $status): int
     {
         return (int) Order::query()
             ->where('status', $status)
-            ->sum('total_amount');
+            ->sum('total_price');
     }
 
     public function getSalesStatsByCurrency(): ?SalesStatsData
     {
         $stats = Order::query()
-            ->selectRaw('count(*) as count, sum(total_amount) as total')
+            ->selectRaw('count(*) as count, sum(total_price) as total')
             ->toBase()
             ->first();
 
@@ -103,7 +104,7 @@ class EloquentOrderRepository implements OrderRepositoryInterface
 
         return new SalesStatsData(
             count: (int) $stats->count,
-            totalCents: (int) $stats->total
+            totalSales: Money::RUB((int) $stats->total)
         );
     }
 }
