@@ -6,16 +6,16 @@ namespace App\Modules\Product\Interfaces\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
-use App\Modules\Product\Application\Services\ProductService;
 use App\Modules\Product\Domain\Data\SyncBulkProductData;
 use App\Modules\Product\Domain\Data\SyncProductsData;
+use App\Modules\Product\Domain\Interfaces\ProductServiceInterface;
 use App\Modules\Product\Interfaces\Http\Requests\Api\SyncBulkProductRequest;
 use App\Modules\Product\Interfaces\Http\Requests\Api\SyncProductRequest;
 use Illuminate\Http\JsonResponse;
 
 class ProductSyncController extends Controller
 {
-    public function __construct(private readonly ProductService $productService) {}
+    public function __construct(private readonly ProductServiceInterface $productService) {}
 
     public function sync(SyncProductRequest $request): JsonResponse
     {
