@@ -6,8 +6,8 @@ namespace App\Modules\Geo\Interfaces\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Geo\Application\Actions\StoreReviewAction;
-use App\Modules\Geo\Application\Services\GeoMetricService;
 use App\Modules\Geo\Domain\Data\ReviewFilterData;
+use App\Modules\Geo\Domain\Interfaces\GeoMetricServiceInterface;
 use App\Modules\Geo\Domain\Interfaces\ReviewServiceInterface;
 use App\Modules\Geo\Domain\Models\Review;
 use App\Modules\Geo\Interfaces\Http\Requests\StoreReviewRequest;
@@ -20,7 +20,7 @@ use Throwable;
 class ReviewController extends Controller
 {
     public function __construct(
-        private readonly GeoMetricService $geoMetricService,
+        private readonly GeoMetricServiceInterface $geoMetricService,
         private readonly ReviewServiceInterface $reviewService,
     ) {}
 

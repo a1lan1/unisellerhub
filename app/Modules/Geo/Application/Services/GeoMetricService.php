@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Geo\Application\Services;
 
+use App\Modules\Geo\Domain\Interfaces\GeoMetricServiceInterface;
 use App\Modules\Geo\Domain\Models\Review;
 use App\Modules\Geo\Domain\Repositories\ReviewRepositoryInterface;
 use App\Modules\Shared\Domain\Enums\CacheKeyEnum;
@@ -12,7 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 
-class GeoMetricService
+class GeoMetricService implements GeoMetricServiceInterface
 {
     public function __construct(protected ReviewRepositoryInterface $reviewRepository) {}
 
@@ -31,6 +32,7 @@ class GeoMetricService
                 $totalReviews = $reviews->count();
                 $sentimentCounts = $reviews->groupBy('sentiment')->map->count();
                 $sourceCounts = $reviews->groupBy('source')->map->count();
+                $ratingCounts = $reviews->groupBy('rating')->map->count();
 
                 $ratingDynamics = $reviews
                     ->sortBy('published_at')
@@ -54,6 +56,7 @@ class GeoMetricService
                     'sentiment_distribution' => $sentimentCounts,
                     'source_distribution' => $sourceCounts,
                     'rating_dynamics' => $ratingDynamics,
+                    'rating_counts' => $ratingCounts,
                 ];
             });
     }
