@@ -9,6 +9,7 @@ use App\Modules\Activity\Interfaces\Http\Resources\ActivityResource;
 use App\Modules\Marketplace\Domain\Data\MarketplaceConnectionStatsData;
 use App\Modules\Marketplace\Domain\Data\StoreMarketplaceConnectionData;
 use App\Modules\Marketplace\Domain\Data\UpdateMarketplaceConnectionData;
+use App\Modules\Marketplace\Domain\Interfaces\MarketplaceConnectionServiceInterface;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Domain\Repositories\MarketplaceConnectionRepositoryInterface;
 use App\Modules\User\Domain\Models\User;
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Prometheus\Facades\Prometheus;
 
-readonly class MarketplaceConnectionService
+readonly class MarketplaceConnectionService implements MarketplaceConnectionServiceInterface
 {
     public function __construct(
         private MarketplaceConnectionRepositoryInterface $repository,

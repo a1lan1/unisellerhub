@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Interfaces\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Marketplace\Application\Services\MarketplaceConnectionService;
 use App\Modules\Marketplace\Domain\Data\StoreMarketplaceConnectionData;
 use App\Modules\Marketplace\Domain\Data\UpdateMarketplaceConnectionData;
+use App\Modules\Marketplace\Domain\Interfaces\MarketplaceConnectionServiceInterface;
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\Marketplace\Interfaces\Http\Requests\Api\DestroyMarketplaceConnectionRequest;
 use App\Modules\Marketplace\Interfaces\Http\Requests\Api\StoreMarketplaceConnectionRequest;
@@ -20,7 +20,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MarketplaceConnectionController extends Controller
 {
-    public function __construct(private readonly MarketplaceConnectionService $service) {}
+    public function __construct(private readonly MarketplaceConnectionServiceInterface $service) {}
 
     /**
      * Display a listing of marketplace connections for the organization.
