@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Activity\Application\Services;
 
+use App\Modules\Activity\Domain\Interfaces\ActivityServiceInterface;
 use App\Modules\Activity\Domain\Repositories\ActivityRepositoryInterface;
 use App\Modules\Activity\Interfaces\Http\Resources\ActivityResource;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-readonly class ActivityService
+readonly class ActivityService implements ActivityServiceInterface
 {
     public function __construct(private ActivityRepositoryInterface $activityRepository) {}
 
