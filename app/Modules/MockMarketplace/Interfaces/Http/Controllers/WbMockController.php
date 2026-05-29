@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\MockMarketplace\Interfaces\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\MockMarketplace\Application\Services\MockMarketplaceService;
+use App\Modules\MockMarketplace\Domain\Interfaces\MockMarketplaceServiceInterface;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Wb\GetWbOrdersRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Wb\GetWbProductsRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Wb\GetWbStocksRequest;
@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 class WbMockController extends Controller
 {
     public function __construct(
-        private readonly MockMarketplaceService $service
+        private readonly MockMarketplaceServiceInterface $service
     ) {}
 
     /**

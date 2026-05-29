@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\MockMarketplace\Interfaces\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\MockMarketplace\Application\Services\MockMarketplaceService;
+use App\Modules\MockMarketplace\Domain\Interfaces\MockMarketplaceServiceInterface;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Yandex\GetYandexCampaignsRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Yandex\GetYandexOrdersRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Yandex\GetYandexProductsRequest;
@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 class YandexMockController extends Controller
 {
     public function __construct(
-        private readonly MockMarketplaceService $service
+        private readonly MockMarketplaceServiceInterface $service
     ) {}
 
     /**

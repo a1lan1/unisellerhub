@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\MockMarketplace\Interfaces\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\MockMarketplace\Application\Services\MockMarketplaceService;
+use App\Modules\MockMarketplace\Domain\Interfaces\MockMarketplaceServiceInterface;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Avito\GetAvitoItemsRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Avito\UpdateAvitoPriceRequest;
 use Illuminate\Http\JsonResponse;
@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 class AvitoMockController extends Controller
 {
     public function __construct(
-        private readonly MockMarketplaceService $service
+        private readonly MockMarketplaceServiceInterface $service
     ) {}
 
     /**

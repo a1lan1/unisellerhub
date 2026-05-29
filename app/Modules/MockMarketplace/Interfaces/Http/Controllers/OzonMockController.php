@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\MockMarketplace\Interfaces\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\MockMarketplace\Application\Services\MockMarketplaceService;
+use App\Modules\MockMarketplace\Domain\Interfaces\MockMarketplaceServiceInterface;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Ozon\GetOzonOrdersRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Ozon\GetOzonProductDetailsRequest;
 use App\Modules\MockMarketplace\Interfaces\Http\Requests\Ozon\GetOzonProductsRequest;
@@ -17,7 +17,7 @@ use Illuminate\Http\JsonResponse;
 class OzonMockController extends Controller
 {
     public function __construct(
-        private readonly MockMarketplaceService $service
+        private readonly MockMarketplaceServiceInterface $service
     ) {}
 
     /**

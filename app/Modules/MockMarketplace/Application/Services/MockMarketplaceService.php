@@ -22,6 +22,7 @@ use App\Modules\MockMarketplace\Domain\Data\WbMockStockDTO;
 use App\Modules\MockMarketplace\Domain\Data\YandexMockOrderDTO;
 use App\Modules\MockMarketplace\Domain\Data\YandexMockProductDTO;
 use App\Modules\MockMarketplace\Domain\Data\YandexMockStockDTO;
+use App\Modules\MockMarketplace\Domain\Interfaces\MockMarketplaceServiceInterface;
 use App\Modules\MockMarketplace\Domain\Models\MockProduct;
 use App\Modules\MockMarketplace\Domain\Repositories\MockOrderRepositoryInterface;
 use App\Modules\MockMarketplace\Domain\Repositories\MockProductRepositoryInterface;
@@ -29,7 +30,7 @@ use App\Modules\MockMarketplace\Domain\Repositories\MockStockRepositoryInterface
 use Illuminate\Support\Collection;
 use RuntimeException;
 
-class MockMarketplaceService
+class MockMarketplaceService implements MockMarketplaceServiceInterface
 {
     public function __construct(
         private readonly MockStockRepositoryInterface $stockRepository,

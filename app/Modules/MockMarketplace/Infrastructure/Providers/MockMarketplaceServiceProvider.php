@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\MockMarketplace\Infrastructure\Providers;
 
+use App\Modules\MockMarketplace\Application\Services\MockMarketplaceService;
+use App\Modules\MockMarketplace\Domain\Interfaces\MockMarketplaceServiceInterface;
 use App\Modules\MockMarketplace\Domain\Repositories\MockOrderRepositoryInterface;
 use App\Modules\MockMarketplace\Domain\Repositories\MockProductRepositoryInterface;
 use App\Modules\MockMarketplace\Domain\Repositories\MockStockRepositoryInterface;
@@ -22,6 +24,7 @@ class MockMarketplaceServiceProvider extends ServiceProvider
         MockStockRepositoryInterface::class => EloquentMockStockRepository::class,
         MockOrderRepositoryInterface::class => EloquentMockOrderRepository::class,
         MockProductRepositoryInterface::class => EloquentMockProductRepository::class,
+        MockMarketplaceServiceInterface::class => MockMarketplaceService::class,
     ];
 
     #[Override]
