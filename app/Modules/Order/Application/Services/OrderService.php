@@ -8,6 +8,7 @@ use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
 use App\Modules\Order\Domain\Data\OrderData;
 use App\Modules\Order\Domain\Data\OrderFilterData;
 use App\Modules\Order\Domain\Data\SyncOrdersData;
+use App\Modules\Order\Domain\Interfaces\OrderServiceInterface;
 use App\Modules\Order\Domain\Models\Order;
 use App\Modules\Order\Domain\Repositories\OrderRepositoryInterface;
 use App\Modules\Order\Infrastructure\Jobs\SyncOrdersJob;
@@ -15,7 +16,7 @@ use App\Modules\User\Domain\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Date;
 
-readonly class OrderService
+readonly class OrderService implements OrderServiceInterface
 {
     public function __construct(private OrderRepositoryInterface $orderRepository) {}
 
@@ -43,7 +44,7 @@ readonly class OrderService
     public function getPaginatedOrders(User $user, OrderFilterData $filter): LengthAwarePaginator
     {
         if (! $user->has_organization) {
-            return new LengthAwarePaginator([], 0, $filter->per_page);
+            return new LengthAwarePaginator([], 0, $filter->pagination->getPerPage());
         }
 
         return $this->orderRepository->getPaginatedOrders($filter);
@@ -51,7 +52,7 @@ readonly class OrderService
 
     public function updateOrCreateOrder(MarketplaceEnum $marketplace, OrderData $orderData, ?int $organizationId): Order
     {
-        $order = $this->orderRepository->findByExternalId($marketplace, $orderData->external_id);
+        $order = $this->orderRepository->findByExternalId($marketplace, $orderData->external_id->getValue());
 
         if ($order instanceof Order) {
             return $this->orderRepository->update($order, [
@@ -66,7 +67,7 @@ readonly class OrderService
         return $this->orderRepository->create([
             'organization_id' => $organizationId,
             'marketplace' => $marketplace,
-            'external_id' => $orderData->external_id,
+            'external_id' => $orderData->external_id->getValue(),
             'status' => $orderData->status,
             'total_price' => $orderData->total_price->getAmount(),
             'order_date' => $orderData->order_date,

@@ -6,14 +6,14 @@ namespace App\Modules\Order\Interfaces\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Marketplace\Domain\Enums\MarketplaceEnum;
-use App\Modules\Order\Application\Services\OrderService;
 use App\Modules\Order\Domain\Data\SyncOrdersData;
+use App\Modules\Order\Domain\Interfaces\OrderServiceInterface;
 use App\Modules\Order\Interfaces\Http\Requests\SyncOrderRequest;
 use Illuminate\Http\JsonResponse;
 
 class OrderSyncController extends Controller
 {
-    public function __construct(private readonly OrderService $orderService) {}
+    public function __construct(private readonly OrderServiceInterface $orderService) {}
 
     public function sync(SyncOrderRequest $request): JsonResponse
     {

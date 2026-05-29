@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace App\Modules\Order\Application\Actions;
 
 use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
-use App\Modules\Order\Application\Services\OrderService;
 use App\Modules\Order\Domain\Data\OrderData;
 use App\Modules\Order\Domain\Events\OrdersSynced;
+use App\Modules\Order\Domain\Interfaces\OrderServiceInterface;
 use App\Modules\Order\Domain\Models\OrderItem;
 use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-final readonly class SaveMarketplaceOrdersAction
+class SaveMarketplaceOrdersAction
 {
     public function __construct(
-        private OrderService $orderService,
-        private ProductListingRepositoryInterface $productListingRepository
+        private readonly OrderServiceInterface $orderService,
+        private readonly ProductListingRepositoryInterface $productListingRepository
     ) {}
 
     /**
@@ -55,17 +55,17 @@ final readonly class SaveMarketplaceOrdersAction
 
         foreach ($orderData->items as $itemData) {
             // Try to find listing by external_id first, then by vendor_code
-            $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $itemData->product_id);
+            $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $itemData->product_id->getValue());
 
-            if (! $listing && ! empty($itemData->sku)) {
-                $listing = $this->productListingRepository->findListingByVendorCode($connection->marketplace, $itemData->sku);
+            if (! $listing && $itemData->sku !== null) {
+                $listing = $this->productListingRepository->findListingByVendorCode($connection->marketplace, $itemData->sku->getValue());
             }
 
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_listing_id' => $listing?->id,
-                'external_product_id' => $itemData->product_id,
-                'quantity' => $itemData->quantity,
+                'external_product_id' => $itemData->product_id->getValue(),
+                'quantity' => $itemData->quantity->getValue(),
                 'price' => $itemData->price->getAmount(),
             ]);
         }
