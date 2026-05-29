@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Product\Application\Actions\UpdateProductFinanceAction;
 use App\Modules\Product\Domain\Data\UpdateProductFinanceData;
 use App\Modules\Product\Interfaces\Http\Requests\UpdateProductFinanceRequest;
-use App\Modules\Report\Application\Services\AnalyticsService;
+use App\Modules\Report\Domain\Interfaces\AnalyticsServiceInterface;
 use App\Modules\Report\Interfaces\Http\Requests\Analytics\AbcAnalysisRequest;
 use App\Modules\Report\Interfaces\Http\Requests\Analytics\ProfitabilityAnalysisRequest;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +17,7 @@ use Inertia\Response;
 
 class AnalyticsController extends Controller
 {
-    public function __construct(private readonly AnalyticsService $analyticsService) {}
+    public function __construct(private readonly AnalyticsServiceInterface $analyticsService) {}
 
     public function abc(AbcAnalysisRequest $request): Response
     {
