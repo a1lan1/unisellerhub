@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\Inventory\Interfaces\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Inventory\Application\Services\InventoryService;
 use App\Modules\Inventory\Domain\Data\PullBulkInventoryData;
 use App\Modules\Inventory\Domain\Data\PullInventoryData;
 use App\Modules\Inventory\Domain\Data\SyncMoySkladStockData;
+use App\Modules\Inventory\Domain\Interfaces\InventoryServiceInterface;
 use App\Modules\Inventory\Interfaces\Http\Requests\Api\PullBulkInventoryRequest;
 use App\Modules\Inventory\Interfaces\Http\Requests\Api\PullInventoryRequest;
 use App\Modules\Inventory\Interfaces\Http\Requests\UpdateInventoryRequest;
@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 class InventorySyncController extends Controller
 {
-    public function __construct(private readonly InventoryService $inventoryService) {}
+    public function __construct(private readonly InventoryServiceInterface $inventoryService) {}
 
     /**
      * Pull stocks from marketplaces.

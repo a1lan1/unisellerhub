@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Inventory\Infrastructure\Providers;
 
+use App\Modules\Inventory\Application\Services\InventoryService;
+use App\Modules\Inventory\Domain\Interfaces\InventoryServiceInterface;
 use App\Modules\Inventory\Domain\Repositories\InventoryRepositoryInterface;
 use App\Modules\Inventory\Domain\Repositories\WarehouseRepositoryInterface;
 use App\Modules\Inventory\Infrastructure\Repositories\EloquentInventoryRepository;
@@ -19,6 +21,7 @@ class InventoryServiceProvider extends ServiceProvider
     public array $bindings = [
         InventoryRepositoryInterface::class => EloquentInventoryRepository::class,
         WarehouseRepositoryInterface::class => EloquentWarehouseRepository::class,
+        InventoryServiceInterface::class => InventoryService::class,
     ];
 
     #[Override]
