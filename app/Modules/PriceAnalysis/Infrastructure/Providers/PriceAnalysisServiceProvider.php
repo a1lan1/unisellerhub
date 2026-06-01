@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\PriceAnalysis\Infrastructure\Providers;
 
 use App\Modules\PriceAnalysis\Application\Services\PriceAnalysisSyncResultProcessor;
+use App\Modules\PriceAnalysis\Domain\Interfaces\PriceAnalysisSyncResultProcessorInterface;
 use App\Modules\PriceAnalysis\Domain\Repositories\PriceAnalysisRepositoryInterface;
 use App\Modules\PriceAnalysis\Infrastructure\Repositories\EloquentPriceAnalysisRepository;
 use Illuminate\Support\ServiceProvider;
@@ -27,7 +28,7 @@ final class PriceAnalysisServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
-        $this->app->singleton(PriceAnalysisSyncResultProcessor::class);
+        $this->app->singleton(fn (): PriceAnalysisSyncResultProcessorInterface => new PriceAnalysisSyncResultProcessor);
     }
 
     /**

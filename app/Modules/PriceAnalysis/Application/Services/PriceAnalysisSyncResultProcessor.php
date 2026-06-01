@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\PriceAnalysis\Application\Services;
 
+use App\Modules\PriceAnalysis\Domain\Interfaces\PriceAnalysisSyncResultProcessorInterface;
 use App\Modules\PriceAnalysis\Infrastructure\Jobs\GenerateReportForBatchJob;
 use App\Modules\PriceAnalysis\Infrastructure\Jobs\NotifyUserOfReportJob;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\URL;
 
-final readonly class PriceAnalysisSyncResultProcessor
+final readonly class PriceAnalysisSyncResultProcessor implements PriceAnalysisSyncResultProcessorInterface
 {
     public function processSuccess(array $data): void
     {
