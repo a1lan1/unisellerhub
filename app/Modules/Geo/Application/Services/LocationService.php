@@ -23,18 +23,18 @@ class LocationService implements LocationServiceInterface
      */
     public function getLocationsForUser(User $user): Collection
     {
-        return Cache::tags(['locations'])->flexible(
+        return Cache::tags(['locations'])->remember(
             sprintf(CacheKeyEnum::LOCATIONS_FOR_USER->value, $user->id),
-            [Date::now()->addMinutes(15), Date::now()->addHour()],
+            Date::now()->addHour(),
             fn (): Collection => $this->locationRepository->getForUser($user)
         );
     }
 
     public function getLocationWithStats(Location $location): Location
     {
-        return Cache::tags(['locations'])->flexible(
+        return Cache::tags(['locations'])->remember(
             sprintf(CacheKeyEnum::LOCATIONS_WITH_STATS->value, $location->id),
-            [Date::now()->addMinutes(15), Date::now()->addHour()],
+            Date::now()->addHour(),
             fn (): Location => $this->locationRepository->getWithStats($location)
         );
     }

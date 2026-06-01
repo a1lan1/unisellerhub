@@ -18,9 +18,9 @@ readonly class CachedReviewService implements ReviewServiceInterface
 
     public function getReviewsForUser(User $user, ReviewFilterData $filters, int $page = 1): LengthAwarePaginator
     {
-        return Cache::tags(['reviews'])->flexible(
+        return Cache::tags(['reviews'])->remember(
             sprintf(CacheKeyEnum::REVIEWS_USER->value, $user->id, $filters->cacheKey(), $page),
-            [Date::now()->addMinutes(15), Date::now()->addHour()],
+            Date::now()->addHour(),
             fn (): LengthAwarePaginator => $this->service->getReviewsForUser($user, $filters, $page)
         );
     }

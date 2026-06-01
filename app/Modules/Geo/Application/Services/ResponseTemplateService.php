@@ -23,9 +23,9 @@ class ResponseTemplateService implements ResponseTemplateServiceInterface
      */
     public function getTemplatesForUser(User $user): Collection
     {
-        return Cache::tags(['response_templates'])->flexible(
+        return Cache::tags(['response_templates'])->remember(
             sprintf(CacheKeyEnum::RESPONSE_TEMPLATES_FOR_USER->value, $user->id),
-            [Date::now()->addMinutes(15), Date::now()->addHour()],
+            Date::now()->addHour(),
             fn (): Collection => $this->responseTemplateRepository->getForUser($user)
         );
     }

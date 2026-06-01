@@ -22,9 +22,9 @@ class GeoMetricService implements GeoMetricServiceInterface
      */
     public function calculateForUser(User $user, ?int $locationId = null): array
     {
-        return Cache::tags(['reviews', 'locations'])->flexible(
+        return Cache::tags(['reviews', 'locations'])->remember(
             sprintf(CacheKeyEnum::GEO_METRICS_USER->value, $user->id).($locationId ?? 'all'),
-            [Date::now()->addMinutes(15), Date::now()->addHour()],
+            Date::now()->addHour(),
             function () use ($user, $locationId): array {
                 $reviews = $this->reviewRepository->getForUserAndLocation($user, $locationId);
 
