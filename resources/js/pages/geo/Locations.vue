@@ -132,7 +132,7 @@ const handleSaved = () => {
               <VChip
                 size="small"
                 color="primary"
-                variant="flat"
+                variant="tonal"
                 prepend-icon="mdi-map-marker"
                 class="capitalize"
               >

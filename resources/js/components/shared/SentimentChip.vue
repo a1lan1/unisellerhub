@@ -11,7 +11,7 @@ defineProps<{
   <VChip
     pill
     size="small"
-    variant="flat"
+    variant="tonal"
     :color="getSentimentColor(sentiment)"
     :prepend-icon="getSentimentIcon(sentiment)"
   >

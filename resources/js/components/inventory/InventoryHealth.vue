@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertCircle, PackageSearch, PackageX } from 'lucide-vue-next'
+import { AlertCircle, PackageX } from 'lucide-vue-next'
 import { ref } from 'vue'
 import InventoryDetailModal from '@/components/inventory/InventoryDetailModal.vue'
 import type { InventoryItem } from '@/types'
@@ -30,8 +30,11 @@ const openLowStockModal = () => {
 
 <template>
   <v-card border>
-    <v-card-title class="text-subtitle-1 font-weight-bold flex align-center">
-      <PackageSearch class="mr-2 h-4 w-4" />
+    <v-card-title class="flex align-center">
+      <v-icon
+        icon="mdi-package-check"
+        size="22"
+      />
       Inventory Health
     </v-card-title>
     <v-card-text>

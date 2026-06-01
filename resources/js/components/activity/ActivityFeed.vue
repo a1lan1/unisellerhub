@@ -58,7 +58,7 @@ onUnmounted(() => {
 
     <ActivityList
       :activities
-      style="max-height: 575px"
+      style="height: calc(100vh - 360px)"
     />
   </v-card>
 
