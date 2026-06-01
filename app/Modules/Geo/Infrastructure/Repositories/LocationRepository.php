@@ -15,7 +15,7 @@ class LocationRepository implements LocationRepositoryInterface
     public function getForUser(User $user): Collection
     {
         return $user->locations()
-            ->select(['id', 'user_id', 'name', 'type', 'address', 'latitude', 'longitude', 'external_ids'])
+            ->select(['id', 'user_id', 'name', 'type', 'address', 'latitude', 'longitude', 'external_ids', 'created_at', 'updated_at'])
             ->withCount('reviews')
             ->withAvg('reviews', 'rating')
             ->latest()

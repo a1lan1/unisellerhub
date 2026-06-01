@@ -24,11 +24,12 @@ class LocationResource extends JsonResource
             'address' => $this->address,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
+            'user_id' => $this->user_id,
             'external_ids' => $this->whenHas('external_ids'),
             'reviews_count' => $this->whenCounted('reviews'),
             'reviews_avg_rating' => $this->whenAggregated('reviews', 'rating', 'avg'),
-            'created_at' => $this->whenHas('created_at'),
-            'updated_at' => $this->whenHas('updated_at'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

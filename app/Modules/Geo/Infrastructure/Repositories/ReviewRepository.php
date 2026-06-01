@@ -17,7 +17,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getForUserWithFilters(User $user, ReviewFilterData $filters, int $perPage = 15, int $page = 1): LengthAwarePaginator
     {
         return Review::query()
-            ->select(['id', 'location_id', 'source', 'author_name', 'text', 'rating', 'sentiment', 'published_at'])
+            ->select(['id', 'location_id', 'source', 'author_name', 'text', 'rating', 'sentiment', 'published_at', 'created_at', 'updated_at'])
             ->forUser($user)
             ->applyFilters($filters)
             ->latest('published_at')
@@ -30,7 +30,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getForUserAndLocation(User $user, ?int $locationId = null): Collection
     {
         return Review::query()
-            ->select(['id', 'location_id', 'source', 'author_name', 'text', 'rating', 'sentiment', 'published_at', 'created_at'])
+            ->select(['id', 'location_id', 'source', 'author_name', 'text', 'rating', 'sentiment', 'published_at', 'created_at', 'updated_at'])
             ->forUser($user)
             ->forLocation($locationId)
             ->get();
