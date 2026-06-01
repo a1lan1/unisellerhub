@@ -15,11 +15,11 @@ use App\Modules\Product\Domain\Repositories\ProductRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-final readonly class SaveMarketplaceProductsAction
+class SaveMarketplaceProductsAction
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository,
-        private ProductListingRepositoryInterface $productListingRepository
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly ProductListingRepositoryInterface $productListingRepository
     ) {}
 
     /**

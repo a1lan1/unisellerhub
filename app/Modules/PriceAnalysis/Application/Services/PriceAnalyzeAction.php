@@ -8,7 +8,7 @@ use App\Modules\PriceAnalysis\Domain\Data\PriceAnalysisTaskData;
 use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use Illuminate\Support\Facades\Queue;
 
-final readonly class PriceAnalyzeAction
+class PriceAnalyzeAction
 {
     /**
      * @param  array<array-key, PriceAnalysisTaskData>  $batchData

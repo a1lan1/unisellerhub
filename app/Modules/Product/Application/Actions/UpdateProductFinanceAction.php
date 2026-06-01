@@ -9,9 +9,9 @@ use App\Modules\Product\Domain\Models\ProductListing;
 use App\Modules\Product\Domain\Repositories\ProductListingRepositoryInterface;
 use Cknow\Money\Money;
 
-readonly class UpdateProductFinanceAction
+class UpdateProductFinanceAction
 {
-    public function __construct(private ProductListingRepositoryInterface $repository) {}
+    public function __construct(private readonly ProductListingRepositoryInterface $repository) {}
 
     /**
      * Update product and listing finance data.

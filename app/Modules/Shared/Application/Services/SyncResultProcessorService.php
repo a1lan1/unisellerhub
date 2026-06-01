@@ -16,15 +16,15 @@ use Illuminate\Support\Facades\Log;
 use Spatie\Prometheus\Facades\Prometheus;
 use Throwable;
 
-final readonly class SyncResultProcessorService implements SyncResultProcessorInterface
+class SyncResultProcessorService implements SyncResultProcessorInterface
 {
     public function __construct(
-        private TenantManager $tenantManager,
-        private MarketplaceConnectionRepositoryInterface $connectionRepository,
-        private MarketplaceDataMapper $marketplaceDataMapper,
-        private SaveMarketplaceStockAction $saveMarketplaceStockAction,
-        private SaveMarketplaceOrdersAction $saveMarketplaceOrdersAction,
-        private SaveMarketplaceProductsAction $saveMarketplaceProductsAction,
+        private readonly TenantManager $tenantManager,
+        private readonly MarketplaceConnectionRepositoryInterface $connectionRepository,
+        private readonly MarketplaceDataMapper $marketplaceDataMapper,
+        private readonly SaveMarketplaceStockAction $saveMarketplaceStockAction,
+        private readonly SaveMarketplaceOrdersAction $saveMarketplaceOrdersAction,
+        private readonly SaveMarketplaceProductsAction $saveMarketplaceProductsAction,
     ) {}
 
     /**

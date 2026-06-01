@@ -13,11 +13,11 @@ use App\Modules\User\Domain\Enums\NotificationTypeEnum;
 use App\Modules\User\Domain\Interfaces\NotificationServiceInterface;
 use Illuminate\Support\Facades\Log;
 
-readonly class ProcessOzonWebhookAction
+class ProcessOzonWebhookAction
 {
     public function __construct(
-        private MarketplaceConnectionRepositoryInterface $marketplaceConnectionRepository,
-        private NotificationServiceInterface $notificationService,
+        private readonly MarketplaceConnectionRepositoryInterface $marketplaceConnectionRepository,
+        private readonly NotificationServiceInterface $notificationService,
     ) {}
 
     public function execute(string $clientId, ?string $messageType): void

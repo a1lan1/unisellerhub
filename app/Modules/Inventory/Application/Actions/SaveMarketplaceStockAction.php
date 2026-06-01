@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final readonly class SaveMarketplaceStockAction
+class SaveMarketplaceStockAction
 {
     public function __construct(
-        private ProductListingRepositoryInterface $productListingRepository,
-        private WarehouseRepositoryInterface $warehouseRepository,
-        private InventoryRepositoryInterface $inventoryRepository
+        private readonly ProductListingRepositoryInterface $productListingRepository,
+        private readonly WarehouseRepositoryInterface $warehouseRepository,
+        private readonly InventoryRepositoryInterface $inventoryRepository
     ) {}
 
     /**
@@ -43,15 +43,15 @@ final readonly class SaveMarketplaceStockAction
     {
         // 1. Find product listing within the organization
         // Try by external_id first
-        $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $stockData->external_product_id);
+        $listing = $this->productListingRepository->findListingByExternalId($connection->marketplace, $stockData->external_product_id->getValue());
 
         // Fallback to searching by vendor_code if external_id search fails
-        if (! $listing instanceof ProductListing && ! in_array($stockData->sku, [null, '', '0'], true)) {
-            $listing = $this->productListingRepository->findListingByVendorCode($connection->marketplace, $stockData->sku);
+        if (! $listing instanceof ProductListing && ! in_array($stockData->sku?->getValue(), [null, '', '0'], true)) {
+            $listing = $this->productListingRepository->findListingByVendorCode($connection->marketplace, $stockData->sku->getValue());
         }
 
         if (! $listing instanceof ProductListing) {
-            Log::warning(sprintf('No matching ProductListing found for stockData: external_product_id=%s, sku=%s for %s. Skipping.', $stockData->external_product_id, $stockData->sku, $connection->marketplace->value));
+            Log::warning(sprintf('No matching ProductListing found for stockData: external_product_id=%s, sku=%s for %s. Skipping.', $stockData->external_product_id->getValue(), $stockData->sku?->getValue(), $connection->marketplace->value));
 
             return;
         }
@@ -61,10 +61,10 @@ final readonly class SaveMarketplaceStockAction
             [
                 'organization_id' => $connection->organization_id,
                 'marketplace' => $connection->marketplace,
-                'external_id' => $stockData->external_warehouse_id,
+                'external_id' => $stockData->external_warehouse_id->getValue(),
             ],
             [
-                'name' => sprintf('%s Warehouse %s', $connection->marketplace->label(), $stockData->external_warehouse_id),
+                'name' => sprintf('%s Warehouse %s', $connection->marketplace->label(), $stockData->external_warehouse_id->getValue()),
             ]
         );
 
@@ -75,7 +75,7 @@ final readonly class SaveMarketplaceStockAction
                 'warehouse_id' => $warehouse->id,
             ],
             [
-                'quantity' => $stockData->quantity,
+                'quantity' => $stockData->quantity->getValue(),
             ]
         );
 
