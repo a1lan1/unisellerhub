@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Modules\PriceAnalysis\Application\Services\PriceAnalysisSyncResultProcessor;
+use App\Modules\PriceAnalysis\Domain\Interfaces\PriceAnalysisSyncResultProcessorInterface;
 use App\Modules\Shared\Domain\Enums\QueueNameEnum;
 use App\Modules\Shared\Domain\Interfaces\RabbitMQConnectionInterface;
 use Exception;
@@ -25,7 +25,7 @@ final class ProcessPriceAnalysisSyncResultsCommand extends Command
      */
     public function handle(
         RabbitMQConnectionInterface $rabbitMQConnectionService,
-        PriceAnalysisSyncResultProcessor $processor
+        PriceAnalysisSyncResultProcessorInterface $processor
     ): int {
         $this->info('Starting Price Analysis Result Consumer...');
 

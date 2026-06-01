@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Modules\Activity\Application\Services\ActivityService;
-use App\Modules\Inventory\Application\Services\InventoryService;
-use App\Modules\Order\Application\Services\OrderService;
+use App\Modules\Activity\Domain\Interfaces\ActivityServiceInterface;
+use App\Modules\Inventory\Domain\Interfaces\InventoryServiceInterface;
+use App\Modules\Order\Domain\Interfaces\OrderServiceInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,9 +14,9 @@ use Inertia\Response;
 class DashboardController extends Controller
 {
     public function __construct(
-        private readonly OrderService $orderService,
-        private readonly InventoryService $inventoryService,
-        private readonly ActivityService $activityService
+        private readonly OrderServiceInterface $orderService,
+        private readonly InventoryServiceInterface $inventoryService,
+        private readonly ActivityServiceInterface $activityService
     ) {}
 
     public function index(Request $request): Response

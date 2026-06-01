@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\PriceAnalysis\Infrastructure\Jobs;
 
 use App\Modules\Inventory\Domain\ValueObjects\Quantity;
+use App\Modules\PriceAnalysis\Application\Services\PriceAnalyzeAction;
 use App\Modules\PriceAnalysis\Domain\Data\PriceAnalysisTaskData;
-use App\Modules\PriceAnalysis\Domain\Interfaces\PriceAnalysisActionInterface;
 use App\Modules\PriceAnalysis\Domain\Repositories\PriceAnalysisRepositoryInterface;
 use App\Modules\PriceAnalysis\Domain\ValueObjects\SalesHistoryItem;
 use App\Modules\Product\Domain\Models\Product;
@@ -52,7 +52,7 @@ final class InitiatePriceAnalysisReportJob implements ShouldQueue
 
     public function handle(
         PriceAnalysisRepositoryInterface $repository,
-        PriceAnalysisActionInterface $priceAnalysisService,
+        PriceAnalyzeAction $priceAnalysisService,
         TenantManager $tenantManager
     ): void {
         $tenantManager->setOrganizationId($this->organizationId);
