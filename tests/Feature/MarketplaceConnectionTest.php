@@ -9,7 +9,7 @@ use App\Modules\Marketplace\Domain\Models\MarketplaceConnection;
 use App\Modules\User\Domain\Models\User;
 
 beforeEach(function (): void {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->withBaseRoles()->create();
     $this->actingAs($this->user);
 });
 
@@ -46,7 +46,7 @@ it('can create a marketplace connection with encrypted credentials', function ()
     ]);
 
     $connection = MarketplaceConnection::where('organization_id', $this->user->organization_id)->first();
-    expect($connection->credentials['token'])->toBe('wb-secret-token-123');
+    expect($connection->credentials->getValue()['token'])->toBe('wb-secret-token-123');
 });
 
 it('can update a marketplace connection', function (): void {

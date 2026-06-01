@@ -11,7 +11,7 @@ test('login screen can be rendered', function (): void {
 });
 
 test('users can authenticate using the login screen', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
@@ -30,7 +30,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $user->forceFill([
         'two_factor_secret' => encrypt('test-secret'),
@@ -49,7 +49,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
 });
 
 test('users can not authenticate with invalid password', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $this->post(route('login.store'), [
         'email' => $user->email,
@@ -60,7 +60,7 @@ test('users can not authenticate with invalid password', function (): void {
 });
 
 test('users can logout', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $response = $this->actingAs($user)->post(route('logout'));
 
@@ -69,7 +69,7 @@ test('users can logout', function (): void {
 });
 
 test('users are rate limited', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     RateLimiter::increment(md5('login'.implode('|', [$user->email, '127.0.0.1'])), amount: 5);
 

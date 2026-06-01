@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Event;
 use Spatie\Activitylog\Models\Activity;
 
 beforeEach(function (): void {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->withBaseRoles()->create();
     $this->actingAs($this->user);
 });
 

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 test('SyncOrdersFromMarketplaceAction syncs orders from Wildberries correctly', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $token = 'wb_token_'.Str::random(20);
 

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 test('SyncStockFromMarketplaceAction syncs stocks for Wildberries correctly', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $token = 'wb_token_'.Str::random(20);
 
@@ -73,7 +73,7 @@ test('SyncStockFromMarketplaceAction syncs stocks for Wildberries correctly', fu
 });
 
 test('SyncStockFromMarketplaceAction syncs stocks for Ozon correctly', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $clientId = 'ozon_client_'.Str::random(8);
 
@@ -132,7 +132,7 @@ test('SyncStockFromMarketplaceAction syncs stocks for Ozon correctly', function 
 });
 
 test('SyncStockFromMarketplaceAction updates existing stock correctly', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
 
     $connection = $user->organization->marketplaceConnections()->create([
@@ -176,5 +176,5 @@ test('SyncStockFromMarketplaceAction updates existing stock correctly', function
     $action->execute($connection);
 
     expect(Inventory::where('product_listing_id', $listing->id)->count())->toBe(1);
-    expect(Inventory::where('product_listing_id', $listing->id)->first()->quantity)->toBe(99);
+    expect(Inventory::where('product_listing_id', $listing->id)->first()->quantity->getValue())->toBe(99);
 });

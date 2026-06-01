@@ -9,7 +9,7 @@ use App\Modules\Product\Domain\Models\ProductListing;
 use App\Modules\User\Domain\Models\User;
 
 beforeEach(function (): void {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->withBaseRoles()->create();
     $this->actingAs($this->user);
 });
 

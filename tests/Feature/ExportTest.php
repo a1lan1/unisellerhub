@@ -11,7 +11,7 @@ use App\Modules\User\Domain\Models\User;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function (): void {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->withBaseRoles()->create();
     $this->actingAs($this->user);
 });
 

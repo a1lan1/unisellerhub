@@ -18,7 +18,7 @@ test('reset password link screen can be rendered', function (): void {
 test('reset password link can be requested', function (): void {
     Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -28,7 +28,7 @@ test('reset password link can be requested', function (): void {
 test('reset password screen can be rendered', function (): void {
     Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -44,7 +44,7 @@ test('reset password screen can be rendered', function (): void {
 test('password can be reset with valid token', function (): void {
     Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -65,7 +65,7 @@ test('password can be reset with valid token', function (): void {
 });
 
 test('password cannot be reset with invalid token', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $response = $this->post(route('password.update'), [
         'token' => 'invalid-token',

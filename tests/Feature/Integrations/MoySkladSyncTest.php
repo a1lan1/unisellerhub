@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 it('syncs products from moysklad correctly', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $token = 'ms_token_'.Str::random(20);
 

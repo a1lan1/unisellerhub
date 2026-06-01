@@ -10,7 +10,7 @@ use App\Modules\User\Domain\Models\User;
 it('can search for products via scout', function (): void {
     config(['scout.driver' => 'collection']); // Use collection driver for reliable testing without Meilisearch
 
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
 
     Product::factory()->create([

@@ -4,7 +4,7 @@ use App\Modules\User\Domain\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('confirm password screen can be rendered', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
 
     $response = $this->actingAs($user)->get(route('password.confirm'));
 

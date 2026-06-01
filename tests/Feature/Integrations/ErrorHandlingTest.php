@@ -11,7 +11,7 @@ use App\Modules\User\Domain\Models\User;
 use Illuminate\Support\Facades\Http;
 
 it('handles 401 unauthorized from wildberries gracefully', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
 
     $connection = MarketplaceConnection::factory()->create([

@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 test('SyncProductsFromMarketplaceAction imports products from Wildberries correctly', function (): void {
     // Prepare Seller, Organization and Connection
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $token = 'wb_token_'.Str::random(20);
 
@@ -66,7 +66,7 @@ test('SyncProductsFromMarketplaceAction imports products from Wildberries correc
 });
 
 test('SyncProductsFromMarketplaceAction imports products from Ozon correctly', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $clientId = 'ozon_client_'.Str::random(8);
 
@@ -120,7 +120,7 @@ test('SyncProductsFromMarketplaceAction imports products from Ozon correctly', f
 });
 
 test('SyncProductsFromMarketplaceAction updates existing products by vendor_code', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->withBaseRoles()->create();
     $this->actingAs($user);
     $token = 'wb_token_'.Str::random(20);
 

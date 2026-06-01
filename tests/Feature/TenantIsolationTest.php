@@ -10,8 +10,8 @@ use App\Modules\User\Domain\Models\User;
 
 test('it prevents cross-tenant access for products', function (): void {
     // Create two users from different organizations
-    $userA = User::factory()->create();
-    $userB = User::factory()->create();
+    $userA = User::factory()->withBaseRoles()->create();
+    $userB = User::factory()->withBaseRoles()->create();
 
     // Create a product for Organization A
     $productA = Product::factory()->create(['organization_id' => $userA->organization_id]);
@@ -29,8 +29,8 @@ test('it prevents cross-tenant access for products', function (): void {
 });
 
 test('it prevents cross-tenant access for orders', function (): void {
-    $userA = User::factory()->create();
-    $userB = User::factory()->create();
+    $userA = User::factory()->withBaseRoles()->create();
+    $userB = User::factory()->withBaseRoles()->create();
 
     $orderA = Order::factory()->create(['organization_id' => $userA->organization_id]);
     $orderB = Order::factory()->create(['organization_id' => $userB->organization_id]);
