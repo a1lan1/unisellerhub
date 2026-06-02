@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithCachedConfig;
 use Illuminate\Foundation\Testing\WithCachedRoutes;
@@ -23,14 +24,20 @@ pest()->extend(TestCase::class)
     ->use(WithCachedRoutes::class)
     ->use(WithCachedConfig::class)
     ->group('feature')
-    ->in('Feature');
+    ->in('Feature')
+    ->beforeEach(function (): void {
+        $this->seed(RoleSeeder::class);
+    });
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->use(WithCachedRoutes::class)
     ->use(WithCachedConfig::class)
     ->group('unit')
-    ->in('Unit');
+    ->in('Unit')
+    ->beforeEach(function (): void {
+        $this->seed(RoleSeeder::class);
+    });
 
 /*
 |--------------------------------------------------------------------------
