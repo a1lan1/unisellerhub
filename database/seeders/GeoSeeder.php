@@ -9,10 +9,13 @@ use App\Modules\Geo\Domain\Models\ResponseTemplate;
 use App\Modules\Geo\Domain\Models\Review;
 use App\Modules\User\Domain\Enums\RoleEnum;
 use App\Modules\User\Domain\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class GeoSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     public function run(): void
     {
         $sellers = User::role(RoleEnum::SELLER)->get();
