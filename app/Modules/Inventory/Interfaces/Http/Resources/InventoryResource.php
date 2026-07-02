@@ -27,6 +27,7 @@ class InventoryResource extends JsonResource
             'warehouse_name' => $warehouse->name,
             'quantity' => $this->resource->quantity->getValue(),
             'reserved' => $this->resource->reserved->getValue(),
+            'available' => $this->resource->available,
             'listing_id' => $this->resource->product_listing_id,
             'updated_at' => $this->resource->updated_at?->toDateTimeString(),
         ];

@@ -29,6 +29,7 @@ const headers = [
   { title: 'Warehouse', key: 'warehouse_name', sortable: true },
   { title: 'Quantity', key: 'quantity', sortable: true, width: '150px' },
   { title: 'Reserved', key: 'reserved', sortable: true },
+  { title: 'Available', key: 'available', sortable: true },
   { title: 'Actions', key: 'actions', sortable: false }
 ]
 
