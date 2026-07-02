@@ -24,6 +24,7 @@
         "laravel/scout": "^11.1",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
+        "livewire/livewire": "^4.3",
         "maatwebsite/excel": "^3.1",
         "meilisearch/meilisearch-php": "^1.16",
         "opcodesio/log-viewer": "^3.24",
