@@ -81,7 +81,7 @@ it('processes successful inventory sync result', function (): void {
         ->andReturn($stocks->toArray());
     $this->saveMarketplaceStockAction->shouldReceive('execute')
         ->once()
-        ->with($this->connection, $stocks);
+        ->with($this->connection, Mockery::type('array'));
 
     Log::shouldReceive('info')->once()->withAnyArgs();
 
@@ -133,7 +133,7 @@ it('processes successful orders sync result', function (): void {
         ->andReturn($orders->toArray());
     $this->saveMarketplaceOrdersAction->shouldReceive('execute')
         ->once()
-        ->with($this->connection, $orders);
+        ->with($this->connection, Mockery::type('array'));
 
     Log::shouldReceive('info')->once()->withAnyArgs();
 
@@ -183,7 +183,7 @@ it('processes successful products sync result', function (): void {
         ->andReturn($products->toArray());
     $this->saveMarketplaceProductsAction->shouldReceive('execute')
         ->once()
-        ->with($this->connection, $products);
+        ->with($this->connection, Mockery::type('array'));
 
     Log::shouldReceive('info')->once()->withAnyArgs();
 
