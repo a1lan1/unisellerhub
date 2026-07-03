@@ -31,11 +31,19 @@ it('can update finance data for a product listing', function (): void {
     $this->mock(UpdateProductFinanceAction::class)
         ->shouldReceive('execute')
         ->once()
-        ->withArgs(fn (UpdateProductFinanceData $data): bool => $data->listingId === $updateData['listing_id'] &&
-               $data->costPrice->equals(Money::RUB($updateData['cost_price'] * 100)) &&
-               abs($data->commissionPercent - $updateData['commission_percent']) < 0.001 &&
-               ! $data->logisticCost instanceof Money
-        );
+        ->withArgs(function (UpdateProductFinanceData $actualData) use ($updateData): bool {
+            $expectedData = UpdateProductFinanceData::fromRequest([
+                'listing_id' => $updateData['listing_id'],
+                'cost_price' => $updateData['cost_price'],
+                'commission_percent' => $updateData['commission_percent'],
+                'logistic_cost' => $updateData['logistic_cost'],
+            ]);
+
+            return $actualData->listingId === $expectedData->listingId &&
+                   $actualData->costPrice->equals($expectedData->costPrice) &&
+                   abs($actualData->commissionPercent - $expectedData->commissionPercent) < 0.001 &&
+                   (! $actualData->logisticCost instanceof Money && ! $expectedData->logisticCost instanceof Money);
+        });
 
     patchJson(route('api.analytics.update_finance'), $updateData)
         ->assertOk()
