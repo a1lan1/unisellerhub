@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Inventory\Domain\Models\Inventory;
+use App\Modules\Inventory\Domain\Models\Warehouse;
 use App\Modules\Product\Domain\Models\Product;
 use App\Modules\Product\Domain\Models\ProductListing;
 use App\Modules\User\Domain\Models\Organization;
@@ -21,22 +22,42 @@ beforeEach(function (): void {
 
 it('can display the inventory page', function (): void {
     $product = Product::factory()->for($this->organization)->create();
-    $productListing = ProductListing::factory()
+    $productListings = ProductListing::factory()
         ->for($product)
-        ->create();
-
-    Inventory::factory()
-        ->for($productListing, 'listing')
         ->count(3)
         ->create();
+
+    $warehouse = Warehouse::factory()->create([
+        'organization_id' => $this->organization->id,
+    ]);
+
+    // Создаем по одной записи Inventory для каждого ProductListing
+    foreach ($productListings as $listing) {
+        Inventory::factory()->create([
+            'product_listing_id' => $listing->id,
+            'warehouse_id' => $warehouse->id,
+        ]);
+    }
 
     get(route('inventory.index'))
         ->assertOk()
         ->assertInertia(fn (Assert $page): Assert => $page->component('Inventory/Index')
             ->has('inventory.data', 3)
             ->has('inventory.data.0', fn (Assert $json): Assert => $json
-                ->hasAll(['id', 'quantity', 'listing'])
-                ->has('listing.product.organization_id', $this->organization->id)
+                ->hasAll([
+                    'id',
+                    'product_name',
+                    'sku',
+                    'marketplace',
+                    'warehouse_name',
+                    'quantity',
+                    'listing_id',
+                    'reserved',
+                    'available',
+                    'updated_at',
+                ])
+                ->where('product_name', $product->name)
+                ->where('sku', $product->sku->getValue())
             )
             ->has('filters')
         );

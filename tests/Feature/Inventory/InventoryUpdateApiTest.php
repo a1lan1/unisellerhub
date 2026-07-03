@@ -86,6 +86,7 @@ it('can update inventory and push to marketplace', function (): void {
             'warehouse_name',
             'quantity',
             'reserved',
+            'available',
             'listing_id',
             'updated_at',
         ])
