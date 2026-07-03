@@ -50,9 +50,7 @@ it('gets reviews for a user from base service if not in cache', function (): voi
         ->andReturnSelf();
     Cache::shouldReceive('remember')
         ->with($cacheKey, Mockery::type(CarbonImmutable::class), Mockery::type(Closure::class))
-        ->andReturnUsing(function ($key, $ttl, $callback) {
-            return $callback();
-        });
+        ->andReturnUsing(fn ($key, $ttl, $callback) => $callback());
 
     $this->baseReviewService->shouldReceive('getReviewsForUser')
         ->once()

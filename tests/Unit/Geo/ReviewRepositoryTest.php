@@ -22,9 +22,9 @@ beforeEach(function (): void {
 
 it('gets paginated reviews for a user with filters', function (): void {
     $location = Location::factory()->create(['user_id' => $this->user->id]);
-    Review::factory()->count(5)->create(['location_id' => $location->id, 'organization_id' => $this->organization->id, 'rating' => 5, 'sentiment' => SentimentEnum::Positive]);
-    Review::factory()->count(3)->create(['location_id' => $location->id, 'organization_id' => $this->organization->id, 'rating' => 3, 'sentiment' => SentimentEnum::Negative]);
-    Review::factory()->count(2)->create(['organization_id' => Organization::factory()->create()->id]); // Other organization's reviews
+    Review::factory()->count(5)->create(['location_id' => $location->id, 'rating' => 5, 'sentiment' => SentimentEnum::Positive]);
+    Review::factory()->count(3)->create(['location_id' => $location->id, 'rating' => 3, 'sentiment' => SentimentEnum::Negative]);
+    Review::factory()->count(2)->create();
 
     $filters = ReviewFilterData::from(['rating' => 5, 'sentiment' => SentimentEnum::Positive->value]);
     $paginator = $this->repository->getForUserWithFilters($this->user, $filters);
@@ -37,9 +37,9 @@ it('gets paginated reviews for a user with filters', function (): void {
 it('gets reviews for a user and specific location', function (): void {
     $location1 = Location::factory()->create(['user_id' => $this->user->id]);
     $location2 = Location::factory()->create(['user_id' => $this->user->id]);
-    Review::factory()->count(3)->create(['location_id' => $location1->id, 'organization_id' => $this->organization->id]);
-    Review::factory()->count(2)->create(['location_id' => $location2->id, 'organization_id' => $this->organization->id]);
-    Review::factory()->count(1)->create(['organization_id' => Organization::factory()->create()->id]); // Other organization's reviews
+    Review::factory()->count(3)->create(['location_id' => $location1->id]);
+    Review::factory()->count(2)->create(['location_id' => $location2->id]);
+    Review::factory()->count(1)->create();
 
     $reviews = $this->repository->getForUserAndLocation($this->user, $location1->id);
 
@@ -50,8 +50,8 @@ it('gets reviews for a user and specific location', function (): void {
 it('gets all reviews for a user if locationId is null', function (): void {
     $location1 = Location::factory()->create(['user_id' => $this->user->id]);
     $location2 = Location::factory()->create(['user_id' => $this->user->id]);
-    Review::factory()->count(3)->create(['location_id' => $location1->id, 'organization_id' => $this->organization->id]);
-    Review::factory()->count(2)->create(['location_id' => $location2->id, 'organization_id' => $this->organization->id]);
+    Review::factory()->count(3)->create(['location_id' => $location1->id]);
+    Review::factory()->count(2)->create(['location_id' => $location2->id]);
 
     $reviews = $this->repository->getForUserAndLocation($this->user, null);
 
@@ -63,7 +63,6 @@ it('updates or creates a review', function (): void {
         'external_id' => 'ext-123',
         'source' => ReviewSourceEnum::GOOGLE,
         'location_id' => Location::factory()->create(['user_id' => $this->user->id])->id,
-        'organization_id' => $this->organization->id,
         'author_name' => 'Test Author',
         'text' => 'Test Review',
         'rating' => 4,

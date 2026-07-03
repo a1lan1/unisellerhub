@@ -45,9 +45,7 @@ it('gets response templates for a user from repository if not in cache', functio
         ->andReturnSelf();
     Cache::shouldReceive('remember')
         ->with($cacheKey, Mockery::type(CarbonImmutable::class), Mockery::type(Closure::class))
-        ->andReturnUsing(function ($key, $ttl, $callback) {
-            return $callback();
-        });
+        ->andReturnUsing(fn ($key, $ttl, $callback) => $callback());
 
     $this->responseTemplateRepository->shouldReceive('getForUser')
         ->once()

@@ -48,9 +48,7 @@ it('gets locations for a user from repository if not in cache', function (): voi
         ->andReturnSelf();
     Cache::shouldReceive('remember')
         ->with($cacheKey, Mockery::type(CarbonImmutable::class), Mockery::type(Closure::class))
-        ->andReturnUsing(function ($key, $ttl, $callback) {
-            return $callback();
-        });
+        ->andReturnUsing(fn ($key, $ttl, $callback) => $callback());
 
     $this->locationRepository->shouldReceive('getForUser')
         ->once()
@@ -87,9 +85,7 @@ it('gets location with stats from repository if not in cache', function (): void
         ->andReturnSelf();
     Cache::shouldReceive('remember')
         ->with($cacheKey, Mockery::type(CarbonImmutable::class), Mockery::type(Closure::class))
-        ->andReturnUsing(function ($key, $ttl, $callback) {
-            return $callback();
-        });
+        ->andReturnUsing(fn ($key, $ttl, $callback) => $callback());
 
     $this->locationRepository->shouldReceive('getWithStats')
         ->once()

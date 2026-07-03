@@ -41,9 +41,7 @@ it('gets sellers from repository if not in cache', function (): void {
         ->andReturnSelf();
     Cache::shouldReceive('remember')
         ->with($cacheKey, Mockery::type(CarbonImmutable::class), Mockery::type(Closure::class))
-        ->andReturnUsing(function ($key, $ttl, $callback) {
-            return $callback();
-        });
+        ->andReturnUsing(fn ($key, $ttl, $callback) => $callback());
 
     $this->userRepository->shouldReceive('getSellers')
         ->once()
@@ -79,9 +77,7 @@ it('gets seller with products from repository if not in cache', function (): voi
         ->andReturnSelf();
     Cache::shouldReceive('remember')
         ->with($cacheKey, Mockery::type(CarbonImmutable::class), Mockery::type(Closure::class))
-        ->andReturnUsing(function ($key, $ttl, $callback) {
-            return $callback();
-        });
+        ->andReturnUsing(fn ($key, $ttl, $callback) => $callback());
 
     $this->userRepository->shouldReceive('getSellerWithProducts')
         ->once()

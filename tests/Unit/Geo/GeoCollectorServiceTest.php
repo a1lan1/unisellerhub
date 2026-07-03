@@ -17,8 +17,7 @@ beforeEach(function (): void {
 });
 
 it('sends a review for analysis and returns sentiment', function (): void {
-    $review = Review::factory()->make([
-        'location_id' => 1,
+    $review = Review::factory()->create([
         'source' => ReviewSourceEnum::GOOGLE,
         'external_id' => 'ext123',
         'author_name' => 'John Doe',
@@ -55,8 +54,15 @@ it('returns null if base URL is not configured', function (): void {
         ->once()
         ->with('Geo Collector service URL is not configured.');
 
+    Log::shouldReceive('info')
+        ->once()
+        ->with(
+            'ReviewSaved: Recipient is not a User model.',
+            Mockery::hasKey('Channel')
+        );
+
     $service = new GeoCollectorService('', $this->timeout);
-    $review = Review::factory()->make();
+    $review = Review::factory()->create();
 
     $sentiment = $service->sendReviewForAnalysis($review);
 
@@ -64,7 +70,7 @@ it('returns null if base URL is not configured', function (): void {
 });
 
 it('logs error and returns null on unsuccessful response', function (): void {
-    $review = Review::factory()->make();
+    $review = Review::factory()->create();
 
     Http::fake([
         $this->baseUrl.'/collect_reviews' => Http::response('Error', 500),
@@ -84,10 +90,10 @@ it('logs error and returns null on unsuccessful response', function (): void {
 });
 
 it('logs error and returns null on exception', function (): void {
-    $review = Review::factory()->make();
+    $review = Review::factory()->create();
 
     Http::fake([
-        $this->baseUrl.'/collect_reviews' => Http::timeout(1)->send(), // Simulate timeout
+        $this->baseUrl.'/collect_reviews' => Http::timeout(1), // Simulate timeout
     ]);
 
     Log::shouldReceive('error')
@@ -102,7 +108,7 @@ it('logs error and returns null on exception', function (): void {
 });
 
 it('returns null if sentiment is not present in response', function (): void {
-    $review = Review::factory()->make();
+    $review = Review::factory()->create();
 
     Http::fake([
         $this->baseUrl.'/collect_reviews' => Http::response([
