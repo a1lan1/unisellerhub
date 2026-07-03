@@ -110,6 +110,7 @@ const exportInventory = async() => {
     :inventory="inventory"
     :filters="filters"
     :has-organization="hasOrganization"
+    @updated="router.reload()"
   />
 
   <CreateOrganizationModal

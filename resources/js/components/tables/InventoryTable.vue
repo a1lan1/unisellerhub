@@ -12,6 +12,8 @@ const props = defineProps<{
     hasOrganization: boolean;
 }>()
 
+const emit = defineEmits(['updated'])
+
 const inventoryStore = useInventoryStore()
 const { isBulkUpdating } = storeToRefs(inventoryStore)
 const { pullBulk, updateStock } = inventoryStore
@@ -42,6 +44,15 @@ const bulkPull = async() => {
 
   await pullBulk(selected.value)
   selected.value = []
+}
+
+const updateProductStock = async(item: InventoryItem) => {
+  try {
+    await updateStock(item)
+    emit('updated')
+  } catch (e: any) {
+    console.error(e)
+  }
 }
 </script>
 
@@ -155,6 +166,7 @@ const bulkPull = async() => {
             variant="outlined"
             min="0"
             :disabled="!hasOrganization"
+            @keyup.enter="updateProductStock(item)"
           />
         </template>
 
@@ -164,7 +176,7 @@ const bulkPull = async() => {
             variant="tonal"
             color="secondary"
             :disabled="!hasOrganization"
-            @click="updateStock(item)"
+            @click="updateProductStock(item)"
           >
             Update
           </v-btn>
